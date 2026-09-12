@@ -1,26 +1,251 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* Tokens and their meaning are documented in docs/design-system.md */
+@theme static {
+  --color-ink: #16171b;
+  --color-ink-soft: #4d4f57;
+  --color-paper: #efeff0;
+  --color-sheet: #ffffff;
+  --color-rule: #d9d9dd;
+  --color-ballpoint: #e50914;
+  --color-ballpoint-deep: #9b0610;
+  --color-ballpoint-ink: #c8000c;
+  --color-on-ballpoint: #ffffff;
+  --color-canary: #ffd84d;
+  --color-highlight: #ffd84d;
+  --color-carbon: #f6b8c4;
+  --color-night: #16171b;
+  --color-night-rule: #33353d;
+  --color-night-soft: #b0b2ba;
+
+  --ease-press: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-plex), ui-sans-serif, system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    color-scheme: light;
+  }
+
+  /* Dark theme: neutral graphite (a desk at night), lit by lamplight — not navy */
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --color-ink: #ecedf1;
+    --color-ink-soft: #a5a8b4;
+    --color-paper: #0f1012;
+    --color-sheet: #18191d;
+    --color-rule: #2a2c33;
+    --color-ballpoint-deep: #7d040c;
+    --color-ballpoint-ink: #ff6b72;
+    --color-highlight: color-mix(in oklab, #ffd84d 36%, transparent);
+    --color-carbon: #d98c9e;
+    --color-night: #08090b;
+    --color-night-rule: #22242b;
+    --color-night-soft: #a5a8b4;
+  }
+
+  html {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    font-size: 1.0625rem;
+    line-height: 1.6;
+  }
+
+  /* Light spilling in from above the page */
+  :root[data-theme="dark"] body {
+    background-image:
+      radial-gradient(1100px 620px at 78% -140px, rgb(229 9 20 / 0.1), transparent 70%),
+      radial-gradient(800px 480px at 8% -80px, rgb(255 216 77 / 0.06), transparent 70%);
+    background-repeat: no-repeat;
+  }
+
+  /* Lit top edge on paper sheets; composes with ring/shadow utilities */
+  [data-theme="dark"] .bg-sheet {
+    --tw-inset-shadow: inset 0 1px 0 0 rgb(255 255 255 / 0.07);
+  }
+
+  ::selection {
+    background-color: var(--color-canary);
+    color: var(--color-night);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ballpoint);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  [id] {
+    scroll-margin-top: 5rem;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .page-container {
+    width: 100%;
+    max-width: 88rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  @media (width >= 40rem) {
+    .page-container {
+      padding-inline: 2rem;
+    }
+  }
+
+  .font-wide {
+    font-family: var(--font-display);
+    font-variation-settings: "wdth" 125;
+    letter-spacing: -0.015em;
+  }
+
+  .font-semiwide {
+    font-family: var(--font-display);
+    font-variation-settings: "wdth" 112;
+  }
+
+  .heading-section {
+    font-family: var(--font-display);
+    font-variation-settings: "wdth" 125;
+    font-weight: 800;
+    font-size: clamp(2.1rem, 4.4vw, 4.25rem);
+    line-height: 1.02;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  .on-ink :focus-visible {
+    outline-color: var(--color-canary);
+  }
+
+  .on-canary :focus-visible {
+    outline-color: var(--color-night);
+  }
+
+  /* Soft pool of light that follows the pointer (dark theme only, see Lamplight.tsx) */
+  .lamplight {
+    --lx: 50vw;
+    --ly: 20vh;
+    background: radial-gradient(560px circle at var(--lx) var(--ly), rgb(255 255 255 / 0.06), transparent 70%);
+    mix-blend-mode: screen;
+  }
+
+  /* Highlighter stroke: marks values an AI agent filled in */
+  .marker {
+    background-image: linear-gradient(transparent 58%, var(--color-highlight) 58%);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+    animation: marker-sweep 650ms var(--ease-press) both;
+  }
+
+  .flash {
+    opacity: 0;
+    animation: flash-out 900ms ease-out;
+  }
+
+  .pulse-dot {
+    animation: pulse-dot 1.2s ease-in-out infinite;
+  }
+
+  .tab-progress {
+    animation-name: tab-progress;
+    animation-timing-function: linear;
+    animation-fill-mode: both;
+  }
+
+  .perforated {
+    background-color: var(--color-sheet);
+    background-image:
+      radial-gradient(circle at 7px 0, var(--color-paper) 3.5px, transparent 4px),
+      radial-gradient(circle at 7px 100%, var(--color-paper) 3.5px, transparent 4px);
+    background-size: 14px 100%;
+    background-repeat: repeat-x;
+  }
+
+  .ticker-track {
+    animation: ticker 52s linear infinite;
+  }
+
+  .ticker:hover .ticker-track {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes marker-sweep {
+  from {
+    background-size: 0% 100%;
+  }
+}
+
+@keyframes flash-out {
+  from {
+    opacity: 0.85;
+  }
+}
+
+@keyframes pulse-dot {
+  50% {
+    opacity: 0.3;
+  }
+}
+
+@keyframes tab-progress {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes ticker {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Theme switch: ThemeToggle animates a growing circle on the new snapshot */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marker,
+  .flash,
+  .pulse-dot {
+    animation: none;
+  }
+
+  .ticker-track {
+    animation: none;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .ticker-track > ul {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .ticker-track > ul:nth-child(2),
+  .ticker-track li:nth-child(n + 5) {
+    display: none;
+  }
 }
