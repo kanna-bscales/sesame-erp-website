@@ -7,7 +7,6 @@ import { emptyContactValues, type ContactState } from "./state";
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 type Enquiry = Record<"name" | "email" | "phone" | "message", string>;
-
 function buildMessage(enquiry: Enquiry) {
   return {
     to: process.env.CONTACT_TO ?? site.email,
