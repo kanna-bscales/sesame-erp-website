@@ -5,7 +5,8 @@ import { motion, useScroll, useTransform, type MotionValue } from "motion/react"
 import { howWeWork, type ProcessStep } from "@/content/home";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 
-const WEEKS = 7;
+const weekLabels = ["Week 1", "Week 2", "Week 3", "Week 4", "Week x1", "Week x2", "Week x3"];
+const WEEKS = weekLabels.length;
 
 const colStart: Record<number, string> = {
   1: "lg:col-start-1",
@@ -24,7 +25,7 @@ export function Process() {
   const { scrollYProgress } = useScroll({ target: trackRef, offset: ["start start", "end end"] });
   const weeks = useTransform(scrollYProgress, [0.06, 0.9], [0, WEEKS], { clamp: true });
   const todayLeft = useTransform(weeks, (d) => `${(d / WEEKS) * 100}%`);
-  const todayLabel = useTransform(weeks, (d) => `Week ${Math.min(WEEKS, Math.max(1, Math.ceil(d)))}`);
+  const todayLabel = useTransform(weeks, (d) => weekLabels[Math.min(WEEKS, Math.max(1, Math.ceil(d))) - 1]);
 
   return (
     <section id="process" aria-labelledby="process-heading" className="relative">
@@ -40,9 +41,9 @@ export function Process() {
                 aria-hidden
                 className="hidden grid-cols-7 border-b-2 border-ink pb-3 text-sm font-medium text-ink-soft lg:grid"
               >
-                {Array.from({ length: WEEKS }, (_, i) => (
-                  <span key={i} className="pl-3">
-                    Week {i + 1}
+                {weekLabels.map((label) => (
+                  <span key={label} className="pl-3">
+                    {label}
                   </span>
                 ))}
               </div>

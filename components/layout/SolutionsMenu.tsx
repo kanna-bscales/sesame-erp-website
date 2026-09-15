@@ -4,19 +4,22 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState, type FocusEvent, type PointerEvent } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { ChevronDown, Smartphone, type LucideIcon } from "lucide-react";
-import { services } from "@/lib/site";
+import { ChevronDown, Factory, ShoppingBag, Smartphone, UtensilsCrossed, type LucideIcon } from "lucide-react";
+import { solutions } from "@/lib/site";
 
 const icons: Record<string, LucideIcon> = {
+  "/manufacturing": Factory,
+  "/restaurant": UtensilsCrossed,
+  "/retail": ShoppingBag,
   "/wireless-erp": Smartphone,
 };
 
-export function ServicesMenu() {
+export function SolutionsMenu() {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const panelId = useId();
   const pathname = usePathname();
-  const onServicePage = services.some((service) => service.href === pathname);
+  const onSolutionPage = solutions.some((solution) => solution.href === pathname);
 
   useEffect(() => {
     if (!open) return;
@@ -60,10 +63,10 @@ export function ServicesMenu() {
         aria-controls={panelId}
         onClick={() => setOpen((value) => !value)}
         className={`inline-flex items-center gap-1.5 transition-colors hover:text-ink ${
-          open || onServicePage ? "text-ink" : "text-ink-soft"
+          open || onSolutionPage ? "text-ink" : "text-ink-soft"
         }`}
       >
-        Services
+        Solutions
         <ChevronDown
           aria-hidden
           className={`size-4 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
@@ -81,13 +84,13 @@ export function ServicesMenu() {
             className="absolute top-full left-1/2 w-[22rem] -translate-x-1/2 pt-4"
           >
             <ul className="rounded-md bg-sheet p-2 shadow-[8px_8px_0_var(--color-canary)] ring-1 ring-rule dark:shadow-[8px_8px_0_var(--color-canary),0_0_60px_-24px_var(--color-canary)]">
-              {services.map((service) => {
-                const Icon = icons[service.href] ?? Smartphone;
-                const current = pathname === service.href;
+              {solutions.map((solution) => {
+                const Icon = icons[solution.href] ?? Factory;
+                const current = pathname === solution.href;
                 return (
-                  <li key={service.href}>
+                  <li key={solution.href}>
                     <Link
-                      href={service.href}
+                      href={solution.href}
                       onClick={() => setOpen(false)}
                       aria-current={current ? "page" : undefined}
                       className="flex gap-3 rounded-md p-3 transition-colors hover:bg-paper"
@@ -96,8 +99,8 @@ export function ServicesMenu() {
                         <Icon aria-hidden className="size-5" />
                       </span>
                       <span>
-                        <span className="block font-semibold text-ink">{service.label}</span>
-                        <span className="mt-0.5 block text-sm font-normal text-ink-soft">{service.description}</span>
+                        <span className="block font-semibold text-ink">{solution.label}</span>
+                        <span className="mt-0.5 block text-sm font-normal text-ink-soft">{solution.description}</span>
                       </span>
                     </Link>
                   </li>

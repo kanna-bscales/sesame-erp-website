@@ -1,15 +1,15 @@
-const rupees = new Intl.NumberFormat("en-IN", {
+const dollars = new Intl.NumberFormat("en-US", {
   style: "currency",
-  currency: "INR",
+  currency: "USD",
   maximumFractionDigits: 0,
 });
 
-const rupeesExact = new Intl.NumberFormat("en-IN", {
+const dollarsExact = new Intl.NumberFormat("en-US", {
   style: "currency",
-  currency: "INR",
+  currency: "USD",
   minimumFractionDigits: 2,
   maximumFractionDigits: 2,
 });
 
-export const formatMoney = (value: number) => rupees.format(value);
-export const formatMoneyExact = (value: number) => rupeesExact.format(value);
+export const formatMoney = (value: number) => dollars.format(value);
+export const formatMoneyExact = (value: number) => dollarsExact.format(value);

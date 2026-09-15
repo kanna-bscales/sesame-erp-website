@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Logo } from "@/components/brand/Logo";
-import { navLinks, services, site } from "@/lib/site";
+import { navLinks, showSolutions, site, solutions } from "@/lib/site";
 import { SectionLink } from "./SectionLink";
 
 export function SiteFooter() {
@@ -10,45 +10,28 @@ export function SiteFooter() {
         <div className="md:col-span-4">
           <Logo tone="light" />
           <p className="mt-5 max-w-sm text-night-soft">
-            Custom ERP systems with AI agents built in, delivered in as little as seven weeks.
+            Custom ERP systems with AI agents built in, delivered in a few weeks.
           </p>
         </div>
 
-        <div className="md:col-span-3">
-          <h2 className="text-sm font-semibold">Contact</h2>
-          <ul className="mt-4 space-y-2 text-night-soft">
-            <li>
-              <a href={`mailto:${site.email}`} className="transition-colors hover:text-white">
-                {site.email}
-              </a>
-            </li>
-            <li>
-              <a href={site.phoneHref} className="transition-colors hover:text-white">
-                {site.phoneDisplay}
-              </a>
-            </li>
-            <li>
-              <address className="not-italic">
-                {site.address.map((line) => (
-                  <span key={line} className="block">
-                    {line}
-                  </span>
-                ))}
-              </address>
-            </li>
-          </ul>
-        </div>
+        {showSolutions && (
+          <nav aria-label="Solutions" className="md:col-span-2">
+            <h2 className="text-sm font-semibold">Solutions</h2>
+            <ul className="mt-4 space-y-2 text-night-soft">
+              {solutions.map((solution) => (
+                <li key={solution.href}>
+                  <Link href={solution.href} className="transition-colors hover:text-white">
+                    {solution.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
 
-        <nav aria-label="Footer" className="md:col-span-3">
+        <nav aria-label="Footer" className="md:col-span-2">
           <h2 className="text-sm font-semibold">Explore</h2>
           <ul className="mt-4 space-y-2 text-night-soft">
-            {services.map((service) => (
-              <li key={service.href}>
-                <Link href={service.href} className="transition-colors hover:text-white">
-                  {service.label}
-                </Link>
-              </li>
-            ))}
             {navLinks.map((link) => (
               <li key={link.hash}>
                 <SectionLink hash={link.hash} className="transition-colors hover:text-white">
@@ -56,8 +39,24 @@ export function SiteFooter() {
                 </SectionLink>
               </li>
             ))}
+            <li>
+              <Link href="/contact" className="transition-colors hover:text-white">
+                Contact
+              </Link>
+            </li>
           </ul>
         </nav>
+
+        <div className="md:col-span-2">
+          <h2 className="text-sm font-semibold">Contact</h2>
+          <ul className="mt-4 space-y-2 text-night-soft">
+            <li>
+              <a href={`mailto:${site.email}`} className="transition-colors hover:text-white">
+                {site.email}
+              </a>
+            </li>
+          </ul>
+        </div>
 
         <div className="md:col-span-2">
           <h2 className="text-sm font-semibold">Follow us</h2>

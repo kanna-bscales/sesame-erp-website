@@ -26,7 +26,7 @@ Navigation: Products, Solutions (by module / by industry), Resources (news, case
 
 | Topic | DOSS | Our site today | Take-away |
 | --- | --- | --- | --- |
-| Speed | Not a headline claim | Working system in about seven weeks | Our strongest differentiator. Keep it first. |
+| Speed | Not a headline claim | Working system in a few weeks | Our strongest differentiator. Keep it first. |
 | Customization | Configurable platform; builds on request | Fully custom around the workflow | Keep leading with it. The new "module that isn't listed" block reinforces it. |
 | AI | "AI-native", chat assistant for queries | Five named agents shown doing real work | Ours is more concrete. Keep the live demos. |
 | Proof | Logos, named testimonials, hard metrics | None | **Biggest gap.** |

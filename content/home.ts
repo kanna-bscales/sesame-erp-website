@@ -5,13 +5,13 @@ export const hero = {
   headline: ["Custom ERP systems,", "built fast."],
   headlineSecond: "Powered by AI agents.",
   subheadline:
-    "We design and build ERP systems around how your business actually works — not the other way around. Every system we ship comes with AI agents built in, and a working system is delivered in as little as seven weeks.",
+    "We design and build ERP systems around how your business actually works — not the other way around. Every system we ship comes with AI agents built in, and a working system is delivered in a few weeks.",
   primaryCta: "Schedule a consultation",
   secondaryCta: "See how it works",
 };
 
 export const stats = [
-  "Delivered in as little as 7 weeks",
+  "Delivered in a few weeks, not months",
   "100% custom-built — not a template",
   "AI agents included, not an add-on",
   "Direct support from the team that builds it",
@@ -23,7 +23,7 @@ export const whyUs = {
   items: [
     {
       title: "Fast delivery",
-      body: "Most ERP rollouts run for six months or more. We scope, build, and deliver a working system in about seven weeks — so you're running on it, not waiting on it.",
+      body: "Most ERP rollouts run for six months or more. We scope, build, and deliver a working system in a few weeks — so you're running on it, not waiting on it.",
     },
     {
       title: "Fully custom",
@@ -48,7 +48,7 @@ export type ProcessStep = {
 };
 
 export const howWeWork: { heading: string; steps: ProcessStep[] } = {
-  heading: "From consultation to live system in seven weeks",
+  heading: "From consultation to live system in a few weeks",
   steps: [
     {
       title: "Discovery call",
@@ -64,14 +64,14 @@ export const howWeWork: { heading: string; steps: ProcessStep[] } = {
     },
     {
       title: "Build & AI integration",
-      weeks: "Weeks 3–6",
-      span: [3, 6],
+      weeks: "Weeks 3 and 4",
+      span: [3, 4],
       body: "We build the full system and wire in the AI agents for the tasks you want automated.",
     },
     {
       title: "Deploy & launch",
-      weeks: "Week 7",
-      span: [7, 7],
+      weeks: "Weeks x1 to x3",
+      span: [5, 7],
       body: "Your system goes live, your team gets a walkthrough, and we stay on for support.",
     },
   ],
@@ -253,7 +253,7 @@ export const differentiators = {
     {
       title: "Speed",
       typical: "Rollouts that run six months or more",
-      body: "Full systems delivered in about seven weeks, not six months.",
+      body: "Full systems delivered in a few weeks, not six months.",
     },
     {
       title: "True customization",
@@ -282,7 +282,7 @@ export const faq = {
   heading: "Frequently asked questions",
   items: [
     {
-      q: "How can you deliver a full ERP in seven weeks?",
+      q: "How can you deliver a full ERP in a few weeks?",
       a: "We keep scope tight and focused on what your business actually needs, use a proven module library as the foundation, and customize on top of it — instead of building everything from zero.",
     },
     {

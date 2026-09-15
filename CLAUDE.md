@@ -2,14 +2,16 @@
 
 # Custom ERP website
 
-Marketing site for a company that builds custom ERP systems with AI agents built in, delivering a working system in about seven weeks. Audience: owners and operations heads of manufacturing, distribution, retail, and service businesses (India, ₹ pricing). Every page's job is getting the visitor to schedule a consultation.
+Marketing site for a company that builds custom ERP systems with AI agents built in, delivering a working system in a few weeks. Audience: owners and operations heads of manufacturing, distribution, retail, and service businesses (prices shown in USD). Every page's job is getting the visitor to schedule a consultation.
 
 ## Scope right now
 
 | Route | Status | Copy reference | Rendered copy |
 | --- | --- | --- | --- |
 | `/` | Built | `docs/content-homepage.md` | `content/home.ts` |
-| `/wireless-erp` | Built (first service page) | `docs/content-wireless-erp.md` | `content/wireless-erp.ts` |
+| `/manufacturing`, `/restaurant`, `/retail` | Built, HIDDEN from navigation (`showSolutions`). Restaurant and Retail copy is DRAFT | `docs/content-industries.md` | `content/industries.ts` |
+| `/wireless-erp` | Built, HIDDEN from navigation (`showSolutions`) | `docs/content-wireless-erp.md` | `content/wireless-erp.ts` |
+| `/contact` | Built. The form is NOT wired to email yet | `docs/content-contact.md` | `content/contact.ts` |
 
 - Do not add routes or pages until the owner asks.
 - Copy is approved. Keep each docs file and its `content/*.ts` file in sync, and do not reword approved copy. Open copy questions are listed at the top of each content doc.
@@ -41,14 +43,18 @@ npm run build
 app/
   layout.tsx            fonts, metadata, theme init script, <Providers>, SiteHeader + SiteFooter (shared by all pages)
   page.tsx              homepage: 10 sections
-  wireless-erp/page.tsx Wireless ERP service page
+  wireless-erp/page.tsx Wireless ERP solution page
+  manufacturing|restaurant|retail/  industry pages, 6 lines each, one shared layout
+  contact/              page.tsx, actions.ts (server action), state.ts
   globals.css           tokens (light + dark), base styles, helper classes, reduced-motion rules
 components/
   providers/Providers.tsx   MotionConfig + Lenis + lamplight + theme re-apply
   providers/ThemeScript.tsx inline theme script for <head> (no flash, no React script warning)
-  layout/               SiteHeader, SiteFooter, ServicesMenu (desktop dropdown), SectionLink
+  layout/               SiteHeader, SiteFooter, SolutionsMenu (desktop dropdown), SectionLink
   ui/                   ButtonLink, ThemeToggle, PaperStack, LetterTitle, ScrollRevealText, AnimatedNumber, Skeleton
   brand/Logo.tsx        SesameERP mark (sesame seeds on a red tile) + wordmark; favicon is app/icon.svg
+  contact/ContactForm.tsx   client form (useActionState), validation errors, honeypot
+  industry/             IndustryPage (shared layout for every industry) + DocumentCard
   sections/             homepage sections (one file each) and their parts
   wireless/             Wireless ERP page sections: WirelessHero, DeviceBoxLabel, WirelessIntro, WirelessFeatures, AllocationBoard
 content/                typed copy per page
@@ -59,11 +65,12 @@ lib/format.ts           INR formatting
 docs/                   design system, approved content per page, placeholder checklist
 ```
 
-## Adding a service page (when asked)
+## Adding a solution page (when asked)
 
 1. Add the approved copy to `docs/content-<slug>.md` and `content/<slug>.ts`.
-2. Add an entry to `services` in `lib/site.ts` (label, href, one-line description). The Services menu, mobile menu and footer pick it up automatically.
-3. Add an icon for the href in `components/layout/ServicesMenu.tsx`.
+2. Add an entry to `solutions` in `lib/site.ts` (label, href, one-line description). The Solutions menu, mobile menu and footer pick it up automatically.
+   For an industry, add it to `industries` in `content/industries.ts` and copy an existing `app/<slug>/page.tsx` — the shared `IndustryPage` does the rest.
+3. Add an icon for the href in `components/layout/SolutionsMenu.tsx`.
 4. Create `app/<slug>/page.tsx` with `metadata`, wrap sections in `<main id="main">`, and give the hero `id="top"` (the footer's "Back to top" link targets it).
 5. Reuse `PaperStack`, `LetterTitle`, `ScrollRevealText` and `FinalCta`; give the page one signature visual grounded in its subject.
 
@@ -71,7 +78,9 @@ docs/                   design system, approved content per page, placeholder ch
 
 - Header and footer live in the root layout, so they must work on every route.
 - Homepage section links go through `SectionLink`: on `/` it renders `<a href="#process">` so Lenis smooth-scrolls; on other routes it renders `<Link href="/#process">`.
-- Service pages are listed in `services` (`lib/site.ts`) and appear in the desktop Services dropdown, the mobile menu and the footer.
+- Solution pages are listed in `solutions` (`lib/site.ts`) and appear in the desktop Solutions dropdown, the mobile menu and the footer — but only while `showSolutions` is `true`. The owner asked for them to be hidden for now; the pages themselves still work at their URLs.
+- `ButtonLink` renders a next/link for hrefs starting with `/` and a plain anchor for mailto, tel and #hash.
+- Every "Schedule a consultation" button points at `site.consultationHref`, which is `/contact`.
 
 ## Theming
 
@@ -93,7 +102,7 @@ docs/                   design system, approved content per page, placeholder ch
 - Color has meaning. `ballpoint` = the action red (buttons, focus, progress), with `ballpoint-deep` only for a button offset shadow and `ballpoint-ink` for red used as text or a thin stroke. `canary`/`highlight` = work an AI agent did or something being pointed at. `carbon` = third copy layer only. `ink` = text. `night` = dark bands.
 - Type: `.font-wide` / `.heading-section` (Archivo at width 125) for headings, `.font-semiwide` (width 112) for titles and figures, IBM Plex Sans for body. Sentence case. No all-caps labels, no monospace, no single-word color accents in headings.
 - Numbered markers only where content is a real sequence (homepage Process, Wireless ERP features flow).
-- Depth comes from offset "copy" shadows (`shadow-[5px_5px_0_var(--color-canary)]`), not soft grey drop shadows. Canary sits under paper surfaces; a button uses its own deeper red so it stays one colour.
+- Depth comes from offset "copy" shadows (`shadow-[5px_5px_0_var(--color-canary)]`) on paper surfaces only, not soft grey drop shadows. Buttons are flat: one solid red, no shadow layer, darkening to `ballpoint-deep` on hover.
 
 ## Motion rules
 

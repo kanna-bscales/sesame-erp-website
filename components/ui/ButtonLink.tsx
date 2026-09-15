@@ -1,14 +1,14 @@
 "use client";
 
+import Link from "next/link";
 import { useRef, type PointerEvent, type ReactNode } from "react";
 import { motion, useMotionValue, useReducedMotion, useSpring } from "motion/react";
 
 type Variant = "primary" | "secondary";
 
-// One colour per button: the action red, with its own darker shade as the offset copy shadow.
+// Flat buttons: one colour, no offset layer. Hover darkens the fill.
 const variants: Record<Variant, string> = {
-  primary:
-    "bg-ballpoint text-on-ballpoint shadow-[5px_5px_0_var(--color-ballpoint-deep)] hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-[2px_2px_0_var(--color-ballpoint-deep)]",
+  primary: "bg-ballpoint text-on-ballpoint hover:bg-ballpoint-deep",
   secondary: "border border-ink/25 text-ink hover:border-ink hover:bg-sheet",
 };
 
@@ -50,6 +50,13 @@ export function ButtonLink({
     pullY.set(0);
   };
 
+  const classes = `inline-flex h-13 items-center justify-center gap-2 rounded-[10px] px-6 text-base font-semibold transition-colors duration-200 ease-press ${
+    block ? "w-full" : ""
+  } ${variants[variant]} ${className}`;
+
+  // Routes navigate client-side; mailto, tel and #hash links stay plain anchors (Lenis handles hashes).
+  const internal = href.startsWith("/");
+
   return (
     <motion.span
       className={block ? "block" : "inline-block"}
@@ -57,16 +64,15 @@ export function ButtonLink({
       onPointerMove={onPointerMove}
       onPointerLeave={release}
     >
-      <a
-        ref={ref}
-        href={href}
-        onClick={onClick}
-        className={`inline-flex h-13 items-center justify-center gap-2 rounded-[10px] px-6 text-base font-semibold transition-[translate,box-shadow,background-color,border-color] duration-200 ease-press ${
-          block ? "w-full" : ""
-        } ${variants[variant]} ${className}`}
-      >
-        {children}
-      </a>
+      {internal ? (
+        <Link ref={ref} href={href} onClick={onClick} className={classes}>
+          {children}
+        </Link>
+      ) : (
+        <a ref={ref} href={href} onClick={onClick} className={classes}>
+          {children}
+        </a>
+      )}
     </motion.span>
   );
 }

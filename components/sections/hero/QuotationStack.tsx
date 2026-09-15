@@ -24,29 +24,29 @@ const drafts: Draft[] = [
     number: "QT-2041",
     rfq: "RFQ-0187",
     customer: "Kaveri Engineering Works",
-    rule: "Distributor list, 18% GST",
+    rule: "Distributor list, 8% sales tax",
     seconds: 38,
     lines: [
-      { item: "MS sheet 2 mm, laser cut", qty: 120, rate: 342 },
-      { item: "Bracket, powder coated", qty: 400, rate: 58 },
-      { item: "Assembly and packing", qty: 1, rate: 6500 },
+      { item: "MS sheet 2 mm, laser cut", qty: 120, rate: 42 },
+      { item: "Bracket, powder coated", qty: 400, rate: 8 },
+      { item: "Assembly and packing", qty: 1, rate: 950 },
     ],
   },
   {
     number: "QT-2042",
     rfq: "RFQ-0191",
     customer: "Nila Textiles",
-    rule: "Project pricing, 18% GST",
+    rule: "Project pricing, 8% sales tax",
     seconds: 41,
     lines: [
-      { item: "Steel storage rack, 5 tier", qty: 24, rate: 8450 },
-      { item: "Bin set, 12 pieces", qty: 24, rate: 1180 },
-      { item: "Delivery and installation", qty: 1, rate: 9800 },
+      { item: "Steel storage rack, 5 tier", qty: 24, rate: 1050 },
+      { item: "Bin set, 12 pieces", qty: 24, rate: 145 },
+      { item: "Delivery and installation", qty: 1, rate: 1200 },
     ],
   },
 ];
 
-const GST = 0.18;
+const TAX = 0.08;
 const STEPS = 6;
 
 export function QuotationStack() {
@@ -57,7 +57,7 @@ export function QuotationStack() {
 
   const draft = drafts[draftIndex];
   const subtotal = draft.lines.reduce((sum, line) => sum + line.qty * line.rate, 0);
-  const tax = Math.round(subtotal * GST);
+  const tax = Math.round(subtotal * TAX);
   const done = step >= STEPS;
 
   const draftAnother = () => {
@@ -141,7 +141,7 @@ export function QuotationStack() {
             <span className="tabular-nums">{step >= 5 ? formatMoney(subtotal) : <Skeleton className="w-20" />}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-ink-soft">GST 18%</span>
+            <span className="text-ink-soft">Sales tax 8%</span>
             <span className="tabular-nums">{step >= 5 ? formatMoney(tax) : <Skeleton className="w-16" />}</span>
           </div>
           <div className="flex items-baseline justify-between pt-2">

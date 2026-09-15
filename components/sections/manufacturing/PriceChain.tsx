@@ -7,9 +7,9 @@ import { formatMoneyExact } from "@/lib/format";
 
 // Illustrative figures only — see docs/placeholders.md.
 const KG_PER_BRACKET = 1.8;
-const CUTTING_COST = 22;
+const CUTTING_COST = 6;
 const BRACKETS_PER_RACK = 4;
-const ASSEMBLY_COST = 140;
+const ASSEMBLY_COST = 40;
 const MARGIN = 0.18;
 
 export function PriceChain() {
@@ -17,7 +17,7 @@ export function PriceChain() {
   const [rawCost, setRawCost] = useState(68);
   const [pulse, setPulse] = useState(0);
 
-  const bracketCost = rawCost * KG_PER_BRACKET + CUTTING_COST;
+  const bracketCost = (rawCost / 100) * KG_PER_BRACKET + CUTTING_COST;
   const rackPrice = (bracketCost * BRACKETS_PER_RACK + ASSEMBLY_COST) * (1 + MARGIN);
 
   return (
@@ -33,7 +33,7 @@ export function PriceChain() {
             Raw material cost: MS coil, per kg
           </label>
           <output htmlFor={sliderId} className="font-semiwide text-2xl font-extrabold tabular-nums">
-            {formatMoneyExact(rawCost)}
+            {formatMoneyExact(rawCost / 100)}
           </output>
         </div>
         <input
@@ -50,8 +50,8 @@ export function PriceChain() {
           className="mt-4 h-2 w-full cursor-pointer accent-ballpoint"
         />
         <div className="mt-2 flex justify-between text-sm text-ink-soft">
-          <span>{formatMoneyExact(50)}</span>
-          <span>{formatMoneyExact(95)}</span>
+          <span>{formatMoneyExact(0.5)}</span>
+          <span>{formatMoneyExact(0.95)}</span>
         </div>
       </div>
 

@@ -8,9 +8,9 @@ import { Menu, X } from "lucide-react";
 import { Logo } from "@/components/brand/Logo";
 import { ButtonLink } from "@/components/ui/ButtonLink";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
-import { navLinks, services, site } from "@/lib/site";
+import { navLinks, showSolutions, site, solutions } from "@/lib/site";
 import { SectionLink } from "./SectionLink";
-import { ServicesMenu } from "./ServicesMenu";
+import { SolutionsMenu } from "./SolutionsMenu";
 
 export function SiteHeader() {
   const pathname = usePathname();
@@ -22,6 +22,7 @@ export function SiteHeader() {
 
   const solid = scrolled || menuOpen;
   const closeMenu = () => setMenuOpen(false);
+  const onContact = pathname === "/contact";
 
   return (
     <header
@@ -48,10 +49,12 @@ export function SiteHeader() {
         )}
 
         <nav aria-label="Primary" className="hidden lg:block">
-          <ul className="flex items-center gap-9 text-[0.95rem] font-medium">
-            <li>
-              <ServicesMenu />
-            </li>
+          <ul className="flex items-center gap-8 text-[0.95rem] font-medium">
+            {showSolutions && (
+              <li>
+                <SolutionsMenu />
+              </li>
+            )}
             {navLinks.map((link) => (
               <li key={link.hash}>
                 <SectionLink hash={link.hash} className="text-ink-soft transition-colors hover:text-ink">
@@ -59,6 +62,15 @@ export function SiteHeader() {
                 </SectionLink>
               </li>
             ))}
+            <li>
+              <Link
+                href="/contact"
+                aria-current={onContact ? "page" : undefined}
+                className={`transition-colors hover:text-ink ${onContact ? "text-ink" : "text-ink-soft"}`}
+              >
+                Contact
+              </Link>
+            </li>
           </ul>
         </nav>
 
@@ -92,6 +104,7 @@ export function SiteHeader() {
         {menuOpen && (
           <motion.nav
             id="mobile-nav"
+            key="mobile-nav"
             aria-label="Mobile"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
@@ -100,22 +113,26 @@ export function SiteHeader() {
             className="overflow-hidden border-t border-rule bg-paper lg:hidden"
           >
             <div className="page-container py-4">
-              <p className="pt-1 text-sm font-medium text-ink-soft">Services</p>
-              <ul>
-                {services.map((service) => (
-                  <li key={service.href}>
-                    <Link
-                      href={service.href}
-                      onClick={closeMenu}
-                      aria-current={pathname === service.href ? "page" : undefined}
-                      className="block py-3 text-lg font-medium"
-                    >
-                      {service.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-              <ul className="mt-2 border-t border-rule pt-2">
+              {showSolutions && (
+                <>
+                  <p className="pt-1 text-sm font-medium text-ink-soft">Solutions</p>
+                  <ul>
+                    {solutions.map((solution) => (
+                      <li key={solution.href}>
+                        <Link
+                          href={solution.href}
+                          onClick={closeMenu}
+                          aria-current={pathname === solution.href ? "page" : undefined}
+                          className="block py-3 text-lg font-medium"
+                        >
+                          {solution.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+              <ul className={showSolutions ? "mt-2 border-t border-rule pt-2" : ""}>
                 {navLinks.map((link) => (
                   <li key={link.hash}>
                     <SectionLink hash={link.hash} onClick={closeMenu} className="block py-3 text-lg font-medium">
@@ -123,6 +140,16 @@ export function SiteHeader() {
                     </SectionLink>
                   </li>
                 ))}
+                <li>
+                  <Link
+                    href="/contact"
+                    onClick={closeMenu}
+                    aria-current={onContact ? "page" : undefined}
+                    className="block py-3 text-lg font-medium"
+                  >
+                    Contact
+                  </Link>
+                </li>
               </ul>
               <div className="pt-4 pb-2">
                 <ButtonLink href={site.consultationHref} block onClick={closeMenu}>

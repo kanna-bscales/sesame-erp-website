@@ -2,7 +2,7 @@
 
 Approved copy for the homepage. The site renders it from `content/home.ts`; keep both files in sync.
 
-**Revision (owner, 2026-09-12):** delivery takes **seven weeks**, not one week. The original document said "one week" and "7 days" by mistake, so every timing line below is updated and the process timeline runs Week 1 to Week 7.
+**Revision (owner):** delivery is described as **a few weeks**, not a fixed number (an earlier draft said one week, then seven weeks). The process timeline runs Week 1, Week 2, Weeks 3 and 4, then Weeks x1 to x3 for the flexible tail. Money is shown in **USD**.
 
 Presentation changes made during the build (wording unchanged):
 
@@ -16,13 +16,13 @@ Presentation changes made during the build (wording unchanged):
 
 - **Eyebrow:** AI-Powered Custom ERP Development
 - **Headline:** Custom ERP Systems, Built Fast. Powered by AI Agents.
-- **Subheadline:** We design and build ERP systems around how your business actually works — not the other way around. Every system we ship comes with AI agents built in, and a working system is delivered in as little as seven weeks.
+- **Subheadline:** We design and build ERP systems around how your business actually works — not the other way around. Every system we ship comes with AI agents built in, and a working system is delivered in a few weeks.
 - **Primary CTA:** Schedule a Consultation
 - **Secondary CTA:** See How It Works
 
 ## 2. Trust / stats bar
 
-- Delivered in as little as 7 weeks
+- Delivered in a few weeks, not months
 - 100% custom-built — not a template
 - AI agents included, not an add-on
 - Direct support from the team that builds it
@@ -31,14 +31,14 @@ Presentation changes made during the build (wording unchanged):
 
 **Heading:** Built Around Your Business, Not the Other Way Around
 
-- **Fast Delivery:** Most ERP rollouts run for six months or more. We scope, build, and deliver a working system in about seven weeks — so you're running on it, not waiting on it.
+- **Fast Delivery:** Most ERP rollouts run for six months or more. We scope, build, and deliver a working system in a few weeks — so you're running on it, not waiting on it.
 - **Fully Custom:** No forced workflows or unused modules. We build exactly what your business needs, matched to how your team already operates.
 - **AI Agents Built In:** Every system we build includes AI agents that handle repetitive work automatically — quotations, stock alerts, data entry, and customer replies — so your team spends less time on busywork.
 - **Direct Ongoing Support:** You work directly with the team that built your system, so changes and fixes happen fast, without layers of support tickets.
 
 ## 4. How we work (process)
 
-**Heading:** From Consultation to Live System in Seven Weeks
+**Heading:** From Consultation to Live System in a Few Weeks
 
 1. **Discovery Call:** We learn your workflow, current bottlenecks, and what a good system looks like for your business.
 2. **Design & Planning:** We map out the modules, data flow, and AI agents your system needs.
@@ -91,7 +91,7 @@ Manufacturing businesses we work with get all of the Core Modules above, tuned s
 
 ## 8. Why choose us (differentiators)
 
-- **Speed:** Full systems delivered in about seven weeks, not six months.
+- **Speed:** Full systems delivered in a few weeks, not six months.
 - **True Customization:** Every system is built for your workflow, never a repackaged template.
 - **AI-First:** AI agents are part of the build, not a bolt-on afterward.
 - **One Team, Start to Finish:** You talk to the people actually building your system.
@@ -99,7 +99,7 @@ Manufacturing businesses we work with get all of the Core Modules above, tuned s
 
 ## 9. FAQ
 
-- **How can you deliver a full ERP in seven weeks?** We keep scope tight and focused on what your business actually needs, use a proven module library as the foundation, and customize on top of it — instead of building everything from zero.
+- **How can you deliver a full ERP in a few weeks?** We keep scope tight and focused on what your business actually needs, use a proven module library as the foundation, and customize on top of it — instead of building everything from zero.
 - **Is it really custom, or a template with my logo on it?** Every system is built around your specific workflow, data, and pricing rules. The AI agents and modules are configured for your business, not reused as-is.
 - **Do you support the system after launch?** Yes — you work directly with the team that built it for fixes, changes, and new features as your business grows.
 - **What industries do you build for?** Manufacturing is a strong fit today, and the same core system adapts to distribution, retail, and service-based businesses with their own workflows.
@@ -119,7 +119,7 @@ These short texts were not in the approved document. They support the layout and
 
 | Where | Added copy |
 | --- | --- |
-| Process | Week labels: Week 1, Week 2, Weeks 3-6, Week 7 (an assumption about how the seven weeks split) |
+| Process | Week labels: Week 1, Week 2, Weeks 3 and 4, then Weeks x1 to x3 for the flexible tail of the project |
 | Modules | Subline "14 modules across 4 areas of your business"; group names Customers and vendors, Selling and pricing, Buying, Stock; filter labels "All modules" and "Manufacturing focus" |
 | Modules | Manufacturing tags: Pricing chains, Multi-vendor RFQs, Conversion tracking, Bundled products |
 | Manufacturing | Button "Highlight these in the module list"; price chain labels and helper sentence |
@@ -128,4 +128,4 @@ These short texts were not in the approved document. They support the layout and
 | Modules (end of section) | "Need a module that isn't listed?" / "Tell us how your team works, and we'll design and build that module into your system." / "Schedule a consultation". Added after the competitor review (see `docs/competitor-doss.md`); our own wording. |
 | Hero demo | Quotation, customer names, items, prices, "Ready for your approval" stamp, "Draft another quotation" |
 | AI agent demos | RFQ, chat, invoice, stock chart and weekly summary text |
-| Footer | "Custom ERP systems with AI agents built in, delivered in as little as seven weeks." |
+| Footer | "Custom ERP systems with AI agents built in, delivered in a few weeks." |

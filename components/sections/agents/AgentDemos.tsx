@@ -66,9 +66,9 @@ function Appear({ show, children, className }: { show: boolean; children: ReactN
 }
 
 const salesLines = [
-  { label: "Flange plate, 8 mm", detail: "250 × ₹186 list price", amount: 46500 },
-  { label: "Gasket set", detail: "40 × ₹42 list price", amount: 1680 },
-  { label: "Volume discount", detail: "4% on orders above 200 units", amount: -1927 },
+  { label: "Flange plate, 8 mm", detail: "250 units at $23 list price", amount: 5750 },
+  { label: "Gasket set", detail: "40 units at $5 list price", amount: 200 },
+  { label: "Volume discount", detail: "4% on orders above 200 units", amount: -238 },
 ];
 
 function SalesDemo() {
@@ -112,7 +112,7 @@ function SalesDemo() {
 
       <Appear show={step >= 4} className="flex items-baseline justify-between border-t-2 border-ink pt-3">
         <span className="font-semibold">Total before tax</span>
-        <span className="font-semiwide text-2xl font-extrabold tabular-nums">{formatMoney(46253)}</span>
+        <span className="font-semiwide text-2xl font-extrabold tabular-nums">{formatMoney(5712)}</span>
       </Appear>
     </Sheet>
   );
@@ -290,8 +290,8 @@ const invoiceFields = [
 ];
 
 const invoiceLines = [
-  { item: "HR coil, 2.5 mm", qty: "2,000 kg", rate: 61.5, amount: 123000, at: 3 },
-  { item: "MS angle, 40 × 40 mm", qty: "600 kg", rate: 64, amount: 38400, at: 4 },
+  { item: "HR coil, 2.5 mm", qty: "2,000 kg", rate: 0.82, amount: 1640, at: 3 },
+  { item: "MS angle, 40 × 40 mm", qty: "600 kg", rate: 0.95, amount: 570, at: 4 },
 ];
 
 function DataEntryDemo() {
@@ -351,7 +351,7 @@ function DataEntryDemo() {
           </div>
           <Appear show={step >= 5} className="mt-3 flex items-baseline justify-between">
             <span className="font-semibold">Total</span>
-            <span className="font-semiwide text-2xl font-extrabold tabular-nums">{formatMoney(161400)}</span>
+            <span className="font-semiwide text-2xl font-extrabold tabular-nums">{formatMoney(2210)}</span>
           </Appear>
         </div>
       </div>
@@ -365,9 +365,9 @@ function DataEntryDemo() {
 }
 
 const metrics = [
-  { label: "Sales", value: "₹18.4 lakh", note: "+12% on last week" },
-  { label: "Stock value", value: "₹42.1 lakh", note: "2 items near reorder" },
-  { label: "Purchases", value: "₹9.7 lakh", note: "−3% on last week" },
+  { label: "Sales", value: "$184,000", note: "+12% on last week" },
+  { label: "Stock value", value: "$421,000", note: "2 items near reorder" },
+  { label: "Purchases", value: "$97,000", note: "−3% on last week" },
 ];
 
 const summary =

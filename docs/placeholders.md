@@ -7,15 +7,18 @@ Everything below is dummy data. Replace it when the real details arrive.
 | Company name | Supplied: `SesameERP` | `lib/site.ts` → `site.name` | Done |
 | Logo | Designed here: three sesame seeds on a red tile | `components/brand/Logo.tsx` | Only if the owner commissions a different logo |
 | Favicon | SesameERP mark | `app/icon.svg` | Only if the logo changes |
-| "Schedule a consultation" link | `mailto:hello@example.com` | `lib/site.ts` → `site.consultationHref` | Calendly / booking URL, WhatsApp link, or contact form URL |
-| Email | `hello@example.com` | `lib/site.ts` → `site.email` | Real email |
-| Phone | `+91 00000 00000` | `lib/site.ts` → `site.phoneDisplay`, `site.phoneHref` | Real number (display format and `tel:` format) |
-| Address | `Office address line 1`, `City, State 000000` | `lib/site.ts` → `site.address` | Office address lines |
+| "Schedule a consultation" link | Goes to `/contact` | `lib/site.ts` → `site.consultationHref` | Done, unless you would rather it opened a Calendly or WhatsApp link |
+| Email | Supplied by the owner: `hi@sesamelabs.ai` | `lib/site.ts` → `site.email` | Done |
 | Social links | LinkedIn, YouTube, Instagram, X, all `#` | `lib/site.ts` → `site.social` | Real profile URLs; remove any not used |
 | Page title and description | Built from `site.name` and `site.description` | `lib/site.ts`, `app/layout.tsx` | Final SEO title and description |
 | Hero quotation demo | Kaveri Engineering Works, Nila Textiles, sample items and prices | `components/sections/hero/QuotationStack.tsx` | Optional: real (anonymized) examples, or a real ERP screenshot |
 | AI agent demos | Sample RFQ, stock chart, chat, invoice, weekly summary | `components/sections/agents/AgentDemos.tsx` | Optional: real screenshots or real anonymized examples |
-| Price chain example | MS coil ₹68/kg, bracket, storage rack, 18% margin | `components/sections/manufacturing/PriceChain.tsx` | Optional: a real product chain from a client |
+| Price chain example | MS coil $0.68/kg, bracket, storage rack, 18% margin | `components/sections/manufacturing/PriceChain.tsx` | Optional: a real product chain from a client |
+| **Contact form delivery (blocker)** | Code is finished (SMTP or Resend). Waiting on credentials in `.env.local` | `.env.local`, see `.env.example` | A Gmail app password (`SMTP_USER` + `SMTP_PASSWORD`), or a Resend API key. Testing goes to a personal inbox first, then `CONTACT_TO=hi@sesamelabs.ai` |
+| Restaurant and Retail page copy | Draft written during design | `content/industries.ts`, `docs/content-industries.md` | Owner approval, or replacement wording |
+| Industry demo documents | Supplier invoice INV-4471, reorder list for Store 2 | `content/industries.ts` | Optional: real anonymized examples |
+| Solutions in the menu | Hidden on the owners instruction. The pages still work at their URLs | `lib/site.ts` → `showSolutions` | Set to `true` when the industry copy is approved |
+| Phone and office address | Removed. Only the email is shown, per the owner | `lib/site.ts`, footer, contact page | Add back if a real number and address should appear |
 | Copyright year | `2026` | `lib/site.ts` → `site.copyrightYear` | Update yearly |
 | Open Graph image | None | add `app/opengraph-image.png` | 1200×630 share image |
 | Brand name on Wireless ERP copy | Updated to SesameERP (the source copy said "Business Scales") | `content/wireless-erp.ts`, `lib/site.ts` | Confirm the sentence still reads correctly |

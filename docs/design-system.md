@@ -4,8 +4,8 @@ Source of truth for visual and motion decisions. Tokens are implemented in `app/
 
 ## Brief
 
-- **Subject:** a studio that builds custom ERP systems with AI agents built in, delivered in about seven weeks.
-- **Audience:** owners and operations heads at manufacturing, distribution, retail and service businesses in India.
+- **Subject:** a studio that builds custom ERP systems with AI agents built in, delivered in a few weeks.
+- **Audience:** owners and operations heads at manufacturing, distribution, retail and service businesses. Prices are shown in USD.
 - **Page's job:** get the visitor to schedule a consultation.
 - **Owner's asks:** premium and fun, smooth scrolling, scroll effects, movement. Theme and colours were left to the designer, then revised by the owner: Netflix red buttons, one colour per button, and the normal system cursor (the custom cursor was removed).
 
@@ -27,7 +27,7 @@ The site uses that material world. Records are paper sheets. AI agents are the n
 | `sheet` | `#FFFFFF` | Surfaces that represent a document or record. |
 | `rule` | `#D9D9DD` | Hairlines, table rules, skeleton placeholders. |
 | `ballpoint` | `#E50914` | The action red: buttons, focus ring, scroll progress, the "today" line, check marks. |
-| `ballpoint-deep` | `#9B0610` | Only the offset copy shadow under a button, so a button stays one colour. |
+| `ballpoint-deep` | `#9B0610` | The hover fill of a button. Buttons are flat and single-colour. |
 | `ballpoint-ink` | `#C8000C` | Red as text or a thin stroke on paper (6:1 on sheet): step numbers, icons, stamps. |
 | `on-ballpoint` | `#FFFFFF` | Text on a red button (4.8:1). |
 | `canary` | `#FFD84D` | Highlighter: values an AI agent filled in, highlighted modules, the final CTA block. Never a text colour on light surfaces. |
@@ -74,7 +74,7 @@ TICKER   ◦◦◦ perforated strip, scrolling highlights ◦◦◦
 WHY US   Heading with "the other way around" flipping upright
          ━━━━━━━━  ━━━━━━━━  ━━━━━━━━  ━━━━━━━━   four columns, ink top rules
 
-PROCESS  (pinned)  Week 1 | Week 2 | Week 3 | Week 4 | Week 5 | Week 6 | Week 7
+PROCESS  (pinned)  Week 1 | Week 2 | Week 3 | Week 4 | Week x1 | Week x2 | Week x3
                    1 ▓                                                  <- Gantt bars
                         2 ▓
                              3 ▓▓▓▓▓▓▓
@@ -113,7 +113,7 @@ Everything else stays quiet and structural so this lands.
 | Hero | Headline lines rise from masks, staggered | Page load | The one orchestrated load moment |
 | Hero | Quotation filled step by step with highlighter sweeps, total counts up, stamp lands | Stack in view | Shows "AI agents built in" instead of saying it |
 | Hero | Copies parallax with pointer position | Mouse | Physical depth of stacked paper |
-| Buttons | Magnetic pull on primary CTAs; press into the offset copy on hover | Mouse | Tactile, on-concept |
+| Buttons | Magnetic pull on primary CTAs; fill darkens on hover | Mouse | Tactile without a second colour |
 | Ticker | Continuous marquee, pauses on hover | Always | Owner asked for movement; carries the four trust points |
 | Why us | "the other way around" rotates from upside down to upright, word by word | Scroll | Literal, playful reading of the copy |
 | Process | Section pins; a "today" line crosses a seven-week plan and fills each step's bar | Scroll | The content is a seven-week sequence |
@@ -132,7 +132,7 @@ Everything else stays quiet and structural so this lands.
 
 ## Interaction states
 
-- Primary button: action red with a deeper red offset copy, so the button reads as one colour; on hover it slides 3px into the copy. The same button is used on the canary CTA block.
+- Primary button: flat, one solid action red with white text, no shadow layer. Hover darkens the fill to `ballpoint-deep`. The same button is used on the canary CTA block.
 - Secondary button: ink hairline border, sheet fill on hover.
 - Focus: 2px action-red outline with 3px offset; canary on dark bands, near-black on canary blocks.
 - Tabs, accordion, filter and slider are keyboard operable with proper ARIA roles.
@@ -153,7 +153,7 @@ Dark mode redefines the same tokens, so components rarely need `dark:` classes.
 | `ink` | `#16171B` | `#ECEDF1` | Text |
 | `ink-soft` | `#4D4F57` | `#A5A8B4` | Secondary text (7.8:1 on paper, 7.3:1 on sheet) |
 | `ballpoint` | `#E50914` | `#E50914` | The action red is identical in both themes; white text on it passes at 4.8:1 |
-| `ballpoint-deep` | `#9B0610` | `#7D040C` | The offset shadow under a button |
+| `ballpoint-deep` | `#9B0610` | `#7D040C` | Button hover fill |
 | `ballpoint-ink` | `#C8000C` | `#FF6B72` | Lightened so red text and thin strokes read on graphite (5.9:1) |
 | `highlight` | `#FFD84D` | canary at 36% | Highlighter that still lets light text read through |
 | `carbon` | `#F6B8C4` | `#D98C9E` | Softened copy layer |
@@ -180,11 +180,11 @@ Rules:
 - Dark bands use `bg-night text-white`.
 - Stamps use `mix-blend-multiply dark:mix-blend-normal` (multiply would hide them on a dark sheet).
 
-## Services menu
+## Solutions menu
 
-- Desktop: "Services" opens a panel on hover or click and closes on Escape, outside click or focus leaving. Each service row has a canary icon tile, the name and a one-line description. The panel carries the canary offset shadow like other documents.
-- Mobile: services are listed at the top of the menu, above the homepage section links.
-- The list comes from `services` in `lib/site.ts`.
+- Desktop: "Solutions" opens a panel on hover or click and closes on Escape, outside click or focus leaving. Each service row has a canary icon tile, the name and a one-line description. The panel carries the canary offset shadow like other documents.
+- Mobile: solutions are listed at the top of the menu, above the homepage section links, with Contact last.
+- The list comes from `solutions` in `lib/site.ts`.
 
 ## Wireless ERP page (`/wireless-erp`)
 
@@ -220,6 +220,26 @@ CTA       shared canary CTA
 | Features (desktop) | Board stays pinned; chips move between holders with shared-layout springs; status line updates; step 1 shows the imported CSV | Scroll |
 | Features (desktop) | Progress rail fills; active feature at full opacity, others at 30%; step numbers fill in | Scroll |
 | Features (mobile) | Each feature shows its own static board for that step | None |
+
+## Industry solution pages (`/manufacturing`, `/restaurant`, `/retail`)
+
+One shared layout, driven by data in `content/industries.ts`, so every industry page has the same rhythm and a fourth industry costs one data entry:
+
+```
+HERO      Home / Solutions / Manufacturing
+          MANUFACTURING          ┌ document or price chain ──┐▒
+          ERP                    │ filling itself in          │▒░
+          summary
+          [Schedule] [See the modules]
+INTRO     (sheet band) headline  │ body inks in on scroll
+NEEDS     What we tune for this industry — 4 to 6 points on ink top rules
+MODULES   The modules this industry uses most (names from the approved library)
+AGENTS    (dark band) three of the five approved agents, in that industry's language
+CTA       shared canary CTA
+```
+
+- Manufacturing reuses the interactive price chain as its hero visual; Restaurant and Retail use `DocumentCard`, a paper record that fills itself in (supplier invoice, reorder list) with the same highlighter vocabulary as the homepage.
+- Motion per page: title letters on load, the document filling in view, the intro paragraph inking in on scroll. Nothing else, so the pages stay quiet next to the homepage.
 
 ## Decisions and revisions
 

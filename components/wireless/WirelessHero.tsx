@@ -18,7 +18,7 @@ export function WirelessHero() {
                 </Link>
               </li>
               <li aria-hidden>/</li>
-              <li>Services</li>
+              <li>Solutions</li>
               <li aria-hidden>/</li>
               <li aria-current="page" className="font-medium text-ink">
                 {wirelessErp.title}
