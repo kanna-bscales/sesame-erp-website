@@ -77,6 +77,17 @@ export function SiteFooter() {
           <p>
             © {site.copyrightYear} {site.name}. All rights reserved.
           </p>
+          <p>
+            A product of{" "}
+            <a
+              href="https://sesamelabs.ai"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium underline underline-offset-4 transition-colors hover:text-white"
+            >
+              Sesame Labs
+            </a>
+          </p>
           <a href="#top" className="transition-colors hover:text-white">
             Back to top
           </a>
