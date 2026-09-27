@@ -39,7 +39,7 @@ export function IndustryPage({ industry }: { industry: Industry }) {
 
             <div className="mt-9 flex flex-wrap items-center gap-4">
               <ButtonLink href={site.consultationHref} magnetic>
-                Schedule a consultation
+                Get a free consultation
               </ButtonLink>
               <ButtonLink href="#modules-list" variant="secondary">
                 See the modules

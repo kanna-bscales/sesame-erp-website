@@ -6,7 +6,7 @@ export const hero = {
   headlineSecond: "Powered by AI agents.",
   subheadline:
     "We design and build ERP systems around how your business actually works — not the other way around. Every system we ship comes with AI agents built in, and a working system is delivered in a few weeks.",
-  primaryCta: "Schedule a consultation",
+  primaryCta: "Get a free consultation",
   secondaryCta: "See how it works",
 };
 
@@ -70,7 +70,7 @@ export const howWeWork: { heading: string; steps: ProcessStep[] } = {
     },
     {
       title: "Deploy & launch",
-      weeks: "Weeks x1 to x3",
+      weeks: "Weeks 5 to 7",
       span: [5, 7],
       body: "Your system goes live, your team gets a walkthrough, and we stay on for support.",
     },
@@ -145,7 +145,7 @@ export const modules: {
   custom: {
     heading: "Need a module that isn't listed?",
     body: "Tell us how your team works, and we'll design and build that module into your system.",
-    cta: "Schedule a consultation",
+    cta: "Get a free consultation",
   },
   groups: [
     {
@@ -298,8 +298,20 @@ export const faq = {
       a: "Manufacturing is a strong fit today, and the same core system adapts to distribution, retail, and service-based businesses with their own workflows.",
     },
     {
-      q: "What does “AI agents in the ERP” actually mean?",
+      q: 'What does "AI agents in the ERP" actually mean?',
       a: "It means parts of the system act on your behalf — drafting quotations, flagging low stock, answering routine customer questions — instead of just storing data for you to act on manually.",
+    },
+    {
+      q: "How much does a custom ERP cost?",
+      a: "Every system is scoped to what your business actually needs, so pricing varies. After our discovery call we provide a clear, fixed quote — no surprise invoices or hidden fees.",
+    },
+    {
+      q: "Can you migrate data from our current system?",
+      a: "Yes. We handle data migration from spreadsheets, legacy software, or other ERPs as part of the build, so your team starts with everything already in place.",
+    },
+    {
+      q: "How do you handle security and data privacy?",
+      a: "Your system runs on infrastructure with encryption at rest and in transit, role-based access controls, and regular backups. We scope security to your industry's requirements during the discovery phase.",
     },
   ],
 };
@@ -308,5 +320,5 @@ export const finalCta = {
   headline: "Ready to build your ERP?",
   subtext:
     "Tell us how your business runs today — we'll show you what a custom system with AI agents built in looks like, and how fast we can deliver it.",
-  cta: "Schedule a consultation",
+  cta: "Get a free consultation",
 };

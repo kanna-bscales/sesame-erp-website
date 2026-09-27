@@ -40,6 +40,11 @@ export function SiteFooter() {
               </li>
             ))}
             <li>
+              <Link href="/about" className="transition-colors hover:text-white">
+                About
+              </Link>
+            </li>
+            <li>
               <Link href="/contact" className="transition-colors hover:text-white">
                 Contact
               </Link>
@@ -58,18 +63,22 @@ export function SiteFooter() {
           </ul>
         </div>
 
-        <div className="md:col-span-2">
-          <h2 className="text-sm font-semibold">Follow us</h2>
-          <ul className="mt-4 space-y-2 text-night-soft">
-            {site.social.map((item) => (
-              <li key={item.label}>
-                <a href={item.href} className="transition-colors hover:text-white">
-                  {item.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
+        {site.social.some((s) => s.href !== "#") && (
+          <div className="md:col-span-2">
+            <h2 className="text-sm font-semibold">Follow us</h2>
+            <ul className="mt-4 space-y-2 text-night-soft">
+              {site.social
+                .filter((item) => item.href !== "#")
+                .map((item) => (
+                  <li key={item.label}>
+                    <a href={item.href} className="transition-colors hover:text-white">
+                      {item.label}
+                    </a>
+                  </li>
+                ))}
+            </ul>
+          </div>
+        )}
       </div>
 
       <div className="border-t border-night-rule">

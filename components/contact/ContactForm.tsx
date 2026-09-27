@@ -39,7 +39,7 @@ export function ContactForm() {
       <div className="grid gap-5 sm:grid-cols-2">
         <div className="sm:col-span-1">
           <label htmlFor={fieldId("name")} className="font-medium">
-            {form.name.label}
+            {form.name.label} <span className="text-ballpoint-ink">*</span>
           </label>
           <input
             id={fieldId("name")}
@@ -62,7 +62,7 @@ export function ContactForm() {
 
         <div className="sm:col-span-1">
           <label htmlFor={fieldId("email")} className="font-medium">
-            {form.email.label}
+            {form.email.label} <span className="text-ballpoint-ink">*</span>
           </label>
           <input
             id={fieldId("email")}

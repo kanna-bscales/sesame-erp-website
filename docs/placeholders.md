@@ -7,9 +7,9 @@ Everything below is dummy data. Replace it when the real details arrive.
 | Company name | Supplied: `SesameERP` | `lib/site.ts` → `site.name` | Done |
 | Logo | Designed here: three sesame seeds on a red tile | `components/brand/Logo.tsx` | Only if the owner commissions a different logo |
 | Favicon | SesameERP mark | `app/icon.svg` | Only if the logo changes |
-| "Schedule a consultation" link | Goes to `/contact` | `lib/site.ts` → `site.consultationHref` | Done, unless you would rather it opened a Calendly or WhatsApp link |
+| "Get a free consultation" link | Goes to `/contact` | `lib/site.ts` → `site.consultationHref` | Done; relabeled from "Schedule a consultation" to avoid implying a booking widget |
 | Email | Supplied by the owner: `hi@sesamelabs.ai` | `lib/site.ts` → `site.email` | Done |
-| Social links | LinkedIn, YouTube, Instagram, X, all `#` | `lib/site.ts` → `site.social` | Real profile URLs; remove any not used |
+| Social links | LinkedIn, YouTube, Instagram, X, all `#` — footer hides the block while all are `#` | `lib/site.ts` → `site.social` | Real profile URLs; the footer shows "Follow us" only when at least one link is real |
 | Page title and description | Built from `site.name` and `site.description` | `lib/site.ts`, `app/layout.tsx` | Final SEO title and description |
 | Hero quotation demo | Kaveri Engineering Works, Nila Textiles, sample items and prices | `components/sections/hero/QuotationStack.tsx` | Optional: real (anonymized) examples, or a real ERP screenshot |
 | AI agent demos | Sample RFQ, stock chart, chat, invoice, weekly summary | `components/sections/agents/AgentDemos.tsx` | Optional: real screenshots or real anonymized examples |
@@ -20,7 +20,7 @@ Everything below is dummy data. Replace it when the real details arrive.
 | Solutions in the menu | Hidden on the owners instruction. The pages still work at their URLs | `lib/site.ts` → `showSolutions` | Set to `true` when the industry copy is approved |
 | Phone and office address | Removed. Only the email is shown, per the owner | `lib/site.ts`, footer, contact page | Add back if a real number and address should appear |
 | Copyright year | `2026` | `lib/site.ts` → `site.copyrightYear` | Update yearly |
-| Open Graph image | None | add `app/opengraph-image.png` | 1200×630 share image |
+| Open Graph image | Generated dynamically via `app/opengraph-image.tsx` (edge runtime, 1200×630) | `app/opengraph-image.tsx` | Done — also generates `/twitter-image` via `app/twitter-image.tsx` |
 | Brand name on Wireless ERP copy | Updated to SesameERP (the source copy said "Business Scales") | `content/wireless-erp.ts`, `lib/site.ts` | Confirm the sentence still reads correctly |
 | Wireless ERP: Agent Allocation description | Draft sentence (supplied text was website-builder placeholder copy) | `content/wireless-erp.ts`, `docs/content-wireless-erp.md` | Real description of the Agent Allocation feature |
 | Wireless ERP: packing list demo | Box BX-12, Galaxy A15 128 GB, six sample IMEIs | `components/wireless/DeviceBoxLabel.tsx` | Optional: real (anonymized) example or a screenshot of the app |

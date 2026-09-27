@@ -2,11 +2,11 @@
 
 Approved copy for the homepage. The site renders it from `content/home.ts`; keep both files in sync.
 
-**Revision (owner):** delivery is described as **a few weeks**, not a fixed number (an earlier draft said one week, then seven weeks). The process timeline runs Week 1, Week 2, Weeks 3 and 4, then Weeks x1 to x3 for the flexible tail. Money is shown in **USD**.
+**Revision (owner):** delivery is described as **a few weeks**, not a fixed number (an earlier draft said one week, then seven weeks). The process timeline runs Week 1, Week 2, Weeks 3 and 4, then Weeks 5 to 7. Money is shown in **USD**.
 
 Presentation changes made during the build (wording unchanged):
 
-- Headings and buttons use sentence case ("Schedule a consultation").
+- Headings and buttons use sentence case ("Get a free consultation").
 - Emoji in the stats bar are replaced by icons.
 - Section 7 does not repeat the module list. The module section has an "All modules / Manufacturing focus" filter, and section 7 has a button that switches it on.
 
@@ -17,7 +17,7 @@ Presentation changes made during the build (wording unchanged):
 - **Eyebrow:** AI-Powered Custom ERP Development
 - **Headline:** Custom ERP Systems, Built Fast. Powered by AI Agents.
 - **Subheadline:** We design and build ERP systems around how your business actually works — not the other way around. Every system we ship comes with AI agents built in, and a working system is delivered in a few weeks.
-- **Primary CTA:** Schedule a Consultation
+- **Primary CTA:** Get a free consultation
 - **Secondary CTA:** See How It Works
 
 ## 2. Trust / stats bar
@@ -104,12 +104,15 @@ Manufacturing businesses we work with get all of the Core Modules above, tuned s
 - **Do you support the system after launch?** Yes — you work directly with the team that built it for fixes, changes, and new features as your business grows.
 - **What industries do you build for?** Manufacturing is a strong fit today, and the same core system adapts to distribution, retail, and service-based businesses with their own workflows.
 - **What does "AI agents in the ERP" actually mean?** It means parts of the system act on your behalf — drafting quotations, flagging low stock, answering routine customer questions — instead of just storing data for you to act on manually.
+- **How much does a custom ERP cost?** Every system is scoped to what your business actually needs, so pricing varies. After our discovery call we provide a clear, fixed quote — no surprise invoices or hidden fees.
+- **Can you migrate data from our current system?** Yes. We handle data migration from spreadsheets, legacy software, or other ERPs as part of the build, so your team starts with everything already in place.
+- **How do you handle security and data privacy?** Your system runs on infrastructure with encryption at rest and in transit, role-based access controls, and regular backups. We scope security to your industry's requirements during the discovery phase.
 
 ## 10. Final CTA
 
 - **Headline:** Ready to Build Your ERP?
 - **Subtext:** Tell us how your business runs today — we'll show you what a custom system with AI agents built in looks like, and how fast we can deliver it.
-- **CTA:** Schedule a Consultation
+- **CTA:** Get a free consultation
 
 ---
 
@@ -119,7 +122,7 @@ These short texts were not in the approved document. They support the layout and
 
 | Where | Added copy |
 | --- | --- |
-| Process | Week labels: Week 1, Week 2, Weeks 3 and 4, then Weeks x1 to x3 for the flexible tail of the project |
+| Process | Week labels: Week 1, Week 2, Weeks 3 and 4, then Weeks 5 to 7 |
 | Modules | Subline "14 modules across 4 areas of your business"; group names Customers and vendors, Selling and pricing, Buying, Stock; filter labels "All modules" and "Manufacturing focus" |
 | Modules | Manufacturing tags: Pricing chains, Multi-vendor RFQs, Conversion tracking, Bundled products |
 | Manufacturing | Button "Highlight these in the module list"; price chain labels and helper sentence |

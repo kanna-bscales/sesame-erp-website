@@ -5,7 +5,7 @@ import { motion, useScroll, useTransform, type MotionValue } from "motion/react"
 import { howWeWork, type ProcessStep } from "@/content/home";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 
-const weekLabels = ["Week 1", "Week 2", "Week 3", "Week 4", "Week x1", "Week x2", "Week x3"];
+const weekLabels = ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6", "Week 7"];
 const WEEKS = weekLabels.length;
 
 const colStart: Record<number, string> = {

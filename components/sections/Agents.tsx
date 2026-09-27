@@ -12,6 +12,7 @@ import {
 } from "motion/react";
 import { agents } from "@/content/home";
 import { AgentDemo } from "./agents/AgentDemos";
+import { AgentActivityFeed } from "./agents/AgentActivityFeed";
 
 const CYCLE_MS = 8000;
 
@@ -145,6 +146,8 @@ export function Agents() {
               </AnimatePresence>
             </div>
           </div>
+
+          <AgentActivityFeed />
         </div>
       </motion.div>
     </section>

@@ -25,6 +25,20 @@ const plex = IBM_Plex_Sans({
 export const metadata: Metadata = {
   title: `${site.name} | Custom ERP systems with AI agents built in`,
   description: site.description,
+  openGraph: {
+    title: `${site.name} | Custom ERP systems with AI agents built in`,
+    description: site.description,
+    url: "https://sesameerp.ai",
+    siteName: site.name,
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${site.name} | Custom ERP systems with AI agents built in`,
+    description: site.description,
+  },
+  metadataBase: new URL("https://sesameerp.ai"),
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

@@ -64,6 +64,15 @@ export function SiteHeader() {
             ))}
             <li>
               <Link
+                href="/about"
+                aria-current={pathname === "/about" ? "page" : undefined}
+                className={`transition-colors hover:text-ink ${pathname === "/about" ? "text-ink" : "text-ink-soft"}`}
+              >
+                About
+              </Link>
+            </li>
+            <li>
+              <Link
                 href="/contact"
                 aria-current={onContact ? "page" : undefined}
                 className={`transition-colors hover:text-ink ${onContact ? "text-ink" : "text-ink-soft"}`}
@@ -78,7 +87,7 @@ export function SiteHeader() {
           <ThemeToggle />
           <div className="hidden lg:block">
             <ButtonLink href={site.consultationHref} className="h-11 px-5 text-[0.95rem]">
-              Schedule a consultation
+              Get a free consultation
             </ButtonLink>
           </div>
           <button
@@ -142,6 +151,16 @@ export function SiteHeader() {
                 ))}
                 <li>
                   <Link
+                    href="/about"
+                    onClick={closeMenu}
+                    aria-current={pathname === "/about" ? "page" : undefined}
+                    className="block py-3 text-lg font-medium"
+                  >
+                    About
+                  </Link>
+                </li>
+                <li>
+                  <Link
                     href="/contact"
                     onClick={closeMenu}
                     aria-current={onContact ? "page" : undefined}
@@ -153,7 +172,7 @@ export function SiteHeader() {
               </ul>
               <div className="pt-4 pb-2">
                 <ButtonLink href={site.consultationHref} block onClick={closeMenu}>
-                  Schedule a consultation
+                  Get a free consultation
                 </ButtonLink>
               </div>
             </div>
