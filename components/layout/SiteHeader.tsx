@@ -8,6 +8,7 @@ import { Menu, X } from "lucide-react";
 import { Logo } from "@/components/brand/Logo";
 import { ButtonLink } from "@/components/ui/ButtonLink";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { getCampaign } from "@/lib/campaign";
 import { navLinks, showSolutions, site, solutions } from "@/lib/site";
 import { SectionLink } from "./SectionLink";
 import { SolutionsMenu } from "./SolutionsMenu";
@@ -23,6 +24,10 @@ export function SiteHeader() {
   const solid = scrolled || menuOpen;
   const closeMenu = () => setMenuOpen(false);
   const onContact = pathname === "/contact";
+  // Campaign pages swap the consultation button for their own in-page CTAs.
+  const campaign = getCampaign(pathname);
+  const primary = campaign?.headerPrimary ?? { label: "Get a free consultation", href: site.consultationHref };
+  const secondary = campaign?.headerSecondary;
 
   return (
     <header
@@ -85,9 +90,16 @@ export function SiteHeader() {
 
         <div className="flex items-center gap-3">
           <ThemeToggle />
+          {secondary && (
+            <div className="hidden xl:block">
+              <ButtonLink href={secondary.href} variant="secondary" className="h-11 px-5 text-[0.95rem]">
+                {secondary.label}
+              </ButtonLink>
+            </div>
+          )}
           <div className="hidden lg:block">
-            <ButtonLink href={site.consultationHref} className="h-11 px-5 text-[0.95rem]">
-              Get a free consultation
+            <ButtonLink href={primary.href} className="h-11 px-5 text-[0.95rem]">
+              {primary.label}
             </ButtonLink>
           </div>
           <button
@@ -170,10 +182,15 @@ export function SiteHeader() {
                   </Link>
                 </li>
               </ul>
-              <div className="pt-4 pb-2">
-                <ButtonLink href={site.consultationHref} block onClick={closeMenu}>
-                  Get a free consultation
+              <div className="space-y-3 pt-4 pb-2">
+                <ButtonLink href={primary.href} block onClick={closeMenu}>
+                  {primary.label}
                 </ButtonLink>
+                {secondary && (
+                  <ButtonLink href={secondary.href} variant="secondary" block onClick={closeMenu}>
+                    {secondary.label}
+                  </ButtonLink>
+                )}
               </div>
             </div>
           </motion.nav>
