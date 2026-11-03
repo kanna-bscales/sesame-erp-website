@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Logo } from "@/components/brand/Logo";
 import { navLinks, showSolutions, site, solutions } from "@/lib/site";
+import { FooterAttribution, FooterCampaignLinks, FooterTagline } from "./FooterCampaignText";
 import { SectionLink } from "./SectionLink";
 
 export function SiteFooter() {
@@ -10,7 +11,7 @@ export function SiteFooter() {
         <div className="md:col-span-4">
           <Logo tone="light" />
           <p className="mt-5 max-w-sm text-night-soft">
-            Custom ERP systems with AI agents built in, delivered in a few weeks.
+            <FooterTagline>Custom ERP systems with AI agents built in, delivered in a few weeks.</FooterTagline>
           </p>
         </div>
 
@@ -86,17 +87,8 @@ export function SiteFooter() {
           <p>
             © {site.copyrightYear} {site.name}. All rights reserved.
           </p>
-          <p>
-            A product of{" "}
-            <a
-              href="https://sesamelabs.ai"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-medium underline underline-offset-4 transition-colors hover:text-white"
-            >
-              Sesame Labs
-            </a>
-          </p>
+          <FooterAttribution />
+          <FooterCampaignLinks />
           <a href="#top" className="transition-colors hover:text-white">
             Back to top
           </a>

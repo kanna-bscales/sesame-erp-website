@@ -12,6 +12,8 @@ Marketing site for a company that builds custom ERP systems with AI agents built
 | `/manufacturing`, `/restaurant`, `/retail` | Built, HIDDEN from navigation (`showSolutions`). Restaurant and Retail copy is DRAFT | `docs/content-industries.md` | `content/industries.ts` |
 | `/wireless-erp` | Built, HIDDEN from navigation (`showSolutions`) | `docs/content-wireless-erp.md` | `content/wireless-erp.ts` |
 | `/contact` | Built. The form is NOT wired to email yet | `docs/content-contact.md` | `content/contact.ts` |
+| `/chicago-event` | Built. PLMA 2026 campaign (one free ERP module, US$5,000 value), not in navigation. Header CTA, two section links and footer tagline/attribution are swapped on this route via `lib/campaign.ts`. Custom registration form (`ZohoLeadForm`) posting to the Zoho CRM webform; keys and field map in `zohoLeadForm` | `docs/content-chicago-event.md` | `content/chicago-event.ts` |
+| `/plma-2026-terms` | Built. PLMA 2026 Promotion Terms (18 sections + FAQ), print view and PDF snapshot in `public/legal/`. `noindex` until `termsStatus.indexable` is true. Clickwrap checkbox in `ZohoLeadForm`. Launch checklist: `docs/plma-2026-terms-approval-checklist.md` | `docs/content-plma-2026-terms.md` | `content/plma-2026-terms.ts` |
 
 - Do not add routes or pages until the owner asks.
 - Copy is approved. Keep each docs file and its `content/*.ts` file in sync, and do not reword approved copy. Open copy questions are listed at the top of each content doc.
