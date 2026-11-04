@@ -42,7 +42,7 @@ Production Zoho **US** data centre (org945149959, business-scales):
 - CRM API: `https://www.zohoapis.com/crm/v8/...`
 - Webform fallback: `https://crm.zoho.com/crm/WebToLeadForm`
 
-Scopes on the refresh token: `ZohoCRM.modules.leads.ALL, ZohoCRM.modules.campaigns.READ,
+Scopes on the refresh token: `ZohoCRM.modules.leads.ALL, ZohoCRM.modules.campaigns.READ,ZohoCRM.modules.campaigns.UPDATE,
 ZohoCRM.modules.notes.CREATE, ZohoCRM.coql.READ`. All writes use `trigger: []`, so no workflow
 rule, approval or blueprint runs and no automatic email is sent.
 

@@ -21,6 +21,7 @@ import {
   PLACEHOLDER_LAST_NAME,
   TEST_CONFERENCE_NAME,
   updateLead,
+  ZohoError,
   zohoConfigured,
   type CrmLead,
 } from "@/lib/plma/zoho.server";
@@ -202,8 +203,13 @@ export async function POST(request: Request) {
     if (lead?.Conference_Name !== TEST_CONFERENCE_NAME) {
       try {
         await addLeadToCampaign(leadId, "Responded");
-      } catch {
-        console.error("PLMA enquiry: campaign association failed (lead saved)");
+      } catch (error) {
+        // Logged without personal data. A 401/403 here usually means the refresh token lacks
+        // the ZohoCRM.modules.campaigns.UPDATE scope.
+        console.error(
+          "PLMA enquiry: campaign status update failed (lead saved):",
+          error instanceof ZohoError ? `HTTP ${error.status ?? "?"}` : "unknown error",
+        );
       }
     }
     try {

@@ -4,7 +4,7 @@
 // handlers. Nothing in this file may be imported by a client component.
 //
 // Required OAuth scopes for the Self Client refresh token:
-//   ZohoCRM.modules.leads.ALL,ZohoCRM.modules.campaigns.READ,ZohoCRM.modules.notes.CREATE,ZohoCRM.coql.READ
+//   ZohoCRM.modules.leads.ALL,ZohoCRM.modules.campaigns.READ,ZohoCRM.modules.campaigns.UPDATE,ZohoCRM.modules.notes.CREATE,ZohoCRM.coql.READ
 
 import { createHash } from "node:crypto";
 
