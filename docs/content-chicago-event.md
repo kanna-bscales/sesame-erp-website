@@ -32,25 +32,17 @@ It is NOT a cash credit, account balance or discount, and it covers ERP only (no
 - Footer tagline: Custom ERP solutions with AI agents and intelligent automation.
 - Footer attribution: A product of Business Scales (links to https://businessscales.com/).
 
-## Hero
+## Top section (offer + registration form)
 
-- Eyebrow: PLMA 2026 attendee exclusive
-- Headline: Complimentary development / of one ERP module.
-- Highlight: US$5,000 worth of ERP development work
-- Description: Attending PLMA 2026? Explore how SesameERP can help improve your business operations with custom ERP development, AI agents and ERP automation.
+One combined section at the top of the page (`id="top"`), two columns. There is no separate hero band and no form-intro text block — the offer card, benefits, buttons and terms sit directly beside the form.
+
+Left column:
+- Offer card: PLMA 2026 exclusive offer · One ERP module · Complimentary · Development value US$5,000 · Available to PLMA conference users
 - Benefits: One complimentary ERP module · Custom ERP development · AI agents for ERP · ERP workflow automation
-- Buttons: Request your complimentary ERP module (to the form) · Request a demo (to the PLMA 2026 section)
-- Offer card: PLMA 2026 exclusive offer · One ERP module · Complimentary · Development value US$5,000 · Available to PLMA 2026 attendees
+- Buttons: Request your complimentary ERP module (to the form, `#register`) · Request a demo (to the PLMA 2026 section, `#plma-2026`)
+- Offer terms apply. PLMA Offer Terms & Conditions (to `/plma-2026-terms`)
 
-## Request your complimentary ERP module
-
-Tell us about your business and the ERP module you need. Our team will review your request and contact you about the next steps.
-
-- Complimentary development of one ERP module
-- Representing US$5,000 worth of development work
-- Prefer to see SesameERP first? Ask for a product demo when we contact you
-
-Link: Read the offer terms.
+Right column: the registration form (`#register`; see the form bullet under "Open questions" above).
 
 ## About SesameERP
 

@@ -5,7 +5,6 @@ import { EventFaq } from "@/components/chicago-event/EventFaq";
 import { eventIcons } from "@/components/chicago-event/icons";
 import { OfferCard } from "@/components/chicago-event/OfferCard";
 import { ZohoLeadForm } from "@/components/chicago-event/ZohoLeadForm";
-import { PlmaHeadline } from "@/components/chicago-event/PlmaHeadline";
 import { ButtonLink } from "@/components/ui/ButtonLink";
 import { ScrollRevealText } from "@/components/ui/ScrollRevealText";
 import {
@@ -17,7 +16,6 @@ import {
   caseStudies,
   cta,
   eventSection,
-  formSection,
   howSection,
   offerTerms,
   plmaEvent,
@@ -58,58 +56,18 @@ const sectionTitle = "heading-section text-[clamp(2rem,3.6vw,3.5rem)]";
 export default function PlmaCampaignPage() {
   return (
     <main id="main">
-      {/* Registration form */}
-      <section id={anchors.form} aria-labelledby="form-heading" className="border-b border-rule bg-sheet pt-28 sm:pt-32">
+      {/* Offer card + registration form */}
+      <section id="top" aria-label={cta.primary} className="border-b border-rule bg-sheet pt-28 sm:pt-32">
         <div className="page-container grid gap-12 pb-20 lg:grid-cols-12 lg:gap-10 lg:pb-28">
           <div className="lg:col-span-5">
-            <div className="lg:sticky lg:top-28">
-              <h2 id="form-heading" className={sectionTitle}>
-                {formSection.heading}
-              </h2>
-              <p className="mt-6 max-w-[34rem] text-lg leading-relaxed text-ink-soft">{formSection.intro}</p>
-              <ul className="mt-8 space-y-3">
-                {formSection.points.map((point) => (
-                  <li key={point} className="flex items-start gap-3">
-                    <Check aria-hidden className="mt-1 size-5 shrink-0 text-ballpoint-ink" />
-                    {point}
-                  </li>
-                ))}
-              </ul>
-              <Link
-                href={termsPath}
-                className="mt-8 inline-block text-sm font-medium text-ink-soft underline underline-offset-4 hover:text-ink"
-              >
-                {termsLinkLabel}
-              </Link>
-            </div>
-          </div>
+            <OfferCard />
 
-          <div className="lg:col-span-7">
-            <ZohoLeadForm />
-          </div>
-        </div>
-      </section>
-
-      {/* Hero */}
-      <section id="top" className="relative overflow-hidden pt-20 pb-16 sm:pt-24 lg:pb-24">
-        <div className="page-container grid items-center gap-12 lg:grid-cols-12 lg:gap-10">
-          <div className="lg:col-span-7">
-            <PlmaHeadline
-              eyebrow={plmaHero.eyebrow}
-              lines={plmaHero.headline}
-              second={plmaHero.headlineSecond}
-            />
-            <p className="font-semiwide mt-6 text-xl font-extrabold sm:text-2xl">
-              <span>{plmaHero.highlight}</span>
-            </p>
-            <p className="mt-6 max-w-[36rem] text-lg leading-relaxed text-ink-soft">{plmaHero.description}</p>
-
-            <ul className="mt-8 grid max-w-[36rem] gap-x-6 gap-y-3.5 sm:grid-cols-2">
+            <ul className="mt-8 grid gap-x-6 gap-y-3.5 sm:grid-cols-2 lg:grid-cols-1">
               {plmaHero.benefits.map((benefit) => {
                 const Icon = eventIcons[benefit.icon];
                 return (
                   <li key={benefit.label} className="flex items-center gap-3 font-medium">
-                    <span className="flex size-8 shrink-0 items-center justify-center rounded-md bg-sheet ring-1 ring-ink/10">
+                    <span className="flex size-8 shrink-0 items-center justify-center rounded-md bg-paper ring-1 ring-ink/10">
                       <Icon aria-hidden className="size-4 text-ballpoint-ink" />
                     </span>
                     {benefit.label}
@@ -118,7 +76,7 @@ export default function PlmaCampaignPage() {
               })}
             </ul>
 
-            <div className="mt-9 flex flex-wrap items-center gap-4">
+            <div className="mt-8 flex flex-wrap items-center gap-4">
               <ButtonLink href={formHref} magnetic>
                 {cta.primary}
               </ButtonLink>
@@ -134,8 +92,8 @@ export default function PlmaCampaignPage() {
             </p>
           </div>
 
-          <div className="lg:col-span-5">
-            <OfferCard />
+          <div id={anchors.form} className="lg:col-span-7">
+            <ZohoLeadForm />
           </div>
         </div>
       </section>
