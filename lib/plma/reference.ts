@@ -1,9 +1,9 @@
-// PLMA 2026 personal invitation links: …/chicago-event?booth=F2542&ref=<attendee reference>.
+// PLMA 2026 personal invitation links: https://www.sesameerp.ai/chicago-event?ref=<attendee reference>.
 //
 // The reference is a random 22-character token (128 bits) minted per attendee by
 // data/plma-2026/build_offer_urls.py. Only its SHA-256 hash is stored in Zoho CRM
-// (Leads › Attendee Reference Hash), so the CRM never holds the link itself. The booth number is
-// for tracking only and is never used on its own to look anyone up.
+// (Leads › Attendee Reference Hash), so the CRM never holds the link itself. Booth numbers are
+// not part of the link and are never used to look anyone up.
 //
 // Safe to import from client and server code: no secrets here.
 

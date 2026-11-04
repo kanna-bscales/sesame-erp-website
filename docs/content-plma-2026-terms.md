@@ -2,7 +2,7 @@
 
 Rendered copy: `content/plma-2026-terms.ts`. Keep both files in sync. The body below was generated from the rendered page on November 3, 2026.
 
-Status: production wording chosen by the business on November 3, 2026 (sponsor Business Scales LLC, Delaware law, no fixed closing date, liability cap US$5,000, contact info@business-scales.com). The page stays `noindex` until `termsStatus.indexable` is set to `true` after legal review. Open items: `docs/plma-2026-terms-approval-checklist.md`.
+Status: production wording chosen by the business on November 3, 2026 (sponsor Business Scales LLC, Delaware law, no fixed closing date, liability cap US$5,000, contact info@businessscales.com). The page stays `noindex` until `termsStatus.indexable` is set to `true` after legal review. Open items: `docs/plma-2026-terms-approval-checklist.md`.
 
 Linked from the landing page hero ("Offer terms apply."), the form side, the clickwrap checkbox in the request form, the yellow offer banner, the FAQ terms panel, and the footer on both campaign routes.
 
@@ -179,7 +179,7 @@ Business Scales may modify the promotion, the eligibility requirements, the scop
 
 Information you submit is used to review your application, contact you about the Offer and the SesameERP services you asked about, and administer the promotion. It is stored in our customer relationship management system (Zoho CRM).
 
-To ask about, correct or delete the information you submitted, email info@business-scales.com.
+To ask about, correct or delete the information you submitted, email info@businessscales.com.
 
 ## 16. Governing law
 

@@ -151,7 +151,7 @@ Deploy:
 After deploy (smoke test, approved test lead only):
 
 1. Create one internal test lead (Conference Name "PLMA 2026 (test)", Email Opt Out on) with its own reference.
-2. Open `https://www.sesameerp.ai/chicago-event?booth=TEST01&ref=<test ref>`: form prefills.
+2. Open `https://www.sesameerp.ai/chicago-event?ref=<test ref>`: form prefills.
 3. Submit once: thank-you shows; same lead updated; notes added; no campaign change; no email.
 4. Open a real attendee link (read-only, do not submit): form prefills correctly.
 5. Delete the test lead; Lead count back to 720.

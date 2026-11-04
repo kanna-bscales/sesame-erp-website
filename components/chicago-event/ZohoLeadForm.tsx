@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { CircleAlert, CircleCheck, LoaderCircle } from "lucide-react";
-import { boothParam, leadForm, zohoLeadForm, zohoWebform } from "@/content/chicago-event";
+import { leadForm, zohoLeadForm, zohoWebform } from "@/content/chicago-event";
 import { termsAcceptance, termsMeta, termsPath } from "@/content/plma-2026-terms";
 import {
   BOOTH_RE,
@@ -16,7 +16,7 @@ import {
 
 // PLMA 2026 registration form.
 //
-// Personal invitation links (…?booth=F2542&ref=<attendee reference>) pre-fill the form: the
+// Personal invitation links (…/chicago-event?ref=<attendee reference>) pre-fill the form: the
 // reference is sent to /api/plma/attendee, which looks the Lead up in Zoho CRM on the server and
 // returns only Name, Email, Company, Phone, Booth, Job title and Website. Everything stays
 // editable, and the consent and terms boxes are never pre-ticked.
@@ -53,16 +53,23 @@ const WEBSITE_RE = /^(https?:\/\/)?([a-z0-9-]+\.)+[a-z]{2,}(:\d+)?(\/\S*)?$/i;
 
 const C = zohoLeadForm.clientOnly;
 
-/** Attendee reference from ?ref=…, kept only if it has the expected shape. */
-function refFromUrl(): string | null {
-  const value = new URLSearchParams(window.location.search).get(refParam);
-  return isValidRef(value) ? value : null;
-}
-
-/** Booth number from ?booth=…, kept only if it looks like a booth number. */
-function boothFromUrl(): string {
-  const value = (new URLSearchParams(window.location.search).get(boothParam) ?? "").trim();
-  return BOOTH_RE.test(value) ? value : "";
+// The attendee reference from ?ref=… is the ONLY attendee identity. It is read once, kept in
+// memory, and removed from the address bar straight away (together with any legacy ?booth=…),
+// before Zoho's analytics script loads, so it is not shared via the URL, history, screenshots or
+// referrer headers. A booth value in the URL is never trusted: the booth number shown in the form
+// comes from the verified CRM record.
+let capturedRef: string | null | undefined;
+function takeRefFromUrl(): string | null {
+  if (capturedRef !== undefined) return capturedRef;
+  const url = new URL(window.location.href);
+  const value = url.searchParams.get(refParam);
+  capturedRef = isValidRef(value) ? value : null;
+  if (url.searchParams.has(refParam) || url.searchParams.has("booth")) {
+    url.searchParams.delete(refParam);
+    url.searchParams.delete("booth");
+    window.history.replaceState(window.history.state, "", url.pathname + url.search + url.hash);
+  }
+  return capturedRef;
 }
 
 /** One "Name" input -> Zoho's First Name / Last Name. Last Name is mandatory in Zoho, so a
@@ -161,30 +168,11 @@ export function ZohoLeadForm() {
     }
   }, []);
 
-  // Zoho's webform analytics script (part of Zoho's generated code: "Do not remove this code").
-  // It attaches to the form by its Zoho id and adds Zoho's tracking/anti-spam fields, which Zoho
-  // requires before it will create the lead. Loaded once the form is in the DOM.
+  // Personal invitation link (?ref=…): ask the server for this attendee's permitted details. Only
+  // empty inputs are filled, so anything the visitor already typed is kept. Missing, invalid or
+  // unknown references leave the normal blank form.
   useEffect(() => {
-    if (document.getElementById("wf_anal")) return;
-    const script = document.createElement("script");
-    script.id = "wf_anal";
-    script.src = zohoLeadForm.analyticsScript;
-    script.async = true;
-    document.body.appendChild(script);
-  }, []);
-
-  // Personal invitation links carry ?booth=…: pre-fill the (still editable) Booth number field.
-  const boothRef = useRef<HTMLInputElement>(null);
-  useEffect(() => {
-    const booth = boothFromUrl();
-    if (booth && boothRef.current && !boothRef.current.value) boothRef.current.value = booth;
-  }, []);
-
-  // …and &ref=…: ask the server for this attendee's permitted details. Only empty inputs are
-  // filled, so anything the visitor already typed is kept. Unknown or invalid references simply
-  // leave the normal blank form.
-  useEffect(() => {
-    const ref = refFromUrl();
+    const ref = takeRefFromUrl();
     if (!ref) return;
     attendeeRef.current = ref;
     const controller = new AbortController();
@@ -223,6 +211,19 @@ export function ZohoLeadForm() {
       });
     return () => controller.abort();
   }, []);
+
+  // Zoho's webform analytics script (part of Zoho's generated code: "Do not remove this code").
+  // It attaches to the form by its Zoho id and adds Zoho's tracking/anti-spam fields, which Zoho
+  // requires before it will create the lead. Loaded once the form is in the DOM.
+  useEffect(() => {
+    if (document.getElementById("wf_anal")) return;
+    const script = document.createElement("script");
+    script.id = "wf_anal";
+    script.src = zohoLeadForm.analyticsScript;
+    script.async = true;
+    document.body.appendChild(script);
+  }, []);
+
 
   useEffect(() => {
     if (status === "success") successRef.current?.focus();
@@ -543,7 +544,6 @@ export function ZohoLeadForm() {
           error={errors.booth}
         >
           <input
-            ref={boothRef}
             id={id("booth")}
             name={C.booth}
             type="text"

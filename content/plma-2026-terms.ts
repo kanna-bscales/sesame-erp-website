@@ -3,7 +3,7 @@
 //
 // Commercial and legal choices made by the business on 3 November 2026: sponsor Business Scales LLC,
 // Delaware governing law, no fixed closing date, liability capped at US$5,000,
-// contact info@business-scales.com. Legal review before launch is still recommended
+// contact info@businessscales.com. Legal review before launch is still recommended
 // (see docs/plma-2026-terms-approval-checklist.md).
 //
 // Search engines: the page stays `noindex` until `termsStatus.indexable` is set to true.
@@ -50,7 +50,7 @@ export const termsHero = {
 export const pdf = {
   href: "/legal/plma-2026-offer-terms.pdf",
   fileName: "SesameERP-PLMA-2026-Offer-Terms.pdf",
-  version: "November 3, 2026",
+  version: "November 4, 2026",
 };
 
 export const termsSummary = {
@@ -78,9 +78,9 @@ export type TermsSection = { id: string; title: string; blocks: Block[] };
 
 export const termsContact = {
   company: "Business Scales LLC",
-  website: { label: "business-scales.com", href: "https://business-scales.com/" },
+  website: { label: "businessscales.com", href: "https://businessscales.com/" },
   product: { label: "www.sesameerp.ai", href: "https://www.sesameerp.ai/" },
-  email: "info@business-scales.com",
+  email: "info@businessscales.com",
 };
 
 export const termsSections: TermsSection[] = [
@@ -379,7 +379,7 @@ export const termsSections: TermsSection[] = [
       },
       {
         type: "p",
-        text: "To ask about, correct or delete the information you submitted, email info@business-scales.com.",
+        text: "To ask about, correct or delete the information you submitted, email info@businessscales.com.",
       },
     ],
   },

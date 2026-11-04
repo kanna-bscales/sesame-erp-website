@@ -27,7 +27,7 @@ Replace `OFFER_URL` with the recipient's Offer URL using your sending tool's mer
 The merge-field syntax depends on the tool used to send, and **has not been verified by a test
 send** (no emails were sent during setup). Before the real send, put the snippet in a template,
 send it to yourself, and click the banner: it must open
-`https://www.sesameerp.ai/chicago-event?booth=…&ref=…` for that record, not a literal placeholder.
+`https://www.sesameerp.ai/chicago-event?ref=…` for that record, not a literal placeholder.
 
 | Sending from | Where the URL comes from | What to check |
 | --- | --- | --- |

@@ -14,9 +14,9 @@ export const campaignPath = "/chicago-event";
 export const siteOrigin = "https://www.sesameerp.ai";
 export const campaignUrl = `${siteOrigin}${campaignPath}`;
 
-// Each attendee gets a personal link such as https://www.sesameerp.ai/chicago-event?booth=12345.
-// The form only pre-fills the Booth number field from it. CRM lookup is deliberately NOT built yet.
-export const boothParam = "booth";
+// Each attendee gets a personal link https://www.sesameerp.ai/chicago-event?ref=<random token>
+// (lib/plma/reference.ts). The token is the only identity; booth numbers are never used to look
+// anyone up.
 
 // Zoho CRM webform 7671386000000694280 (org945149959, Leads module) — values copied from the
 // source code Zoho generates under Setup > Webforms > Publish Options. Do not rename fields or edit
@@ -187,15 +187,15 @@ export const campaignChrome = {
   // Homepage section links that have an equivalent on this page scroll here instead of leaving it.
   sectionLinks: { "#process": `#${anchors.how}`, "#faq": `#${anchors.faq}` } as Record<string, string>,
   footerTagline: "Custom ERP solutions with AI agents and intelligent automation.",
-  attribution: { prefix: "A product of", label: "Business Scales", href: "https://business-scales.com/" },
+  attribution: { prefix: "A product of", label: "Business Scales", href: "https://businessscales.com/" },
   // Company information shown in the footer on campaign pages.
   companyInfo: {
     sponsorLabel: "Offer sponsor",
     sponsor: "Business Scales LLC",
     links: [
-      { label: "Business website", text: "business-scales.com", href: "https://business-scales.com/" },
+      { label: "Business website", text: "businessscales.com", href: "https://businessscales.com/" },
       { label: "Product", text: "SesameERP · www.sesameerp.ai", href: "https://www.sesameerp.ai/" },
-      { label: "Email", text: "info@business-scales.com", href: "mailto:info@business-scales.com" },
+      { label: "Email", text: "info@businessscales.com", href: "mailto:info@businessscales.com" },
     ],
   },
 };
