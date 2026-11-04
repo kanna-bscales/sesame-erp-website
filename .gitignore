@@ -42,3 +42,7 @@ next-env.d.ts
 
 # keep the example env file in git
 !.env.example
+
+# PLMA 2026 attendee data (personal data, never commit)
+/data/
+/public/__plma_tmp/

@@ -1,9 +1,9 @@
-// PLMA 2026 Free ERP Module Offer — Promotion Terms for /plma-2026-terms.
+// PLMA 2026 Complimentary ERP Module Offer — Promotion Terms for /plma-2026-terms.
 // Mirrors docs/content-plma-2026-terms.md — keep wording in sync.
 //
 // Commercial and legal choices made by the business on 3 November 2026: sponsor Business Scales LLC,
 // Delaware governing law, no fixed closing date, liability capped at US$5,000,
-// contact info@business-scales.com. Legal review before launch is still recommended
+// contact info@businessscales.com. Legal review before launch is still recommended
 // (see docs/plma-2026-terms-approval-checklist.md).
 //
 // Search engines: the page stays `noindex` until `termsStatus.indexable` is set to true.
@@ -11,6 +11,7 @@
 // these terms change (instructions in the checklist) and update `pdf.version`.
 
 export const termsPath = "/plma-2026-terms";
+export const termsUrl = "https://www.sesameerp.ai/plma-2026-terms";
 export const campaignHref = "/chicago-event";
 
 export const termsStatus = {
@@ -22,7 +23,7 @@ export const termsLinkLabel = "PLMA Offer Terms & Conditions";
 // Clickwrap acceptance in the request form (components/chicago-event/ZohoLeadForm.tsx).
 export const termsAcceptance = {
   before: "I have read and accept the",
-  link: "PLMA 2026 Free ERP Module Offer Terms & Conditions",
+  link: "PLMA 2026 Complimentary ERP Module Offer Terms & Conditions",
   error: "Please accept the offer terms to submit your request.",
 };
 
@@ -36,12 +37,12 @@ export const termsMeta = {
 export const termsHero = {
   breadcrumb: "Offer terms",
   eyebrow: "Promotion terms",
-  title: "PLMA 2026 Free ERP Module Offer Terms & Conditions",
+  title: "PLMA 2026 Complimentary ERP Module Offer Terms & Conditions",
   summary:
     "These terms explain who can apply, what the offer includes, how applications are reviewed and the conditions that apply to development work delivered through the offer.",
   badges: ["US$5,000 development value", "One custom ERP module", "PLMA exclusive offer", "Reviewed individually"],
   backToCampaign: "Back to the PLMA 2026 offer",
-  request: "Request your free ERP module",
+  request: "Request your complimentary ERP module",
   print: "Print",
   downloadPdf: "Download PDF",
 };
@@ -49,7 +50,7 @@ export const termsHero = {
 export const pdf = {
   href: "/legal/plma-2026-offer-terms.pdf",
   fileName: "SesameERP-PLMA-2026-Offer-Terms.pdf",
-  version: "November 3, 2026",
+  version: "November 4, 2026",
 };
 
 export const termsSummary = {
@@ -77,9 +78,9 @@ export type TermsSection = { id: string; title: string; blocks: Block[] };
 
 export const termsContact = {
   company: "Business Scales LLC",
-  website: { label: "business-scales.com", href: "https://business-scales.com/" },
-  product: { label: "sesameerp.ai", href: "https://sesameerp.ai/" },
-  email: "info@business-scales.com",
+  website: { label: "businessscales.com", href: "https://businessscales.com/" },
+  product: { label: "www.sesameerp.ai", href: "https://www.sesameerp.ai/" },
+  email: "info@businessscales.com",
 };
 
 export const termsSections: TermsSection[] = [
@@ -89,7 +90,7 @@ export const termsSections: TermsSection[] = [
     blocks: [
       {
         type: "p",
-        text: "These Promotion Terms (\"Terms\") govern the PLMA 2026 Free ERP Module Offer (the \"Offer\"). The Offer is sponsored by Business Scales LLC (\"Business Scales\", \"we\", \"us\"). SesameERP is a product of Business Scales.",
+        text: "These Promotion Terms (\"Terms\") govern the PLMA 2026 Complimentary ERP Module Offer (the \"Offer\"). The Offer is sponsored by Business Scales LLC (\"Business Scales\", \"we\", \"us\"). SesameERP is a product of Business Scales.",
       },
       {
         type: "p",
@@ -378,7 +379,7 @@ export const termsSections: TermsSection[] = [
       },
       {
         type: "p",
-        text: "To ask about, correct or delete the information you submitted, email info@business-scales.com.",
+        text: "To ask about, correct or delete the information you submitted, email info@businessscales.com.",
       },
     ],
   },
@@ -448,8 +449,9 @@ export const termsFaq = {
 export const termsSeo = {
   title: "PLMA 2026 Offer Terms & Conditions | SesameERP",
   description:
-    "Review the terms and conditions for the SesameERP PLMA 2026 free ERP module offer, representing US$5,000 worth of development work.",
+    "Review the terms and conditions for the SesameERP PLMA 2026 offer: complimentary development of one ERP module, representing US$5,000 worth of ERP development work.",
   path: termsPath,
+  url: termsUrl,
 };
 
 // Rough reading time for the hero, from the words on the page.
