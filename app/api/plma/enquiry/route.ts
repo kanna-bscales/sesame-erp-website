@@ -4,7 +4,8 @@
 // 2. Finds the attendee's existing Lead: first by the secure reference from the personal link,
 //    then by email. A found Lead is UPDATED, so repeat submissions never create duplicates.
 // 3. Otherwise creates one new Lead with the PLMA 2026 source details.
-// 4. Adds the Lead to the PLMA 2026 campaign as "Responded" and records a Note with the consent
+// 4. Sets PLMA Response Status = "Submitted" and PLMA Submission Date, adds the Lead to the
+//    PLMA 2026 campaign as "Responded" and records a Note with the consent
 //    and terms acceptance. Writes run with trigger: [] so no workflow or promotional email fires.
 // Answers { ok: true } only after Zoho has accepted the write. If Zoho credentials are not set,
 // answers 503 "not_configured" and the form falls back to the Zoho webform.
@@ -56,6 +57,11 @@ const text = (value: unknown, max: number, multiline = false) =>
         .trim()
         .slice(0, max)
     : "";
+
+/** Zoho datetime fields take "yyyy-MM-ddTHH:mm:ss+00:00" (no milliseconds). */
+function zohoDateTime(iso: string) {
+  return iso.replace(/\.\d{3}Z$/, "+00:00");
+}
 
 function splitName(full: string) {
   const parts = full.split(/\s+/).filter(Boolean);
@@ -135,6 +141,10 @@ export async function POST(request: Request) {
       Email: email,
       Company: company,
       Consent_to_be_Contacted: true,
+      // Submission tracking (Leads › PLMA Response Status / PLMA Submission Date). Only a submitted
+      // form sets these; opening the page or clicking the email banner changes nothing.
+      PLMA_Response_Status: "Submitted",
+      PLMA_Submission_Date: zohoDateTime(submittedAt),
       ...(first ? { First_Name: first } : {}),
       ...(phone ? { Phone: phone } : {}),
       ...(jobTitle ? { Designation: jobTitle } : {}),
