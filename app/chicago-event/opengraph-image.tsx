@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "PLMA 2026 exclusive: one ERP module built free, US$5,000 development value — SesameERP";
+export const alt = "PLMA 2026 exclusive: complimentary development of one ERP module, US$5,000 worth of ERP development work — SesameERP";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -89,8 +89,8 @@ export default async function PlmaOgImage() {
             flexDirection: "column",
           }}
         >
-          <span>Get one ERP module</span>
-          <span>built for free.</span>
+          <span>Complimentary development</span>
+          <span>of one ERP module.</span>
         </div>
 
         {/* Tagline */}
@@ -104,7 +104,7 @@ export default async function PlmaOgImage() {
             display: "flex",
           }}
         >
-          US$5,000 worth of ERP development work, for PLMA conference users.
+          US$5,000 worth of ERP development work, for PLMA 2026 attendees.
         </div>
 
         {/* Bottom bar */}
@@ -121,9 +121,9 @@ export default async function PlmaOgImage() {
             paddingTop: "20px",
           }}
         >
-          <span style={{ fontSize: "16px", color: "#a5a8b4" }}>sesameerp.ai/chicago-event</span>
+          <span style={{ fontSize: "16px", color: "#a5a8b4" }}>www.sesameerp.ai/chicago-event</span>
           <span style={{ fontSize: "16px", color: "#a5a8b4" }}>
-            A product of BusinessScales.com
+            A product of Business Scales
           </span>
         </div>
       </div>

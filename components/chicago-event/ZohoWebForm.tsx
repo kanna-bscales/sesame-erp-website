@@ -58,7 +58,7 @@ export function ZohoWebForm({ src, title, heightDesktop, heightMobile, timeoutMs
             </a>{" "}
             or email{" "}
             <a
-              href={`mailto:${site.email}?subject=${encodeURIComponent("PLMA 2026 – free ERP module request")}`}
+              href={`mailto:${site.email}?subject=${encodeURIComponent("PLMA 2026 – complimentary ERP module enquiry")}`}
               className="font-medium text-ballpoint-ink underline underline-offset-4"
             >
               {site.email}

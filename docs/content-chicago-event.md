@@ -4,13 +4,13 @@ Rendered copy: `content/chicago-event.ts`. Keep both files in sync.
 
 Campaign page for PLMA's 2026 Private Label Trade Show. Rattan sends the promotional emails from his own system to his existing contact list; leads arrive in Zoho CRM and Rattan follows up. The page is not linked from the site navigation.
 
-**The one message:** PLMA conference users can request one free ERP module representing US$5,000 worth of development work through SesameERP.
+**The one message:** PLMA 2026 attendees can request complimentary development of one ERP module, representing US$5,000 worth of ERP development work, through SesameERP. Public wording says "complimentary", never "free" (team feedback, November 4, 2026). Official URLs use www: https://www.sesameerp.ai/chicago-event and https://www.sesameerp.ai/plma-2026-terms.
 
 It is NOT a cash credit, account balance or discount, and it covers ERP only (not CRM or other services).
 
 ## Confirmed by Nbits
 
-- Business Scales provides one ERP module free of charge.
+- Business Scales provides development of one ERP module on a complimentary basis.
 - The development work represents US$5,000 worth of value.
 - ERP only. Available to PLMA conference users. No expiry date.
 - Promoted capabilities: custom ERP, AI agents for ERP, ERP automation, customised software, app development.
@@ -21,32 +21,32 @@ It is NOT a cash credit, account balance or discount, and it covers ERP only (no
 - Full legal terms and conditions (marked "pending business approval" on the page).
 - Location wording: the venue is in Rosemont, next to Chicago. The page says "Rosemont (Chicago), Illinois, USA"; the brief said "Chicago, Illinois, USA".
 - Campaign contact email: the footer and the form fallback use the site email `hi@sesamelabs.ai`. Confirm it is the right contact for this campaign.
-- Registration form: custom form (`components/chicago-event/ZohoLeadForm.tsx`) that posts to the existing Zoho CRM webform (Leads, form 7671386000000694280) — same endpoint and request Zoho's generated code uses. Field map and keys live in `zohoLeadForm` in `content/chicago-event.ts`. It captures ERP requirements (LEADCF3), request type Free ERP Module / Product Demo / Both (LEADCF7), ERP interests (LEADCF1) and UTM source/medium/campaign (LEADCF4/6/5). Lead Source "PLMA 2026", tag "PLMA 2026" (set in the webform), campaign "PLMA 2026 – Free ERP Module". The old "Chicago Event" Lead Source option and "Chicago Event – $5,000 Credits" campaign are kept. Campaign association of new leads is not automatic yet (needs a Zoho workflow + custom function). If the webform is edited in Zoho, re-copy the hidden keys from Publish Options.
+- Enquiry form (`components/chicago-event/ZohoLeadForm.tsx`, posts to Zoho webform 7671386000000694280). Labels: required fields show a red *; optional fields have no "(optional)" label. Fields: Name (required; split into Zoho First Name / Last Name, one-word names go to Last Name), Business email (required), Company name (required), Phone number (optional), Booth number (optional; pre-filled only from the verified CRM record of a personal link, editable; no helper text), Job title (optional), Website (optional), "What would you like to discuss with our team?" (textarea, LEADCF3), consent (LEADCF52, required, unticked) and the offer-terms checkbox (browser only). Services Interested In (LEADCF1) and Request Type (LEADCF7) are no longer sent. Until the webform has a Booth Number field, the booth number is written as the first line of LEADCF3 ("Booth number: 12345"). Fixed values: Lead Source "PLMA 2026", Credit Offer Status "Pending Review", tag "PLMA 2026" (webform setting). Submit button: Submit Your Enquiry. Success message only after Zoho accepts the submission. Personal invitation links (`/chicago-event?ref=<attendee reference>`, no booth number in the link) pre-fill Name, Business email, Company, Phone, Booth, Job title and Website from the attendee's Zoho Lead via the server route `/api/plma/attendee` (secure reference only; a booth number alone never loads anyone's details); all fields stay editable and both checkboxes stay unticked. Prefill notice: "We have filled in the details we hold for you from your PLMA 2026 invitation. Please check them and change anything that is not right before you submit." Submissions go to `/api/plma/enquiry`, which updates the existing Lead (matched by reference, then email) or creates one; it falls back to the Zoho webform when Zoho API credentials are not configured.
 - FAQ "Does the offer expire?": the brief's answer was "Nbits has confirmed that there is no expiry date." The page shows "No. There is no expiry date for this offer." so the internal name is not shown to visitors.
 - Case studies: none approved for SesameERP, so the section is hidden. Add items to `caseStudies` to show it.
 
 ## Header and footer on this page
 
-- Header button: Request your free ERP module (to the form). Secondary, on wide screens and in the mobile menu: Request a demo (to the PLMA 2026 section).
+- Header button: Request your complimentary ERP module (to the form). Secondary, on wide screens and in the mobile menu: Request a demo (to the PLMA 2026 section).
 - "How it works" and "FAQ" in the header scroll to this page's sections; "AI agents" and "Modules" open the homepage sections.
 - Footer tagline: Custom ERP solutions with AI agents and intelligent automation.
-- Footer attribution: A product of BusinessScales.com (links to https://business-scales.com/).
+- Footer attribution: A product of Business Scales (links to https://businessscales.com/).
 
 ## Hero
 
 - Eyebrow: PLMA 2026 attendee exclusive
-- Headline: Get one ERP module / built for free.
+- Headline: Complimentary development / of one ERP module.
 - Highlight: US$5,000 worth of ERP development work
-- Description: Attending PLMA 2026? Discover how SesameERP can help improve your business operations. Get one ERP module developed at no cost, representing US$5,000 worth of development work.
-- Benefits: One free ERP module · Custom ERP development · AI agents for ERP · ERP workflow automation
-- Buttons: Request your free ERP module (to the form) · Request a demo (to the PLMA 2026 section)
-- Offer card: PLMA 2026 exclusive offer · One ERP module · Free · Development value US$5,000 · Available to PLMA conference users
+- Description: Attending PLMA 2026? Explore how SesameERP can help improve your business operations with custom ERP development, AI agents and ERP automation.
+- Benefits: One complimentary ERP module · Custom ERP development · AI agents for ERP · ERP workflow automation
+- Buttons: Request your complimentary ERP module (to the form) · Request a demo (to the PLMA 2026 section)
+- Offer card: PLMA 2026 exclusive offer · One ERP module · Complimentary · Development value US$5,000 · Available to PLMA 2026 attendees
 
-## Request your free ERP module
+## Request your complimentary ERP module
 
 Tell us about your business and the ERP module you need. Our team will review your request and contact you about the next steps.
 
-- One ERP module, developed free of charge
+- Complimentary development of one ERP module
 - Representing US$5,000 worth of development work
 - Prefer to see SesameERP first? Ask for a product demo when we contact you
 
@@ -56,7 +56,7 @@ Link: Read the offer terms.
 
 SesameERP helps businesses streamline operations through custom ERP systems, intelligent AI agents and business process automation. We build solutions around the way businesses actually work.
 
-A product of BusinessScales.com.
+A product of Business Scales (https://businessscales.com/).
 
 ## Our capabilities
 
@@ -67,6 +67,8 @@ Lead: The ERP capabilities SesameERP is showcasing for PLMA 2026.
 - **ERP automation** — Automate repetitive ERP tasks and streamline business processes to improve operational efficiency.
 - **Customised software** — Software built around your specific business requirements, for the processes off-the-shelf tools do not cover.
 - **App development** — Web and mobile apps that connect to your business systems, so your team can work from anywhere.
+
+"Learn more" links (open in a new tab): Custom ERP development → `/#modules`, AI agents for ERP → `/#agents`, ERP automation → `/#process`. Customised software and App development have no link (no matching page yet).
 
 ## Who we help
 
@@ -99,27 +101,27 @@ No booth, venue demo, time or meeting place is claimed.
 - **Process-first philosophy** — Understand and optimise workflows before designing and implementing technology.
 - **Dedicated support** — Provide guidance through requirements, development, implementation and ongoing support.
 
-## How the free ERP module offer works
+## How the complimentary ERP module offer works
 
 1. **Submit your details** — Tell us about your business and ERP requirements.
 2. **Share your requirements** — Describe the ERP module you would like to have developed.
 3. **Requirements review** — Our team reviews your requirements and offer eligibility.
 4. **Personal follow-up** — Rattan and the team contact you to discuss the next steps.
 
-Banner: **PLMA 2026 exclusive offer** — Get one ERP module developed free of charge, representing US$5,000 worth of development work. Button: Request your free ERP module.
+Banner: **PLMA 2026 exclusive offer** — Complimentary development of one ERP module, representing US$5,000 worth of ERP development work. Button: Request your complimentary ERP module.
 
 ## Frequently asked questions
 
-1. **What is the PLMA 2026 exclusive offer?** One ERP module will be developed free of charge, representing US$5,000 worth of development work.
+1. **What is the PLMA 2026 exclusive offer?** Complimentary development of one ERP module, representing US$5,000 worth of ERP development work.
 2. **Who is eligible for this offer?** The offer is available to PLMA conference users.
 3. **Which services are included?** This offer is specifically for one ERP module.
-4. **How do I request the free ERP module?** Submit your business details and ERP requirements through the registration form. Our team will review your request and contact you.
+4. **How do I request the complimentary ERP module?** Submit your business details and ERP requirements through the registration form. Our team will review your request and contact you.
 5. **Can I request a product demo?** Yes. You can request a SesameERP product demo using the enquiry form.
 6. **Does the offer expire?** No. There is no expiry date for this offer.
 
 ## Offer terms and conditions
 
-- One ERP module is offered free of charge.
+- Development of one ERP module is offered on a complimentary basis.
 - The development work represents US$5,000 in value.
 - The offer is intended for PLMA conference users.
 - The offer applies to ERP only.
@@ -129,7 +131,8 @@ Full legal terms and conditions are pending business approval.
 
 ## SEO
 
-- Title: PLMA 2026 Exclusive ERP Offer | Free ERP Module Worth $5,000 | SesameERP
-- Description: Attending PLMA 2026? Get one ERP module developed free, representing US$5,000 worth of work. Explore custom ERP development, AI agents and ERP automation with SesameERP.
+- Title: PLMA 2026 Exclusive ERP Offer | Complimentary ERP Module Development | SesameERP
+- Description: Attending PLMA 2026? Request complimentary development of one ERP module, representing US$5,000 worth of ERP development work. Explore custom ERP development, AI agents and ERP automation with SesameERP.
+- Canonical / og:url: https://www.sesameerp.ai/chicago-event
 - Canonical: https://sesameerp.ai/chicago-event
 - Social image: `app/chicago-event/opengraph-image.tsx` (campaign version of the site image).

@@ -26,9 +26,11 @@ export function OfferCard() {
         <p className="font-semiwide mt-7 text-[clamp(1.6rem,3.4vw,2.25rem)] leading-tight font-extrabold">
           {offerCard.module}
         </p>
-        <p className="font-wide mt-1 text-[clamp(4rem,10vw,6.5rem)] leading-[0.95] font-extrabold">
-          <span>{offerCard.price}</span>
-        </p>
+        <div className="@container">
+          <p className="font-wide mt-1 text-[clamp(1.6rem,9.5cqi,3.5rem)] leading-[0.95] font-extrabold">
+            <span>{offerCard.price}</span>
+          </p>
+        </div>
 
         <dl className="mt-7 border-t-2 border-ink">
           <div className="flex items-baseline justify-between gap-4 border-b border-rule py-3.5">
