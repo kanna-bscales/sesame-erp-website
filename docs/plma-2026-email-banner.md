@@ -5,10 +5,10 @@ One common banner image for everyone; each recipient's banner links to **their o
 attendee Google Sheet).
 
 - Banner image (public once the site is deployed):
-  `https://www.sesameerp.ai/images/email-signature/plma-2026-banner.png` (1200 × 400, shown at 600 × 200).
+  `https://www.sesameerp.ai/images/email-signature/plma-2026-banner.png` (1200 × 300, shown at 600 × 150).
   Source: `public/images/email-signature/plma-2026-banner-source.html`.
-- Message on the banner: "Complimentary Development of One ERP Module", "US$5,000 Worth of ERP
-  Development Work", services "Custom ERP | AI Agents | ERP Automation", sponsor Business Scales LLC.
+- Design: simple dark sponsor banner — "Business Scales LLC, Offer sponsor", Website businessscales.com,
+  SesameERP www.sesameerp.ai, Email info@businessscales.com. The whole image is one link.
 
 ## HTML snippet
 
