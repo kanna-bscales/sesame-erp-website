@@ -58,8 +58,40 @@ const sectionTitle = "heading-section text-[clamp(2rem,3.6vw,3.5rem)]";
 export default function PlmaCampaignPage() {
   return (
     <main id="main">
+      {/* Registration form */}
+      <section id={anchors.form} aria-labelledby="form-heading" className="border-b border-rule bg-sheet pt-28 sm:pt-32">
+        <div className="page-container grid gap-12 pb-20 lg:grid-cols-12 lg:gap-10 lg:pb-28">
+          <div className="lg:col-span-5">
+            <div className="lg:sticky lg:top-28">
+              <h2 id="form-heading" className={sectionTitle}>
+                {formSection.heading}
+              </h2>
+              <p className="mt-6 max-w-[34rem] text-lg leading-relaxed text-ink-soft">{formSection.intro}</p>
+              <ul className="mt-8 space-y-3">
+                {formSection.points.map((point) => (
+                  <li key={point} className="flex items-start gap-3">
+                    <Check aria-hidden className="mt-1 size-5 shrink-0 text-ballpoint-ink" />
+                    {point}
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href={termsPath}
+                className="mt-8 inline-block text-sm font-medium text-ink-soft underline underline-offset-4 hover:text-ink"
+              >
+                {termsLinkLabel}
+              </Link>
+            </div>
+          </div>
+
+          <div className="lg:col-span-7">
+            <ZohoLeadForm />
+          </div>
+        </div>
+      </section>
+
       {/* Hero */}
-      <section id="top" className="relative overflow-hidden pt-28 pb-16 sm:pt-32 lg:pb-24">
+      <section id="top" className="relative overflow-hidden pt-20 pb-16 sm:pt-24 lg:pb-24">
         <div className="page-container grid items-center gap-12 lg:grid-cols-12 lg:gap-10">
           <div className="lg:col-span-7">
             <PlmaHeadline
@@ -104,38 +136,6 @@ export default function PlmaCampaignPage() {
 
           <div className="lg:col-span-5">
             <OfferCard />
-          </div>
-        </div>
-      </section>
-
-      {/* Registration form */}
-      <section id={anchors.form} aria-labelledby="form-heading" className="border-y border-rule bg-sheet">
-        <div className={`page-container grid gap-12 lg:grid-cols-12 lg:gap-10 ${band}`}>
-          <div className="lg:col-span-5">
-            <div className="lg:sticky lg:top-28">
-              <h2 id="form-heading" className={sectionTitle}>
-                {formSection.heading}
-              </h2>
-              <p className="mt-6 max-w-[34rem] text-lg leading-relaxed text-ink-soft">{formSection.intro}</p>
-              <ul className="mt-8 space-y-3">
-                {formSection.points.map((point) => (
-                  <li key={point} className="flex items-start gap-3">
-                    <Check aria-hidden className="mt-1 size-5 shrink-0 text-ballpoint-ink" />
-                    {point}
-                  </li>
-                ))}
-              </ul>
-              <Link
-                href={termsPath}
-                className="mt-8 inline-block text-sm font-medium text-ink-soft underline underline-offset-4 hover:text-ink"
-              >
-                {termsLinkLabel}
-              </Link>
-            </div>
-          </div>
-
-          <div className="lg:col-span-7">
-            <ZohoLeadForm />
           </div>
         </div>
       </section>
