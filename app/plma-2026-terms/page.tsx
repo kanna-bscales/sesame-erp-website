@@ -24,13 +24,13 @@ import {
 export const metadata: Metadata = {
   title: termsSeo.title,
   description: termsSeo.description,
-  alternates: { canonical: termsSeo.path },
+  alternates: { canonical: termsSeo.url },
   // Out of search results until the business signs off for launch (termsStatus.indexable).
   robots: termsStatus.indexable ? { index: true, follow: true } : { index: false, follow: false },
   openGraph: {
     title: termsSeo.title,
     description: termsSeo.description,
-    url: termsSeo.path,
+    url: termsSeo.url,
     siteName: "SesameERP",
     type: "article",
   },
@@ -202,7 +202,7 @@ export default function PlmaTermsPage() {
         >
           <p className="font-semiwide text-2xl font-extrabold">Ready to apply?</p>
           <p className="mt-2 text-ink-soft">
-            PLMA conference users can request one free ERP module representing US$5,000 worth of development work
+            PLMA 2026 attendees can request complimentary development of one ERP module, representing US$5,000 worth of ERP development work,
             through SesameERP.
           </p>
           <div className="mt-6 flex flex-wrap items-center gap-4">
@@ -319,7 +319,7 @@ function SectionBody({ section }: { section: TermsSection }) {
                 <ContactItem label="SesameERP" href={termsContact.product.href} text={termsContact.product.label} external />
                 <ContactItem
                   label="Email"
-                  href={`mailto:${termsContact.email}?subject=${encodeURIComponent("PLMA 2026 free ERP module offer")}`}
+                  href={`mailto:${termsContact.email}?subject=${encodeURIComponent("PLMA 2026 complimentary ERP module offer")}`}
                   text={termsContact.email}
                 />
               </div>

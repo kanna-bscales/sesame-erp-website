@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Logo } from "@/components/brand/Logo";
 import { navLinks, showSolutions, site, solutions } from "@/lib/site";
-import { FooterAttribution, FooterCampaignLinks, FooterTagline } from "./FooterCampaignText";
+import { FooterAttribution, FooterCampaignLinks, FooterContactColumn, FooterTagline } from "./FooterCampaignText";
 import { SectionLink } from "./SectionLink";
 
 export function SiteFooter() {
@@ -53,16 +53,7 @@ export function SiteFooter() {
           </ul>
         </nav>
 
-        <div className="md:col-span-2">
-          <h2 className="text-sm font-semibold">Contact</h2>
-          <ul className="mt-4 space-y-2 text-night-soft">
-            <li>
-              <a href={`mailto:${site.email}`} className="transition-colors hover:text-white">
-                {site.email}
-              </a>
-            </li>
-          </ul>
-        </div>
+        <FooterContactColumn email={site.email} />
 
         {site.social.some((s) => s.href !== "#") && (
           <div className="md:col-span-2">

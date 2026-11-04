@@ -1,27 +1,41 @@
 // PLMA 2026 campaign copy for /chicago-event. Mirrors docs/content-chicago-event.md — keep wording in sync.
 //
-// The offer (confirmed by Nbits): one ERP module built free of charge, representing US$5,000 worth
-// of development work, for PLMA conference users. ERP only. No expiry date.
+// The offer (confirmed by Nbits): complimentary development of one ERP module, representing US$5,000
+// worth of development work, for PLMA conference attendees. ERP only. No expiry date.
 // It is NOT a cash credit, balance or discount — never describe it that way.
+// Public wording uses "complimentary", never "free" (team feedback, November 4, 2026).
 //
 // Nothing here may be invented. Items still waiting on the business are marked "TO CONFIRM".
 
 export const campaignPath = "/chicago-event";
+
+// Official product origin (www). Campaign canonicals, Open Graph URLs, QR codes and the email
+// signature all use it. The rest of the site still uses app/layout.tsx's metadataBase.
+export const siteOrigin = "https://www.sesameerp.ai";
+export const campaignUrl = `${siteOrigin}${campaignPath}`;
+
+// Each attendee gets a personal link such as https://www.sesameerp.ai/chicago-event?booth=12345.
+// The form only pre-fills the Booth number field from it. CRM lookup is deliberately NOT built yet.
+export const boothParam = "booth";
 
 // Zoho CRM webform 7671386000000694280 (org945149959, Leads module) — values copied from the
 // source code Zoho generates under Setup > Webforms > Publish Options. Do not rename fields or edit
 // the keys by hand: if the webform is edited in Zoho, re-copy the keys AND the analytics script URL
 // from the newly generated source.
 //
-// Field map (Zoho name -> CRM field):
-//   First Name, Last Name, Email, Phone, Company, Designation (Title), Website
-//   LEADCF1  -> Services Interested In (multi-select)
+// Field map (Zoho name -> CRM field) used by the campaign form:
+//   First Name, Last Name  <- split from the single "Name" input (Last Name is mandatory in Zoho;
+//                             a one-word name goes into Last Name)
+//   Email, Phone (optional), Company, Designation (Title, optional), Website (optional)
 //   LEADCF2  -> Credit Offer Status (always "Pending Review"; never auto-approved)
-//   LEADCF3  -> ERP Requirements (multi-line)
+//   LEADCF3  -> ERP Requirements (multi-line) <- "What would you like to discuss with our team?"
+//               Until a Booth Number field exists on the webform, the booth number is added to
+//               the top of this text as "Booth number: 12345".
 //   LEADCF4  -> UTM Source, LEADCF6 -> UTM Medium, LEADCF5 -> UTM Campaign
-//   LEADCF7  -> Request Type (picklist)
 //   LEADCF52 -> Consent to be Contacted (checkbox)
 //   Lead Source -> "PLMA 2026" (tag "PLMA 2026" is added by the Zoho webform settings)
+// No longer sent from this form (the CRM fields are kept for other uses):
+//   LEADCF1 Services Interested In, LEADCF7 Request Type.
 export const zohoLeadForm = {
   // Same endpoint and request shape as Zoho's generated form script (fetch POST of the form data).
   endpoint: "https://crm.zoho.com/crm/WebToLeadForm",
@@ -54,67 +68,66 @@ export const zohoLeadForm = {
     company: "Company",
     jobTitle: "Designation",
     website: "Website",
-    services: "LEADCF1",
     requirements: "LEADCF3",
-    requestType: "LEADCF7",
     consent: "LEADCF52",
     utmSource: "LEADCF4",
     utmMedium: "LEADCF6",
     utmCampaign: "LEADCF5",
+    // Set to the Zoho field name (e.g. "LEADCF8") once a Booth Number field is added to the webform.
+    // While null, the booth number is written into the ERP Requirements text instead.
+    booth: null as string | null,
   },
+  // Browser-only inputs: read and removed before the request is sent to Zoho.
+  clientOnly: { fullName: "plma_full_name", booth: "plma_booth_number" },
   // Zoho field lengths, from the generated source.
-  maxLength: { firstName: 40, lastName: 80, email: 100, phone: 30, company: 200, jobTitle: 100, website: 255, requirements: 2000 },
+  maxLength: { name: 120, firstName: 40, lastName: 80, email: 100, phone: 30, company: 200, jobTitle: 100, website: 255, booth: 20, requirements: 2000 },
   // Fallbacks match the hidden-field defaults set in the Zoho webform.
   utmDefaults: { source: "(direct)", medium: "(none)", campaign: "(not set)" },
 } as const;
 
 // Copy for the custom request form (PLMA 2026 offer).
 export const leadForm = {
-  heading: "Request Your Free ERP Module",
+  heading: "Submit your enquiry",
   description:
-    "Tell us about your business and ERP requirements. Our team will review your request and contact you about the PLMA 2026 exclusive offer.",
-  offer: "One ERP Module Free – US$5,000 Development Value",
-  optional: "optional",
+    "Tell us about your business and what you would like to discuss. Our team will review your enquiry and contact you about the PLMA 2026 exclusive offer.",
+  offer: "Complimentary development of one ERP module – US$5,000 worth of ERP development work",
   labels: {
-    firstName: "First name",
-    lastName: "Last name",
+    name: "Name",
     email: "Business email",
     phone: "Phone number",
     company: "Company name",
+    booth: "Booth number",
     jobTitle: "Job title",
     website: "Website",
-    services: "Services interested in",
-    requirements: "What ERP module are you looking for?",
-    requestType: "What would you like to discuss?",
+    requirements: "What would you like to discuss with our team?",
   },
   placeholders: {
+    name: "Your full name",
     email: "you@company.com",
     phone: "+1 312 555 0100",
+    booth: "e.g. 12345",
     website: "yourcompany.com",
-    services: "Select ERP interests",
-    requirements: "Briefly describe the ERP module or business process you would like to improve...",
+    requirements: "Tell us about your business requirements or the ERP module you are interested in discussing...",
   },
-  // Values must match the Zoho picklist options exactly.
-  serviceOptions: ["Custom ERP Module Development", "AI Agents for ERP", "ERP Automation"],
-  requestTypes: ["Free ERP Module", "Product Demo", "Both"],
   consent: "I agree to be contacted by SesameERP, a product of Business Scales, regarding my ERP enquiry.",
   errors: {
-    firstName: "Enter your first name.",
-    lastName: "Enter your last name.",
+    name: "Enter your name.",
     email: "Enter a valid business email, like name@company.com.",
     emailRequired: "Enter your business email.",
-    phone: "Enter a valid phone number with 7 to 15 digits. Include your country code if outside the US.",
-    phoneRequired: "Enter your phone number.",
+    phone: "Enter a valid phone number with 7 to 15 digits, or leave it blank.",
     company: "Enter your company name.",
+    booth: "Use letters, numbers and dashes only (up to 20 characters), or leave it blank.",
     website: "Enter a valid website, like yourcompany.com.",
-    consent: "Please agree to be contacted so our team can respond to your request.",
+    consent: "Please agree to be contacted so our team can respond to your enquiry.",
     summary: "Please fix the highlighted fields.",
   },
-  submit: "Request My Free ERP Module",
+  submit: "Submit Your Enquiry",
   submitting: "Submitting…",
-  successHeading: "Thank you! Your request has been submitted.",
-  successBody: "Our team will review your ERP requirements and contact you about the PLMA 2026 offer.",
-  failureHeading: "We couldn’t submit your request.",
+  successHeading: "Thank you. Your enquiry has been received.",
+  successBody: "Our team will review your requirements and contact you about the PLMA 2026 offer.",
+  // Shown when a personal invitation link filled in the form from Zoho CRM.
+  prefillNotice: "We have filled in the details we hold for you from your PLMA 2026 invitation. Please check them and change anything that is not right before you submit.",
+  failureHeading: "We couldn’t submit your enquiry.",
   failureBody: "Your details are still in the form. Please try again in a moment, or",
   failureLink: "open the form in a new tab",
 } as const;
@@ -130,13 +143,13 @@ export const anchors = {
 
 // The one sentence every section must agree with.
 export const offerSummary =
-  "PLMA conference users can request one free ERP module representing US$5,000 worth of development work through SesameERP.";
+  "PLMA 2026 attendees can request complimentary development of one ERP module, representing US$5,000 worth of ERP development work, through SesameERP.";
 
 export const offer = {
   module: "One ERP module",
-  price: "Free",
-  value: "US$5,000 development value",
-  audience: "For PLMA conference users",
+  price: "Complimentary",
+  value: "US$5,000 worth of ERP development work",
+  audience: "For PLMA 2026 attendees",
 };
 
 // Official event details — https://plma.com/events/plmas-2026-private-label-trade-show
@@ -154,14 +167,14 @@ export const plmaEvent = {
 // Official Zoho CRM webform (org945149959, Leads module). Form internals are out of scope here.
 export const zohoWebform = {
   src: "https://crm.zoho.com/crm/WebFormServeServlet?rid=a6e932813088cc6b7a394e8fa41ba19bc0eb06bdd153f6377aa9a2d2b711268890a1e89e9b4b4ee867d6977061b588bdgid42c3121357c7ff335a83c2903d062a1c4e1503d44d64b42f8fd15b9e36084e2c",
-  title: "PLMA 2026 free ERP module request form",
+  title: "PLMA 2026 complimentary ERP module enquiry form",
   // Zoho's embed is 870px tall at 610px wide; narrow screens stack the fields and need more room.
   heightDesktop: 900,
   heightMobile: 1080,
 };
 
 export const cta = {
-  primary: "Request your free ERP module",
+  primary: "Request your complimentary ERP module",
   demo: "Request a demo",
   productDemo: "Request a product demo",
 };
@@ -174,18 +187,28 @@ export const campaignChrome = {
   // Homepage section links that have an equivalent on this page scroll here instead of leaving it.
   sectionLinks: { "#process": `#${anchors.how}`, "#faq": `#${anchors.faq}` } as Record<string, string>,
   footerTagline: "Custom ERP solutions with AI agents and intelligent automation.",
-  attribution: { prefix: "A product of", label: "BusinessScales.com", href: "https://businessscales.com/" },
+  attribution: { prefix: "A product of", label: "Business Scales", href: "https://business-scales.com/" },
+  // Company information shown in the footer on campaign pages.
+  companyInfo: {
+    sponsorLabel: "Offer sponsor",
+    sponsor: "Business Scales LLC",
+    links: [
+      { label: "Business website", text: "business-scales.com", href: "https://business-scales.com/" },
+      { label: "Product", text: "SesameERP · www.sesameerp.ai", href: "https://www.sesameerp.ai/" },
+      { label: "Email", text: "info@business-scales.com", href: "mailto:info@business-scales.com" },
+    ],
+  },
 };
 
 export const plmaHero = {
   eyebrow: "PLMA 2026 attendee exclusive",
-  headline: ["Get one ERP module"],
-  headlineSecond: "built for free.",
+  headline: ["Complimentary development"],
+  headlineSecond: "of one ERP module.",
   highlight: "US$5,000 worth of ERP development work",
   description:
-    "Attending PLMA 2026? Discover how SesameERP can help improve your business operations. Get one ERP module developed at no cost, representing US$5,000 worth of development work.",
+    "Attending PLMA 2026? Explore how SesameERP can help improve your business operations with custom ERP development, AI agents and ERP automation.",
   benefits: [
-    { icon: "module", label: "One free ERP module" },
+    { icon: "module", label: "One complimentary ERP module" },
     { icon: "erp", label: "Custom ERP development" },
     { icon: "agents", label: "AI agents for ERP" },
     { icon: "automation", label: "ERP workflow automation" },
@@ -201,12 +224,12 @@ export const offerCard = {
 };
 
 export const formSection = {
-  heading: "Request your free ERP module",
+  heading: "Request your complimentary ERP module",
   intro:
-    "Tell us about your business and the ERP module you need. Our team will review your request and contact you about the next steps.",
+    "Tell us about your business and what you would like to discuss. Our team will review your enquiry and contact you about the next steps.",
   points: [
-    "One ERP module, developed free of charge",
-    "Representing US$5,000 worth of development work",
+    "Complimentary development of one ERP module",
+    "US$5,000 worth of ERP development work",
     "Prefer to see SesameERP first? Ask for a product demo when we contact you",
   ],
 };
@@ -216,24 +239,29 @@ export const aboutSection = {
   body: "SesameERP helps businesses streamline operations through custom ERP systems, intelligent AI agents and business process automation. We build solutions around the way businesses actually work.",
 };
 
+// learnMore: homepage section with more detail, opened in a new tab so the form stays open.
 export const capabilitiesSection = {
   heading: "Our capabilities",
+  learnMoreLabel: "Learn more",
   lead: "The ERP capabilities SesameERP is showcasing for PLMA 2026.",
   items: [
     {
       icon: "erp",
       title: "Custom ERP development",
       body: "Custom ERP modules designed around your business requirements, workflows and operational processes.",
+      learnMore: "/#modules",
     },
     {
       icon: "agents",
       title: "AI agents for ERP",
       body: "AI-powered agents that assist with ERP workflows and help businesses manage operations more intelligently.",
+      learnMore: "/#agents",
     },
     {
       icon: "automation",
       title: "ERP automation",
       body: "Automate repetitive ERP tasks and streamline business processes to improve operational efficiency.",
+      learnMore: "/#process",
     },
     {
       icon: "software",
@@ -279,7 +307,7 @@ export const whySection = {
 };
 
 export const howSection = {
-  heading: "How the free ERP module offer works",
+  heading: "How the complimentary ERP module offer works",
   steps: [
     { title: "Submit your details", body: "Tell us about your business and ERP requirements." },
     { title: "Share your requirements", body: "Describe the ERP module you would like to have developed." },
@@ -288,7 +316,7 @@ export const howSection = {
   ],
   banner: {
     heading: "PLMA 2026 exclusive offer",
-    body: "Get one ERP module developed free of charge, representing US$5,000 worth of development work.",
+    body: "Complimentary development of one ERP module, representing US$5,000 worth of ERP development work.",
   },
 };
 
@@ -301,13 +329,13 @@ export const plmaFaq = {
   items: [
     {
       q: "What is the PLMA 2026 exclusive offer?",
-      a: "One ERP module will be developed free of charge, representing US$5,000 worth of development work.",
+      a: "Complimentary development of one ERP module, representing US$5,000 worth of ERP development work.",
     },
-    { q: "Who is eligible for this offer?", a: "The offer is available to PLMA conference users." },
+    { q: "Who is eligible for this offer?", a: "The offer is available to PLMA 2026 conference attendees." },
     { q: "Which services are included?", a: "This offer is specifically for one ERP module." },
     {
-      q: "How do I request the free ERP module?",
-      a: "Submit your business details and ERP requirements through the registration form. Our team will review your request and contact you.",
+      q: "How do I request the complimentary ERP module?",
+      a: "Submit your business details and what you would like to discuss through the enquiry form. Our team will review your enquiry and contact you.",
     },
     { q: "Can I request a product demo?", a: "Yes. You can request a SesameERP product demo using the enquiry form." },
     // Brief wording: "Nbits has confirmed that there is no expiry date." Shown without the internal name.
@@ -320,9 +348,9 @@ export const offerTerms = {
   heading: "Offer terms",
   summary: "Offer terms and conditions",
   items: [
-    "One ERP module is offered free of charge.",
+    "Development of one ERP module is offered on a complimentary basis.",
     "The development work represents US$5,000 in value.",
-    "The offer is intended for PLMA conference users.",
+    "The offer is intended for PLMA 2026 conference attendees.",
     "The offer applies to ERP only.",
     "No expiry date has been set for the offer.",
   ],
@@ -330,18 +358,19 @@ export const offerTerms = {
 };
 
 export const plmaSeo = {
-  title: "PLMA 2026 Exclusive ERP Offer | Free ERP Module Worth $5,000 | SesameERP",
+  title: "PLMA 2026 Exclusive ERP Offer | Complimentary ERP Module Development | SesameERP",
   description:
-    "Attending PLMA 2026? Get one ERP module developed free, representing US$5,000 worth of work. Explore custom ERP development, AI agents and ERP automation with SesameERP.",
+    "Attending PLMA 2026? Request complimentary development of one ERP module, representing US$5,000 worth of ERP development work. Explore custom ERP development, AI agents and ERP automation with SesameERP.",
   path: campaignPath,
+  url: campaignUrl,
   keywords: [
     "PLMA 2026",
     "private label ERP",
-    "free ERP module",
+    "complimentary ERP module",
     "custom ERP development",
     "AI agents for ERP",
     "ERP automation",
     "SesameERP",
   ],
-  imageAlt: "PLMA 2026 exclusive: one ERP module built free, US$5,000 development value — SesameERP",
+  imageAlt: "PLMA 2026 exclusive: complimentary development of one ERP module, US$5,000 worth of ERP development work — SesameERP",
 };

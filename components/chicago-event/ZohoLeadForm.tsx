@@ -3,13 +3,29 @@
 import Link from "next/link";
 import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { CircleAlert, CircleCheck, LoaderCircle } from "lucide-react";
-import { MultiSelectDropdown } from "@/components/chicago-event/MultiSelectDropdown";
-import { leadForm, zohoLeadForm, zohoWebform } from "@/content/chicago-event";
-import { termsAcceptance, termsPath } from "@/content/plma-2026-terms";
+import { boothParam, leadForm, zohoLeadForm, zohoWebform } from "@/content/chicago-event";
+import { termsAcceptance, termsMeta, termsPath } from "@/content/plma-2026-terms";
+import {
+  BOOTH_RE,
+  isValidRef,
+  refParam,
+  type AttendeeLookupResponse,
+  type EnquiryErrorKey,
+  type EnquiryResponse,
+} from "@/lib/plma/reference";
 
-// Custom-designed form that submits to the existing Zoho CRM webform (Leads module).
+// PLMA 2026 registration form.
 //
-// It sends the same request Zoho's own generated form sends: a fetch POST of the form data to
+// Personal invitation links (…?booth=F2542&ref=<attendee reference>) pre-fill the form: the
+// reference is sent to /api/plma/attendee, which looks the Lead up in Zoho CRM on the server and
+// returns only Name, Email, Company, Phone, Booth, Job title and Website. Everything stays
+// editable, and the consent and terms boxes are never pre-ticked.
+//
+// Submissions go to /api/plma/enquiry, which updates the attendee's existing Lead (matched by the
+// reference, then by email) or creates a new one. If the server has no Zoho credentials it answers
+// "not_configured" and the form falls back to the Zoho webform below.
+//
+// Webform fallback: it sends the same request Zoho's own generated form sends: a fetch POST of the form data to
 // https://crm.zoho.com/crm/WebToLeadForm, using the real hidden keys and Zoho field names from
 // content/chicago-event.ts. The success message only appears after Zoho answers with its
 // "accepted" response; network errors, blocked responses or anything unexpected show an error
@@ -22,7 +38,7 @@ declare global {
   }
 }
 
-type FieldKey = "firstName" | "lastName" | "email" | "phone" | "company" | "website" | "consent" | "terms";
+type FieldKey = "name" | "email" | "phone" | "company" | "booth" | "website" | "consent" | "terms";
 
 // Clickwrap acceptance of the PLMA offer terms. Checked in the browser only: it is removed from the
 // payload before it is sent, so the Zoho submission is unchanged.
@@ -35,25 +51,51 @@ const UTM_KEY = "sesame-plma-utm";
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const WEBSITE_RE = /^(https?:\/\/)?([a-z0-9-]+\.)+[a-z]{2,}(:\d+)?(\/\S*)?$/i;
 
+const C = zohoLeadForm.clientOnly;
+
+/** Attendee reference from ?ref=…, kept only if it has the expected shape. */
+function refFromUrl(): string | null {
+  const value = new URLSearchParams(window.location.search).get(refParam);
+  return isValidRef(value) ? value : null;
+}
+
+/** Booth number from ?booth=…, kept only if it looks like a booth number. */
+function boothFromUrl(): string {
+  const value = (new URLSearchParams(window.location.search).get(boothParam) ?? "").trim();
+  return BOOTH_RE.test(value) ? value : "";
+}
+
+/** One "Name" input -> Zoho's First Name / Last Name. Last Name is mandatory in Zoho, so a
+ *  single-word name goes there; otherwise the last word is the last name. */
+function splitName(full: string): { first: string; last: string } {
+  const parts = full.trim().split(/\s+/).filter(Boolean);
+  if (parts.length <= 1) return { first: "", last: parts[0] ?? "" };
+  return {
+    first: parts.slice(0, -1).join(" ").slice(0, zohoLeadForm.maxLength.firstName),
+    last: parts[parts.length - 1].slice(0, zohoLeadForm.maxLength.lastName),
+  };
+}
+
 function validate(data: FormData): Errors {
   const text = (name: string) => String(data.get(name) ?? "").trim();
   const errors: Errors = {};
   const e = leadForm.errors;
 
-  if (!text(F.firstName)) errors.firstName = e.firstName;
-  if (!text(F.lastName)) errors.lastName = e.lastName;
+  if (!text(C.fullName)) errors.name = e.name;
 
   const email = text(F.email);
   if (!email) errors.email = e.emailRequired;
   else if (!EMAIL_RE.test(email)) errors.email = e.email;
 
-  // International numbers: digits with optional +, spaces, dots, dashes and brackets; 7–15 digits.
+  // Optional. If given: digits with optional +, spaces, dots, dashes and brackets; 7–15 digits.
   const phone = text(F.phone);
   const digits = phone.replace(/\D/g, "");
-  if (!phone) errors.phone = e.phoneRequired;
-  else if (!/^\+?[\d\s().-]+$/.test(phone) || digits.length < 7 || digits.length > 15) errors.phone = e.phone;
+  if (phone && (!/^\+?[\d\s().-]+$/.test(phone) || digits.length < 7 || digits.length > 15)) errors.phone = e.phone;
 
   if (!text(F.company)) errors.company = e.company;
+
+  const booth = text(C.booth);
+  if (booth && !BOOTH_RE.test(booth)) errors.booth = e.booth;
 
   const website = text(F.website);
   if (website && !WEBSITE_RE.test(website)) errors.website = e.website;
@@ -98,6 +140,8 @@ export function ZohoLeadForm() {
   const [status, setStatus] = useState<Status>("idle");
   const [errors, setErrors] = useState<Errors>({});
   const [submitted, setSubmitted] = useState(false);
+  const [prefilled, setPrefilled] = useState(false);
+  const attendeeRef = useRef<string | null>(null);
 
   // Remember UTM values from the landing URL for the rest of the visit (first touch wins).
   useEffect(() => {
@@ -129,6 +173,57 @@ export function ZohoLeadForm() {
     document.body.appendChild(script);
   }, []);
 
+  // Personal invitation links carry ?booth=…: pre-fill the (still editable) Booth number field.
+  const boothRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    const booth = boothFromUrl();
+    if (booth && boothRef.current && !boothRef.current.value) boothRef.current.value = booth;
+  }, []);
+
+  // …and &ref=…: ask the server for this attendee's permitted details. Only empty inputs are
+  // filled, so anything the visitor already typed is kept. Unknown or invalid references simply
+  // leave the normal blank form.
+  useEffect(() => {
+    const ref = refFromUrl();
+    if (!ref) return;
+    attendeeRef.current = ref;
+    const controller = new AbortController();
+    fetch("/api/plma/attendee", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ref }),
+      signal: controller.signal,
+      cache: "no-store",
+    })
+      .then((response) => (response.ok ? (response.json() as Promise<AttendeeLookupResponse>) : null))
+      .then((result) => {
+        const form = formRef.current;
+        if (!result?.found || !form) return;
+        const map: [string, string][] = [
+          [C.fullName, result.fields.name],
+          [F.email, result.fields.email],
+          [F.company, result.fields.company],
+          [F.phone, result.fields.phone],
+          [C.booth, result.fields.booth],
+          [F.jobTitle, result.fields.jobTitle],
+          [F.website, result.fields.website],
+        ];
+        let filled = false;
+        for (const [name, value] of map) {
+          const input = form.elements.namedItem(name);
+          if (value && input instanceof HTMLInputElement && !input.value) {
+            input.value = value;
+            filled = true;
+          }
+        }
+        if (filled) setPrefilled(true);
+      })
+      .catch(() => {
+        // Lookup unavailable: the visitor fills the form in by hand.
+      });
+    return () => controller.abort();
+  }, []);
+
   useEffect(() => {
     if (status === "success") successRef.current?.focus();
     if (status === "error") alertRef.current?.focus();
@@ -139,6 +234,62 @@ export function ZohoLeadForm() {
     if (!submitted || !formRef.current) return;
     setErrors(validate(new FormData(formRef.current)));
   };
+
+  function errorText(key: EnquiryErrorKey): string {
+    const e = leadForm.errors;
+    const map: Record<EnquiryErrorKey, string> = {
+      name: e.name,
+      email: e.email,
+      phone: e.phone,
+      company: e.company,
+      booth: e.booth,
+      website: e.website,
+      consent: e.consent,
+      terms: termsAcceptance.error,
+    };
+    return map[key];
+  }
+
+  /** Sends the enquiry to our server route. "fallback" means: use the Zoho webform instead. */
+  async function submitToApi(data: FormData): Promise<"ok" | "error" | "fallback" | EnquiryErrorKey[]> {
+    const value = (name: string) => String(data.get(name) ?? "").trim();
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => controller.abort(), 25000);
+    try {
+      const response = await fetch("/api/plma/enquiry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        cache: "no-store",
+        signal: controller.signal,
+        body: JSON.stringify({
+          ref: attendeeRef.current,
+          name: value(C.fullName),
+          email: value(F.email),
+          phone: value(F.phone),
+          company: value(F.company),
+          booth: value(C.booth),
+          jobTitle: value(F.jobTitle),
+          website: value(F.website),
+          requirements: value(F.requirements),
+          consent: Boolean(data.get(F.consent)),
+          terms: Boolean(data.get(TERMS_FIELD)),
+          termsVersion: termsMeta.updated,
+          honeypot: value(zohoLeadForm.honeypot),
+          utm: readUtm(),
+        }),
+      });
+      if (response.status === 404) return "fallback"; // route not deployed
+      const result = (await response.json().catch(() => null)) as EnquiryResponse | null;
+      if (result?.ok) return "ok";
+      if (result?.reason === "not_configured") return "fallback";
+      if (result?.reason === "invalid" && result.errors.length) return result.errors;
+      return "error";
+    } catch {
+      return "error";
+    } finally {
+      window.clearTimeout(timer);
+    }
+  }
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -155,6 +306,31 @@ export function ZohoLeadForm() {
       return;
     }
 
+    inFlight.current = true;
+    setStatus("submitting");
+    try {
+      const outcome = await submitToApi(data);
+      if (outcome === "ok") {
+        setStatus("success");
+        return;
+      }
+      if (Array.isArray(outcome)) {
+        const mapped: Errors = {};
+        for (const key of outcome) mapped[key] = errorText(key);
+        setErrors(mapped);
+        setStatus("idle");
+        document.getElementById(id(outcome[0]))?.focus();
+        return;
+      }
+      if (outcome === "error") {
+        setStatus("error");
+        return;
+      }
+      // "fallback": the server has no Zoho credentials yet. Use the Zoho webform instead.
+    } finally {
+      inFlight.current = false;
+    }
+
     // Same order as Zoho's generated script: let its analytics record the submit (this fills in
     // Zoho's tracking fields on the form), then read the form data.
     try {
@@ -164,6 +340,25 @@ export function ZohoLeadForm() {
     }
     data = new FormData(form);
     data.delete(TERMS_FIELD);
+
+    // Single Name input -> Zoho's First Name / Last Name.
+    const { first, last } = splitName(String(data.get(C.fullName) ?? ""));
+    data.delete(C.fullName);
+    data.set(F.firstName, first);
+    data.set(F.lastName, last);
+
+    // Booth number: its own Zoho field once one exists, otherwise the first line of ERP Requirements.
+    const booth = String(data.get(C.booth) ?? "").trim();
+    data.delete(C.booth);
+    if (booth) {
+      if (F.booth) {
+        data.set(F.booth, booth);
+      } else {
+        const notes = String(data.get(F.requirements) ?? "").trim();
+        const combined = `Booth number: ${booth}${notes ? `\n\n${notes}` : ""}`;
+        data.set(F.requirements, combined.slice(0, zohoLeadForm.maxLength.requirements));
+      }
+    }
 
     // Zoho's Website field expects a full URL.
     const website = String(data.get(F.website) ?? "").trim();
@@ -267,6 +462,12 @@ export function ZohoLeadForm() {
         <input type="text" name={zohoLeadForm.honeypot} tabIndex={-1} autoComplete="off" defaultValue="" />
       </div>
 
+      {prefilled && (
+        <p role="status" className="mt-6 rounded-lg border border-rule bg-paper px-4 py-3 text-[0.95rem] leading-relaxed">
+          {leadForm.prefillNotice}
+        </p>
+      )}
+
       {submitted && errorCount > 0 && (
         <p className="mt-6 flex items-center gap-2 rounded-lg bg-ballpoint/[0.06] px-4 py-3 text-[0.95rem] font-medium text-ballpoint-ink">
           <CircleAlert aria-hidden className="size-5 shrink-0" />
@@ -275,30 +476,17 @@ export function ZohoLeadForm() {
       )}
 
       <div className="mt-7 grid gap-x-5 gap-y-6 sm:grid-cols-2">
-        <Field id={id("firstName")} errorId={errId("firstName")} label={leadForm.labels.firstName} required error={errors.firstName}>
+        <Field id={id("name")} errorId={errId("name")} label={leadForm.labels.name} required error={errors.name}>
           <input
-            id={id("firstName")}
-            name={F.firstName}
+            id={id("name")}
+            name={C.fullName}
             type="text"
-            autoComplete="given-name"
-            maxLength={zohoLeadForm.maxLength.firstName}
+            autoComplete="name"
+            maxLength={zohoLeadForm.maxLength.name}
+            placeholder={leadForm.placeholders.name}
             required
-            aria-invalid={errors.firstName ? true : undefined}
-            aria-describedby={errors.firstName ? errId("firstName") : undefined}
-            className={inputClasses}
-          />
-        </Field>
-
-        <Field id={id("lastName")} errorId={errId("lastName")} label={leadForm.labels.lastName} required error={errors.lastName}>
-          <input
-            id={id("lastName")}
-            name={F.lastName}
-            type="text"
-            autoComplete="family-name"
-            maxLength={zohoLeadForm.maxLength.lastName}
-            required
-            aria-invalid={errors.lastName ? true : undefined}
-            aria-describedby={errors.lastName ? errId("lastName") : undefined}
+            aria-invalid={errors.name ? true : undefined}
+            aria-describedby={errors.name ? errId("name") : undefined}
             className={inputClasses}
           />
         </Field>
@@ -319,23 +507,7 @@ export function ZohoLeadForm() {
           />
         </Field>
 
-        <Field id={id("phone")} errorId={errId("phone")} label={leadForm.labels.phone} required error={errors.phone}>
-          <input
-            id={id("phone")}
-            name={F.phone}
-            type="tel"
-            inputMode="tel"
-            autoComplete="tel"
-            maxLength={zohoLeadForm.maxLength.phone}
-            placeholder={leadForm.placeholders.phone}
-            required
-            aria-invalid={errors.phone ? true : undefined}
-            aria-describedby={errors.phone ? errId("phone") : undefined}
-            className={inputClasses}
-          />
-        </Field>
-
-        <Field id={id("company")} errorId={errId("company")} label={leadForm.labels.company} required error={errors.company} wide>
+        <Field id={id("company")} errorId={errId("company")} label={leadForm.labels.company} required error={errors.company}>
           <input
             id={id("company")}
             name={F.company}
@@ -345,6 +517,41 @@ export function ZohoLeadForm() {
             required
             aria-invalid={errors.company ? true : undefined}
             aria-describedby={errors.company ? errId("company") : undefined}
+            className={inputClasses}
+          />
+        </Field>
+
+        <Field id={id("phone")} errorId={errId("phone")} label={leadForm.labels.phone} error={errors.phone}>
+          <input
+            id={id("phone")}
+            name={F.phone}
+            type="tel"
+            inputMode="tel"
+            autoComplete="tel"
+            maxLength={zohoLeadForm.maxLength.phone}
+            placeholder={leadForm.placeholders.phone}
+            aria-invalid={errors.phone ? true : undefined}
+            aria-describedby={errors.phone ? errId("phone") : undefined}
+            className={inputClasses}
+          />
+        </Field>
+
+        <Field
+          id={id("booth")}
+          errorId={errId("booth")}
+          label={leadForm.labels.booth}
+          error={errors.booth}
+        >
+          <input
+            ref={boothRef}
+            id={id("booth")}
+            name={C.booth}
+            type="text"
+            autoComplete="off"
+            maxLength={zohoLeadForm.maxLength.booth}
+            placeholder={leadForm.placeholders.booth}
+            aria-invalid={errors.booth ? true : undefined}
+            aria-describedby={errors.booth ? errId("booth") : undefined}
             className={inputClasses}
           />
         </Field>
@@ -360,7 +567,7 @@ export function ZohoLeadForm() {
           />
         </Field>
 
-        <Field id={id("website")} errorId={errId("website")} label={leadForm.labels.website} error={errors.website}>
+        <Field id={id("website")} errorId={errId("website")} label={leadForm.labels.website} error={errors.website} wide>
           <input
             id={id("website")}
             name={F.website}
@@ -375,43 +582,16 @@ export function ZohoLeadForm() {
           />
         </Field>
 
-        <div className="sm:col-span-2">
-          <MultiSelectDropdown
-            name={F.services}
-            label={leadForm.labels.services}
-            optionalLabel={leadForm.optional}
-            placeholder={leadForm.placeholders.services}
-            options={leadForm.serviceOptions}
-          />
-        </div>
-
         <Field id={id("requirements")} errorId={errId("requirements")} label={leadForm.labels.requirements} wide>
           <textarea
             id={id("requirements")}
             name={F.requirements}
-            rows={4}
-            maxLength={zohoLeadForm.maxLength.requirements}
+            rows={5}
+            maxLength={zohoLeadForm.maxLength.requirements - 40}
             placeholder={leadForm.placeholders.requirements}
-            className={`${inputClasses} h-auto min-h-28 resize-y py-3 leading-relaxed`}
+            className={`${inputClasses} h-auto min-h-32 resize-y py-3 leading-relaxed`}
           />
         </Field>
-
-        <fieldset className="sm:col-span-2">
-          <legend className="text-[0.95rem] font-semibold text-ink">
-            {leadForm.labels.requestType} <span className="font-normal text-ink-soft">({leadForm.optional})</span>
-          </legend>
-          <div className="mt-2 grid gap-3 sm:grid-cols-3">
-            {leadForm.requestTypes.map((type) => (
-              <label
-                key={type}
-                className="flex min-h-12 cursor-pointer items-center gap-3 rounded-lg border border-rule bg-paper px-4 py-3 font-medium transition-colors hover:border-ink/40 has-checked:border-ballpoint has-checked:bg-ballpoint/[0.05] has-focus-visible:ring-2 has-focus-visible:ring-ballpoint/25"
-              >
-                <input type="radio" name={F.requestType} value={type} className="size-4.5 accent-ballpoint" />
-                {type}
-              </label>
-            ))}
-          </div>
-        </fieldset>
 
         <div className="sm:col-span-2">
           <label
@@ -512,6 +692,8 @@ function Field({
   required = false,
   wide = false,
   error,
+  hint,
+  hintId,
   children,
 }: {
   id: string;
@@ -520,21 +702,29 @@ function Field({
   required?: boolean;
   wide?: boolean;
   error?: string;
+  hint?: string;
+  hintId?: string;
   children: ReactNode;
 }) {
   return (
     <div className={wide ? "sm:col-span-2" : undefined}>
       <label htmlFor={id} className="block text-[0.95rem] font-semibold text-ink">
-        {label}{" "}
-        {required ? (
-          <span className="text-ballpoint-ink" aria-hidden>
-            *
-          </span>
-        ) : (
-          <span className="font-normal text-ink-soft">({leadForm.optional})</span>
+        {label}
+        {required && (
+          <>
+            {" "}
+            <span className="text-ballpoint-ink" aria-hidden>
+              *
+            </span>
+          </>
         )}
       </label>
       {children}
+      {hint && (
+        <p id={hintId} className="mt-1.5 text-sm text-ink-soft">
+          {hint}
+        </p>
+      )}
       {error && <ErrorText id={errorId}>{error}</ErrorText>}
     </div>
   );

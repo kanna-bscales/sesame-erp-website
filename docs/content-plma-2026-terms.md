@@ -9,7 +9,7 @@ Linked from the landing page hero ("Offer terms apply."), the form side, the cli
 ## Hero
 
 - Eyebrow: Promotion terms
-- Title: PLMA 2026 Free ERP Module Offer Terms & Conditions
+- Title: PLMA 2026 Complimentary ERP Module Offer Terms & Conditions
 - Summary: These terms explain who can apply, what the offer includes, how applications are reviewed and the conditions that apply to development work delivered through the offer.
 - Offer updated: November 3, 2026 · Effective date: November 3, 2026 · Offer sponsor: Business Scales LLC · Product: SesameERP
 - Badges: US$5,000 development value · One custom ERP module · PLMA exclusive offer · Reviewed individually
@@ -17,7 +17,7 @@ Linked from the landing page hero ("Offer terms apply."), the form side, the cli
 
 ## Request form clickwrap
 
-Required checkbox: "I have read and accept the PLMA 2026 Free ERP Module Offer Terms & Conditions." (link opens this page). Error: "Please accept the offer terms to submit your request." Checked in the browser only; not sent to Zoho.
+Required checkbox: "I have read and accept the PLMA 2026 Complimentary ERP Module Offer Terms & Conditions." (link opens this page). Error: "Please accept the offer terms to submit your request." Checked in the browser only; not sent to Zoho.
 
 ## Offer at a glance
 - Eligible PLMA 2026 participants can apply for development services valued up to US$5,000 for one approved ERP module.
@@ -27,7 +27,7 @@ Required checkbox: "I have read and accept the PLMA 2026 Free ERP Module Offer T
 
 ## 1. Introduction
 
-These Promotion Terms ("Terms") govern the PLMA 2026 Free ERP Module Offer (the "Offer"). The Offer is sponsored by Business Scales LLC ("Business Scales", "we", "us"). SesameERP is a product of Business Scales.
+These Promotion Terms ("Terms") govern the PLMA 2026 Complimentary ERP Module Offer (the "Offer"). The Offer is sponsored by Business Scales LLC ("Business Scales", "we", "us"). SesameERP is a product of Business Scales.
 
 The purpose of the Offer is to help businesses connected with PLMA's 2026 Private Label Trade Show see how a custom ERP module built with SesameERP can improve their operations.
 
@@ -209,6 +209,6 @@ By submitting an application, you acknowledge that:
 ## SEO
 
 - Title: PLMA 2026 Offer Terms & Conditions | SesameERP
-- Description: Review the terms and conditions for the SesameERP PLMA 2026 free ERP module offer, representing US$5,000 worth of development work.
-- Canonical: https://sesameerp.ai/plma-2026-terms
+- Description: Review the terms and conditions for the SesameERP PLMA 2026 offer: complimentary development of one ERP module, representing US$5,000 worth of ERP development work.
+- Canonical: https://www.sesameerp.ai/plma-2026-terms
 - Robots: noindex, nofollow until `termsStatus.indexable` is true.

@@ -5,7 +5,7 @@ import { EventFaq } from "@/components/chicago-event/EventFaq";
 import { eventIcons } from "@/components/chicago-event/icons";
 import { OfferCard } from "@/components/chicago-event/OfferCard";
 import { ZohoLeadForm } from "@/components/chicago-event/ZohoLeadForm";
-import { HeroHeadline } from "@/components/sections/hero/HeroHeadline";
+import { PlmaHeadline } from "@/components/chicago-event/PlmaHeadline";
 import { ButtonLink } from "@/components/ui/ButtonLink";
 import { ScrollRevealText } from "@/components/ui/ScrollRevealText";
 import {
@@ -32,11 +32,11 @@ export const metadata: Metadata = {
   title: plmaSeo.title,
   description: plmaSeo.description,
   keywords: plmaSeo.keywords,
-  alternates: { canonical: plmaSeo.path },
+  alternates: { canonical: plmaSeo.url },
   openGraph: {
     title: plmaSeo.title,
     description: plmaSeo.description,
-    url: plmaSeo.path,
+    url: plmaSeo.url,
     siteName: "SesameERP",
     type: "website",
     locale: "en_US",
@@ -62,7 +62,7 @@ export default function PlmaCampaignPage() {
       <section id="top" className="relative overflow-hidden pt-28 pb-16 sm:pt-32 lg:pb-24">
         <div className="page-container grid items-center gap-12 lg:grid-cols-12 lg:gap-10">
           <div className="lg:col-span-7">
-            <HeroHeadline
+            <PlmaHeadline
               eyebrow={plmaHero.eyebrow}
               lines={plmaHero.headline}
               second={plmaHero.headlineSecond}
@@ -194,6 +194,20 @@ export default function PlmaCampaignPage() {
                   </span>
                   <h3 className="font-semiwide mt-6 text-2xl font-extrabold">{item.title}</h3>
                   <p className="mt-3 leading-relaxed text-ink-soft">{item.body}</p>
+                  {"learnMore" in item && item.learnMore && (
+                    <Link
+                      href={item.learnMore}
+                      target="_blank"
+                      className="mt-auto inline-flex items-center gap-1.5 self-start pt-5 font-semibold text-ballpoint-ink underline-offset-4 hover:underline"
+                    >
+                      {capabilitiesSection.learnMoreLabel}
+                      <span className="sr-only">
+                        {" "}
+                        about {item.title} (opens in a new tab)
+                      </span>
+                      <ArrowUpRight aria-hidden className="size-4" />
+                    </Link>
+                  )}
                 </li>
               );
             })}
