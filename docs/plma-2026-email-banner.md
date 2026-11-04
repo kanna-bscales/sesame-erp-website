@@ -10,7 +10,7 @@ attendee Google Sheet).
   IBM Plex Sans are embedded as base64 woff2; rebuild by screenshotting it at a 1200 × 300 viewport,
   deviceScaleFactor 1).
 - Design: SesameERP site theme (paper sheet with the carbon-copy canary offset shadow, ballpoint-red
-  "Claim your module →" button). Copy: "Your first custom ERP module, developed FREE — a US$5,000 value",
+  "Claim your module →" button). Copy: "Your first custom ERP module, developed FREE — a $5,000 value",
   with FREE highlighted in canary; brand lockup reads "SesameERP · PLMA 2026 attendee offer". The whole
   image is one link. Note: this banner uses "FREE" (owner-approved, Nov 4 2026); the rest of the campaign
   copy uses "complimentary".
@@ -22,7 +22,7 @@ Replace `OFFER_URL` with the recipient's Offer URL using your sending tool's mer
 ```html
 <a href="OFFER_URL" target="_blank" style="display:block;text-decoration:none;border:0;">
   <img src="https://www.sesameerp.ai/images/email-signature/plma-2026-banner.png" width="600"
-       alt="Your first custom ERP module, developed FREE — a US$5,000 value. Claim your module."
+       alt="Your first custom ERP module, developed FREE — a $5,000 value. Claim your module."
        style="display:block;width:600px;max-width:100%;height:auto;border:0;">
 </a>
 ```
