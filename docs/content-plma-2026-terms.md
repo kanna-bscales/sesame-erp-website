@@ -12,7 +12,7 @@ Linked from the landing page hero ("Offer terms apply."), the form side, the cli
 - Title: PLMA 2026 Complimentary ERP Module Offer Terms & Conditions
 - Summary: These terms explain who can apply, what the offer includes, how applications are reviewed and the conditions that apply to development work delivered through the offer.
 - Offer updated: November 3, 2026 · Effective date: November 3, 2026 · Offer sponsor: Business Scales LLC · Product: SesameERP
-- Badges: US$5,000 development value · One custom ERP module · PLMA exclusive offer · Reviewed individually
+- Badges: Development valued up to US$5,000 · One custom ERP module · PLMA exclusive offer · Reviewed individually
 - Actions: Back to the PLMA 2026 offer · Print · Download PDF (`public/legal/plma-2026-offer-terms.pdf`) · reading time · last updated
 
 ## Request form clickwrap
@@ -209,6 +209,6 @@ By submitting an application, you acknowledge that:
 ## SEO
 
 - Title: PLMA 2026 Offer Terms & Conditions | SesameERP
-- Description: Review the terms and conditions for the SesameERP PLMA 2026 offer: complimentary development of one ERP module, representing US$5,000 worth of ERP development work.
+- Description: Review the terms and conditions for the SesameERP PLMA 2026 offer: complimentary development of one approved ERP module, with development services valued up to US$5,000.
 - Canonical: https://www.sesameerp.ai/plma-2026-terms
 - Robots: noindex, nofollow until `termsStatus.indexable` is true.

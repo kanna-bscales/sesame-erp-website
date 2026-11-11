@@ -24,13 +24,53 @@ export type AttendeePrefill = {
   booth: string;
   jobTitle: string;
   website: string;
+  /** Extra addresses this same person submitted earlier (never researched data). */
+  additionalEmails: string[];
 };
 
-export type AttendeeLookupResponse = { found: true; fields: AttendeePrefill } | { found: false };
+/**
+ * Company-level context for the "colleagues already submitted" message, present only for a valid
+ * personal reference (same verified PLMA Company ID, current person excluded).
+ * - `otherSubmitted`: how many OTHER people at the company have submitted.
+ * - `names`: first names of those of them who ticked "show my first name to colleagues"
+ *   (PLMA_Show_First_Name). Never surnames, emails, enquiries or anything else.
+ */
+export type CompanyContext = { name: string; otherSubmitted: number; names: string[] };
 
-export type EnquiryErrorKey = "name" | "email" | "phone" | "company" | "booth" | "website" | "consent" | "terms";
+export type AttendeeLookupResponse = { found: true; fields: AttendeePrefill; company: CompanyContext | null } | { found: false };
+
+/** Limits for one submission (also enforced on the server). */
+export const LIMITS = {
+  additionalEmails: 5,
+  contacts: 10,
+  requestBytes: 24_000,
+} as const;
+
+/** A colleague the visitor adds with "Add another contact". Becomes a separate Lead. */
+export type ContactInput = { name: string; email: string; jobTitle: string };
+
+export type EnquiryErrorKey =
+  | "name"
+  | "email"
+  | "phone"
+  | "company"
+  | "booth"
+  | "website"
+  | "consent"
+  | "terms"
+  | "additionalEmails"
+  | `contact.${number}.name`
+  | `contact.${number}.email`;
 
 export type EnquiryResponse =
-  | { ok: true }
+  | { ok: true; contactsAdded?: number; contactsAlreadyKnown?: number; contactsForReview?: number }
   | { ok: false; reason: "invalid"; errors: EnquiryErrorKey[] }
-  | { ok: false; reason: "not_configured" | "rate_limited" | "crm_error" | "bad_request" };
+  | { ok: false; reason: "not_configured" | "rate_limited" | "crm_error" | "bad_request" | "too_large" };
+
+/** Generic/shared inboxes (info@, sales@ …). Never treated as one person's identity. */
+export const SHARED_INBOX_RE =
+  /^(info|sales|contact|hello|office|admin|customerservice|customer\.service|service|support|orders|marketing|inquiries|enquiries|inquiry|export|exports|hr|careers|jobs|mail|team|general|privatelabel|private\.label|accounts|purchasing|procurement)([._+-].*)?@/i;
+
+export function isSharedInbox(email: string): boolean {
+  return SHARED_INBOX_RE.test(email.trim());
+}

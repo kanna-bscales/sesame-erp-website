@@ -24,6 +24,7 @@ import {
   plmaSeo,
   whySection,
 } from "@/content/chicago-event";
+import { plmaDisclaimer, plmaLanding, plmaLandingFaq, plmaPagePath } from "@/content/plma-2026";
 import { termsLinkLabel, termsPath } from "@/content/plma-2026-terms";
 
 export const metadata: Metadata = {
@@ -209,12 +210,7 @@ export default function PlmaCampaignPage() {
 
           <div className="lg:col-span-6 lg:pt-2">
             <dl className="grid gap-x-10 gap-y-7 sm:grid-cols-2">
-              {[
-                { label: "Event", value: plmaEvent.name },
-                { label: "Dates", value: plmaEvent.dates },
-                { label: "Venue", value: plmaEvent.venue },
-                { label: "Location", value: plmaEvent.location },
-              ].map((detail) => (
+              {[{ label: "Event", value: plmaEvent.name }, ...plmaLanding.eventFacts].map((detail) => (
                 <div key={detail.label} className="border-t-2 border-white/80 pt-4">
                   <dt className="text-night-soft">{detail.label}</dt>
                   <dd className="font-semiwide mt-2 text-xl leading-snug font-extrabold">{detail.value}</dd>
@@ -231,6 +227,45 @@ export default function PlmaCampaignPage() {
               <ArrowUpRight aria-hidden className="size-4" />
               <span className="sr-only">(opens plma.com in a new tab)</span>
             </a>
+            <Link
+              href={plmaPagePath}
+              className="mt-3 block w-fit font-medium underline underline-offset-4 hover:text-canary"
+            >
+              {plmaLanding.guideLink}
+            </Link>
+            <p className="mt-6 max-w-[34rem] text-sm leading-relaxed text-night-soft">{plmaDisclaimer}</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Private-label fit: short, offer-focused copy (the full PLMA guide lives on /plma-2026) */}
+      <section aria-labelledby="plma-fit-heading" className="border-b border-rule bg-sheet">
+        <div className={`page-container grid gap-12 lg:grid-cols-12 lg:gap-10 ${band}`}>
+          <div className="lg:col-span-5">
+            <h2 id="plma-fit-heading" className={sectionTitle}>
+              {plmaLanding.fitHeading}
+            </h2>
+            <p className="mt-6 text-lg leading-relaxed text-ink-soft">{plmaLanding.fitLead}</p>
+            <div className="mt-8 flex flex-wrap items-center gap-5">
+              <ButtonLink href={formHref}>{cta.primary}</ButtonLink>
+              <Link href={plmaPagePath} className="font-medium underline underline-offset-4 hover:text-ink">
+                {plmaLanding.guideLink}
+              </Link>
+            </div>
+          </div>
+          <div className="lg:col-span-7">
+            <ul className="space-y-5">
+              {plmaLanding.fitItems.map((item) => (
+                <li key={item.title} className="flex gap-3">
+                  <Check aria-hidden className="mt-1 size-5 shrink-0 text-ballpoint-ink" />
+                  <div>
+                    <h3 className="font-semibold">{item.title}</h3>
+                    <p className="mt-1 leading-relaxed text-ink-soft">{item.body}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-6 text-sm text-ink-soft">{plmaLanding.fitNote}</p>
           </div>
         </div>
       </section>
@@ -309,7 +344,7 @@ export default function PlmaCampaignPage() {
       )}
 
       {/* FAQ, with the offer terms underneath */}
-      <EventFaq id={anchors.faq} heading={plmaFaq.heading} items={plmaFaq.items}>
+      <EventFaq id={anchors.faq} heading={plmaFaq.heading} items={[...plmaFaq.items, ...plmaLandingFaq]}>
         <details id={anchors.terms} open className="group mt-10 rounded-md bg-sheet ring-1 ring-ink/10">
           <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 font-semibold [&::-webkit-details-marker]:hidden">
             {offerTerms.summary}

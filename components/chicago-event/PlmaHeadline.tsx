@@ -32,6 +32,8 @@ export function PlmaHeadline({ eyebrow, lines, second }: Props) {
             >
               {row.text}
             </motion.span>
+            {/* Block rows show no gap visually; this space keeps words apart for screen readers and search. */}
+            {index < rows.length - 1 ? " " : null}
           </span>
         ))}
       </h1>

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Agents } from "@/components/sections/Agents";
 import { Differentiators } from "@/components/sections/Differentiators";
 import { Faq } from "@/components/sections/Faq";
@@ -9,6 +10,9 @@ import { ModuleFocusProvider } from "@/components/sections/modules/ModuleFocus";
 import { Process } from "@/components/sections/Process";
 import { StatsTicker } from "@/components/sections/StatsTicker";
 import { WhyUs } from "@/components/sections/WhyUs";
+
+// Canonical resolves against metadataBase (https://www.sesameerp.ai) in app/layout.tsx.
+export const metadata: Metadata = { alternates: { canonical: "/" } };
 
 export default function Home() {
   return (

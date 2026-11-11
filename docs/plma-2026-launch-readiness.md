@@ -2,6 +2,11 @@
 
 INTERNAL. Prepared 2026-11-04. Status: **ready for approval, not deployed**.
 
+> **Phase 2 (2026-11-11):** one Lead per person, PLMA Company ID, research contacts, Submitted_* fields
+> (originals never overwritten), company submission count, extra emails, "Add another contact",
+> duplicate rules, `/plma-2026` SEO page, robots/sitemap. Details, CRM changes and the campaign-scope
+> procedure: `docs/plma-2026-phase2.md`. Sections below describe the Phase 1 launch.
+
 Routes: `/chicago-event` (landing page + form), `/plma-2026-terms` (terms, `noindex`),
 `/api/plma/attendee` (secure lookup), `/api/plma/enquiry` (submission).
 
@@ -42,8 +47,8 @@ Production Zoho **US** data centre (org945149959, business-scales):
 - CRM API: `https://www.zohoapis.com/crm/v8/...`
 - Webform fallback: `https://crm.zoho.com/crm/WebToLeadForm`
 
-Scopes on the refresh token: `ZohoCRM.modules.leads.ALL, ZohoCRM.modules.campaigns.READ,ZohoCRM.modules.campaigns.UPDATE,
-ZohoCRM.modules.notes.CREATE, ZohoCRM.coql.READ`. All writes use `trigger: []`, so no workflow
+Scopes on the refresh token: `ZohoCRM.modules.leads.ALL,ZohoCRM.modules.campaigns.READ,ZohoCRM.modules.campaigns.UPDATE,ZohoCRM.modules.notes.CREATE,ZohoCRM.coql.READ`
+(check with `node scripts/zoho-setup.mjs check`, prove with `node scripts/zoho-setup.mjs campaign-test`). All writes use `trigger: []`, so no workflow
 rule, approval or blueprint runs and no automatic email is sent.
 
 ## 4–5. Attendee data in Zoho and the Google Sheet (done 2026-11-04)

@@ -11,11 +11,13 @@ export function FooterTagline({ children }: { children: string }) {
   return <>{campaign?.footerTagline ?? children}</>;
 }
 
+// Public brand is SesameERP. Parent company: Business Scales (attribution and PLMA offer
+// sponsorship confirmed by the owner, Nov 11, 2026). Campaign routes may set their own line.
 export function FooterAttribution() {
   const attribution = getCampaign(usePathname())?.attribution ?? {
     prefix: "A product of",
-    label: "Sesame Labs",
-    href: "https://sesamelabs.ai",
+    label: "Business Scales",
+    href: "https://businessscales.com/",
   };
   return (
     <p>

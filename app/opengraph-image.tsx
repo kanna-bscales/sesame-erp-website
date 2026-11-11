@@ -112,9 +112,7 @@ export default async function OgImage() {
           }}
         >
           <span style={{ fontSize: "16px", color: "#a5a8b4" }}>sesameerp.ai</span>
-          <span style={{ fontSize: "16px", color: "#a5a8b4" }}>
-            A product of Sesame Labs
-          </span>
+          <span style={{ fontSize: "16px", color: "#a5a8b4" }}>SesameERP</span>
         </div>
       </div>
     ),
