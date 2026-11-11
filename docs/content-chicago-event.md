@@ -21,7 +21,7 @@ It is NOT a cash credit, account balance or discount, and it covers ERP only (no
 - Full legal terms and conditions (marked "pending business approval" on the page).
 - Location wording: the venue is in Rosemont, next to Chicago. The page says "Rosemont (Chicago), Illinois, USA"; the brief said "Chicago, Illinois, USA".
 - Campaign contact email: the site email stays `hi@sesamelabs.ai` (owner decision, Nov 11, 2026); the PLMA campaign footer shows the sponsor's info@businessscales.com.
-- Enquiry form (`components/chicago-event/ZohoLeadForm.tsx`, posts to Zoho webform 7671386000000694280). Labels: required fields show a red *; optional fields have no "(optional)" label. Fields: Name (required; split into Zoho First Name / Last Name, one-word names go to Last Name), Business email (required), Company name (required), Phone number (optional), Booth number (optional; pre-filled only from the verified CRM record of a personal link, editable; no helper text), Job title (optional), Website (optional), "What would you like to discuss with our team?" (textarea, LEADCF3), consent (LEADCF52, required, unticked) and the offer-terms checkbox (browser only). Services Interested In (LEADCF1) and Request Type (LEADCF7) are no longer sent. Until the webform has a Booth Number field, the booth number is written as the first line of LEADCF3 ("Booth number: 12345"). Fixed values: Lead Source "PLMA 2026", Credit Offer Status "Pending Review", tag "PLMA 2026" (webform setting). Submit button: Submit Your Enquiry. Success message only after Zoho accepts the submission. Personal invitation links (`/chicago-event?ref=<attendee reference>`, no booth number in the link) pre-fill Name, Business email, Company, Phone, Booth, Job title and Website from the attendee's Zoho Lead via the server route `/api/plma/attendee` (secure reference only; a booth number alone never loads anyone's details); all fields stay editable and both checkboxes stay unticked. Prefill notice: "We have filled in the details we hold for you from your PLMA 2026 invitation. Please check them and change anything that is not right before you submit." Submissions go to `/api/plma/enquiry`, which updates the existing Lead (matched by reference, then email) or creates one; it falls back to the Zoho webform when Zoho API credentials are not configured.
+- Enquiry form (`components/chicago-event/ZohoLeadForm.tsx`, posts to Zoho webform 7671386000000694280). Labels: required fields show a red *; optional fields have no "(optional)" label. Fields: Name (required; split into Zoho First Name / Last Name, one-word names go to Last Name), Business email (required), Company name (required), Phone number (optional), Booth number (optional; pre-filled only from the verified CRM record of a personal link, editable; no helper text), Job title (optional), "Let us know what we can help you with." (textarea, LEADCF3), consent (LEADCF52, required, unticked) and the offer-terms checkbox (browser only). Services Interested In (LEADCF1) and Request Type (LEADCF7) are no longer sent. Until the webform has a Booth Number field, the booth number is written as the first line of LEADCF3 ("Booth number: 12345"). Fixed values: Lead Source "PLMA 2026", Credit Offer Status "Pending Review", tag "PLMA 2026" (webform setting). Submit button: Submit Your Request. Success message only after Zoho accepts the submission. Personal invitation links (`/chicago-event?ref=<attendee reference>`, no booth number in the link) pre-fill Name, Business email, Company, Phone, Booth and Job title from the attendee's Zoho Lead via the server route `/api/plma/attendee` (secure reference only; a booth number alone never loads anyone's details); all fields stay editable and both checkboxes stay unticked. Submissions go to `/api/plma/enquiry`, which updates the existing Lead (matched by reference, then email) or creates one; it falls back to the Zoho webform when Zoho API credentials are not configured.
 - FAQ "Does the offer expire?": the brief's answer was "Nbits has confirmed that there is no expiry date." The page shows "No. There is no expiry date for this offer." so the internal name is not shown to visitors.
 - Case studies: none approved for SesameERP, so the section is hidden. Add items to `caseStudies` to show it.
 
@@ -57,25 +57,17 @@ Short, offer-focused copy (`plmaLanding`, `plmaLandingFaq` in `content/plma-2026
 - Footer tagline: Custom ERP solutions with AI agents and intelligent automation.
 - Footer attribution: A product of Business Scales (links to https://businessscales.com/).
 
-## Hero
+## Top section (offer + registration form)
 
-- Eyebrow: PLMA 2026 attendee exclusive
-- Headline: Complimentary development / of one ERP module.
-- Highlight: Development services valued up to US$5,000
-- Description: Attending PLMA 2026? Explore how SesameERP can help improve your business operations with custom ERP development, AI agents and ERP automation.
+One combined section at the top of the page (`id="top"`), two columns. There is no separate hero band and no form-intro text block — the offer card, benefits, buttons and terms sit directly beside the form.
+
+Left column:
+- Offer card: PLMA 2026 exclusive offer · One ERP module · Complimentary · Development value Up to US$5,000 · Available to PLMA conference users · Development work, not cash or credit
 - Benefits: One complimentary ERP module · Custom ERP development · AI agents for ERP · ERP workflow automation
-- Buttons: Request your complimentary ERP module (to the form) · Request a demo (to the PLMA 2026 section)
-- Offer card: PLMA 2026 exclusive offer · One ERP module · Complimentary · Development value Up to US$5,000 · Development work, not cash or credit · Available to PLMA 2026 attendees
+- Buttons: Request your complimentary ERP module (to the form, `#register`) · Request a demo (to the PLMA 2026 section, `#plma-2026`)
+- Offer terms apply. PLMA Offer Terms & Conditions (to `/plma-2026-terms`)
 
-## Request your complimentary ERP module
-
-Tell us about your business and the ERP module you need. Our team will review your request and contact you about the next steps.
-
-- Complimentary development of one ERP module
-- Development services valued up to US$5,000, not cash or credit
-- Prefer to see SesameERP first? Ask for a product demo when we contact you
-
-Link: Read the offer terms.
+Right column: the registration form (`#register`; see the form bullet under "Open questions" above).
 
 ## About SesameERP
 

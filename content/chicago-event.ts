@@ -87,7 +87,7 @@ export const zohoLeadForm = {
 
 // Copy for the custom request form (PLMA 2026 offer).
 export const leadForm = {
-  heading: "Submit your enquiry",
+  heading: "Submit your request",
   description:
     "Tell us about your business and what you would like to discuss. Our team will review your enquiry and contact you about the PLMA 2026 exclusive offer.",
   offer: "Complimentary development of one approved ERP module, with development services valued up to US$5,000. It is not cash or credit.",
@@ -99,7 +99,7 @@ export const leadForm = {
     booth: "Booth number",
     jobTitle: "Job title",
     website: "Website",
-    requirements: "What would you like to discuss with our team?",
+    requirements: "Let us know what we can help you with.",
   },
   placeholders: {
     name: "Your full name",
@@ -121,7 +121,7 @@ export const leadForm = {
     consent: "Please agree to be contacted so our team can respond to your enquiry.",
     summary: "Please fix the highlighted fields.",
   },
-  submit: "Submit Your Enquiry",
+  submit: "Submit Your Request",
   submitting: "Submitting…",
   successHeading: "Thank you. Your enquiry has been received.",
   successBody: "Our team will review your requirements and contact you about the PLMA 2026 offer.",

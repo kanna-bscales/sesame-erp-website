@@ -165,7 +165,6 @@ export function ZohoLeadForm() {
   const [status, setStatus] = useState<Status>("idle");
   const [errors, setErrors] = useState<Errors>({});
   const [submitted, setSubmitted] = useState(false);
-  const [prefilled, setPrefilled] = useState(false);
   const [company, setCompany] = useState<CompanyContext | null>(null);
   const [extraEmails, setExtraEmails] = useState<string[]>([]);
   const [contacts, setContacts] = useState<ContactRow[]>([]);
@@ -217,21 +216,16 @@ export function ZohoLeadForm() {
           [F.phone, result.fields.phone],
           [C.booth, result.fields.booth],
           [F.jobTitle, result.fields.jobTitle],
-          [F.website, result.fields.website],
         ];
-        let filled = false;
         for (const [name, value] of map) {
           const input = form.elements.namedItem(name);
           if (value && input instanceof HTMLInputElement && !input.value) {
             input.value = value;
-            filled = true;
           }
         }
         if (result.fields.additionalEmails.length) {
           setExtraEmails((current) => (current.length ? current : result.fields.additionalEmails.slice(0, LIMITS.additionalEmails)));
-          filled = true;
         }
-        if (filled) setPrefilled(true);
         if (result.company && result.company.otherSubmitted > 0) setCompany(result.company);
       })
       .catch(() => {
@@ -539,12 +533,6 @@ export function ZohoLeadForm() {
         </p>
       )}
 
-      {prefilled && (
-        <p role="status" className="mt-6 rounded-lg border border-rule bg-paper px-4 py-3 text-[0.95rem] leading-relaxed">
-          {leadForm.prefillNotice}
-        </p>
-      )}
-
       {submitted && errorCount > 0 && (
         <p className="mt-6 flex items-center gap-2 rounded-lg bg-ballpoint/[0.06] px-4 py-3 text-[0.95rem] font-medium text-ballpoint-ink">
           <CircleAlert aria-hidden className="size-5 shrink-0" />
@@ -686,21 +674,6 @@ export function ZohoLeadForm() {
             type="text"
             autoComplete="organization-title"
             maxLength={zohoLeadForm.maxLength.jobTitle}
-            className={inputClasses}
-          />
-        </Field>
-
-        <Field id={id("website")} errorId={errId("website")} label={leadForm.labels.website} error={errors.website} wide>
-          <input
-            id={id("website")}
-            name={F.website}
-            type="text"
-            inputMode="url"
-            autoComplete="url"
-            maxLength={zohoLeadForm.maxLength.website}
-            placeholder={leadForm.placeholders.website}
-            aria-invalid={errors.website ? true : undefined}
-            aria-describedby={errors.website ? errId("website") : undefined}
             className={inputClasses}
           />
         </Field>
