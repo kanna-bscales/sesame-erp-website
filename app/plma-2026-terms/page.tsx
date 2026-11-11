@@ -202,8 +202,8 @@ export default function PlmaTermsPage() {
         >
           <p className="font-semiwide text-2xl font-extrabold">Ready to apply?</p>
           <p className="mt-2 text-ink-soft">
-            PLMA 2026 attendees can request complimentary development of one ERP module, representing US$5,000 worth of ERP development work,
-            through SesameERP.
+            PLMA 2026 attendees can request complimentary development of one approved ERP module, with development services valued up to
+            US$5,000, through SesameERP.
           </p>
           <div className="mt-6 flex flex-wrap items-center gap-4">
             <ButtonLink href={`${campaignHref}#register`}>{termsHero.request}</ButtonLink>

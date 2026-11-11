@@ -40,7 +40,7 @@ export const termsHero = {
   title: "PLMA 2026 Complimentary ERP Module Offer Terms & Conditions",
   summary:
     "These terms explain who can apply, what the offer includes, how applications are reviewed and the conditions that apply to development work delivered through the offer.",
-  badges: ["US$5,000 development value", "One custom ERP module", "PLMA exclusive offer", "Reviewed individually"],
+  badges: ["Development valued up to US$5,000", "One custom ERP module", "PLMA exclusive offer", "Reviewed individually"],
   backToCampaign: "Back to the PLMA 2026 offer",
   request: "Request your complimentary ERP module",
   print: "Print",
@@ -449,7 +449,7 @@ export const termsFaq = {
 export const termsSeo = {
   title: "PLMA 2026 Offer Terms & Conditions | SesameERP",
   description:
-    "Review the terms and conditions for the SesameERP PLMA 2026 offer: complimentary development of one ERP module, representing US$5,000 worth of ERP development work.",
+    "Review the terms and conditions for the SesameERP PLMA 2026 offer: complimentary development of one approved ERP module, with development services valued up to US$5,000.",
   path: termsPath,
   url: termsUrl,
 };

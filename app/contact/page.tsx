@@ -4,6 +4,7 @@ import { contact } from "@/content/contact";
 import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/contact" },
   title: `Contact | ${site.name}`,
   description: contact.intro,
 };

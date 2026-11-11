@@ -1,6 +1,6 @@
 // PLMA 2026 campaign copy for /chicago-event. Mirrors docs/content-chicago-event.md — keep wording in sync.
 //
-// The offer (confirmed by Nbits): complimentary development of one ERP module, representing US$5,000
+// The offer (aligned with the legal terms, Nov 11, 2026): complimentary development of one approved ERP module, with development services valued up to US$5,000
 // worth of development work, for PLMA conference attendees. ERP only. No expiry date.
 // It is NOT a cash credit, balance or discount — never describe it that way.
 // Public wording uses "complimentary", never "free" (team feedback, November 4, 2026).
@@ -90,7 +90,7 @@ export const leadForm = {
   heading: "Submit your enquiry",
   description:
     "Tell us about your business and what you would like to discuss. Our team will review your enquiry and contact you about the PLMA 2026 exclusive offer.",
-  offer: "Complimentary development of one ERP module – US$5,000 worth of ERP development work",
+  offer: "Complimentary development of one approved ERP module, with development services valued up to US$5,000. It is not cash or credit.",
   labels: {
     name: "Name",
     email: "Business email",
@@ -127,6 +127,47 @@ export const leadForm = {
   successBody: "Our team will review your requirements and contact you about the PLMA 2026 offer.",
   // Shown when a personal invitation link filled in the form from Zoho CRM.
   prefillNotice: "We have filled in the details we hold for you from your PLMA 2026 invitation. Please check them and change anything that is not right before you submit.",
+  // Phase 2 (approved requirements, 2026-11): company count, extra emails, colleagues.
+  // Shown only for a valid personal link. Used when no colleague allowed their first name to be shown.
+  companyEnquiries: (count: number, company: string) =>
+    `We have already received enquiries from ${count} other ${count === 1 ? "contact" : "contacts"} at ${company}. You can still submit your own enquiry.`,
+  // Named version (Nov 2026): first names only of colleagues who ticked "showFirstName"; anyone who
+  // did not is counted as "other colleague(s)". At most 5 names are listed.
+  companyNamed: (names: string[], othersWithoutName: number, company: string) => {
+    const shown = names.slice(0, 5);
+    const unnamed = othersWithoutName + (names.length - shown.length);
+    const parts = [...shown];
+    if (unnamed > 0) parts.push(`${unnamed} other ${unnamed === 1 ? "colleague" : "colleagues"}`);
+    const list = parts.length === 1 ? parts[0] : `${parts.slice(0, -1).join(", ")} and ${parts[parts.length - 1]}`;
+    const one = shown.length + unnamed === 1;
+    return `${list} from ${company} ${one ? "has already submitted an enquiry" : "have already submitted their enquiries"}. You can still submit yours.`;
+  },
+  // Optional permission, separate from the contact consent. Never pre-ticked.
+  showFirstName:
+    "Colleagues from my company who open their own PLMA 2026 invitation may see my first name, so they know I have already enquired.",
+  additionalEmails: {
+    label: "Another email for you",
+    add: "Add another email",
+    remove: "Remove email",
+    hint: "Only addresses you use yourself. Colleagues go in “Other contacts at your company” below.",
+    error: "Enter a valid email, like name@company.com, or remove this row.",
+  },
+  contacts: {
+    heading: "Other contacts at your company",
+    description:
+      "Add colleagues who should also hear about the offer. Each person is recorded separately; we do not email them automatically.",
+    add: "Add another contact",
+    remove: "Remove contact",
+    name: "Colleague’s name",
+    email: "Colleague’s business email",
+    jobTitle: "Colleague’s job title",
+    rowLabel: (n: number) => `Contact ${n}`,
+    nameError: "Enter this colleague’s name, or remove the row.",
+    emailError: "Enter this colleague’s business email, or remove the row.",
+    limit: (max: number) => `You can add up to ${max} contacts at a time.`,
+  },
+  successContacts: (n: number) =>
+    `We have also recorded ${n} ${n === 1 ? "colleague" : "colleagues"} you added.`,
   failureHeading: "We couldn’t submit your enquiry.",
   failureBody: "Your details are still in the form. Please try again in a moment, or",
   failureLink: "open the form in a new tab",
@@ -141,14 +182,21 @@ export const anchors = {
   terms: "offer-terms",
 } as const;
 
+// The offer wording used across the website, aligned with the legal terms (owner's decision,
+// November 11, 2026: "development services valued up to US$5,000 for one approved ERP module").
+// Every section must agree with it.
+export const offerStatement =
+  "Complimentary development of one approved ERP module, with development services valued up to US$5,000.";
+export const offerNotCash = "It is not cash or credit.";
+
 // The one sentence every section must agree with.
 export const offerSummary =
-  "PLMA 2026 attendees can request complimentary development of one ERP module, representing US$5,000 worth of ERP development work, through SesameERP.";
+  "PLMA 2026 attendees can request complimentary development of one approved ERP module, with development services valued up to US$5,000, through SesameERP.";
 
 export const offer = {
   module: "One ERP module",
   price: "Complimentary",
-  value: "US$5,000 worth of ERP development work",
+  value: "Development services valued up to US$5,000",
   audience: "For PLMA 2026 attendees",
 };
 
@@ -159,7 +207,9 @@ export const plmaEvent = {
   shortName: "PLMA 2026",
   dates: "November 15–17, 2026",
   venue: "Donald E. Stephens Convention Center",
-  // The venue is in Rosemont, next to Chicago. TO CONFIRM how the business wants this worded.
+  // Trade show floor (Mon–Tue). Sunday education and keynote breakfasts are at the Hyatt Regency
+  // O'Hare (see plmaLanding.eventFacts in content/plma-2026.ts). Wording "Rosemont (Chicago),
+  // Illinois" confirmed by the owner (Nov 11, 2026); PLMA itself writes "Chicago".
   location: "Rosemont (Chicago), Illinois, USA",
   url: "https://plma.com/events/plmas-2026-private-label-trade-show",
 };
@@ -204,7 +254,7 @@ export const plmaHero = {
   eyebrow: "PLMA 2026 attendee exclusive",
   headline: ["Complimentary development"],
   headlineSecond: "of one ERP module.",
-  highlight: "US$5,000 worth of ERP development work",
+  highlight: "Development services valued up to US$5,000",
   description:
     "Attending PLMA 2026? Explore how SesameERP can help improve your business operations with custom ERP development, AI agents and ERP automation.",
   benefits: [
@@ -217,6 +267,7 @@ export const plmaHero = {
 
 export const offerCard = {
   label: "PLMA 2026 exclusive offer",
+  notCash: "Development work, not cash or credit",
   module: offer.module,
   price: offer.price,
   value: offer.value,
@@ -228,8 +279,8 @@ export const formSection = {
   intro:
     "Tell us about your business and what you would like to discuss. Our team will review your enquiry and contact you about the next steps.",
   points: [
-    "Complimentary development of one ERP module",
-    "US$5,000 worth of ERP development work",
+    "Complimentary development of one approved ERP module",
+    "Development services valued up to US$5,000, not cash or credit",
     "Prefer to see SesameERP first? Ask for a product demo when we contact you",
   ],
 };
@@ -316,7 +367,7 @@ export const howSection = {
   ],
   banner: {
     heading: "PLMA 2026 exclusive offer",
-    body: "Complimentary development of one ERP module, representing US$5,000 worth of ERP development work.",
+    body: `${offerStatement} ${offerNotCash}`,
   },
 };
 
@@ -329,7 +380,7 @@ export const plmaFaq = {
   items: [
     {
       q: "What is the PLMA 2026 exclusive offer?",
-      a: "Complimentary development of one ERP module, representing US$5,000 worth of ERP development work.",
+      a: `${offerStatement} ${offerNotCash}`,
     },
     { q: "Who is eligible for this offer?", a: "The offer is available to PLMA 2026 conference attendees." },
     { q: "Which services are included?", a: "This offer is specifically for one ERP module." },
@@ -349,7 +400,7 @@ export const offerTerms = {
   summary: "Offer terms and conditions",
   items: [
     "Development of one ERP module is offered on a complimentary basis.",
-    "The development work represents US$5,000 in value.",
+    "Development services are valued up to US$5,000. It is not cash or credit.",
     "The offer is intended for PLMA 2026 conference attendees.",
     "The offer applies to ERP only.",
     "No expiry date has been set for the offer.",
@@ -360,7 +411,7 @@ export const offerTerms = {
 export const plmaSeo = {
   title: "PLMA 2026 Exclusive ERP Offer | Complimentary ERP Module Development | SesameERP",
   description:
-    "Attending PLMA 2026? Request complimentary development of one ERP module, representing US$5,000 worth of ERP development work. Explore custom ERP development, AI agents and ERP automation with SesameERP.",
+    "Attending PLMA 2026? Request complimentary development of one approved ERP module, with development services valued up to US$5,000. Explore custom ERP development, AI agents and ERP automation with SesameERP.",
   path: campaignPath,
   url: campaignUrl,
   keywords: [
@@ -372,5 +423,5 @@ export const plmaSeo = {
     "ERP automation",
     "SesameERP",
   ],
-  imageAlt: "PLMA 2026 exclusive: complimentary development of one ERP module, US$5,000 worth of ERP development work — SesameERP",
+  imageAlt: "PLMA 2026 exclusive: complimentary development of one approved ERP module, development services valued up to US$5,000 — SesameERP",
 };

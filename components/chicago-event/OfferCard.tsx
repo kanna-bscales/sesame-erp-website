@@ -35,7 +35,7 @@ export function OfferCard() {
         <dl className="mt-7 border-t-2 border-ink">
           <div className="flex items-baseline justify-between gap-4 border-b border-rule py-3.5">
             <dt className="text-ink-soft">Development value</dt>
-            <dd className="font-semiwide text-xl font-extrabold tabular-nums">US$5,000</dd>
+            <dd className="font-semiwide text-xl font-extrabold tabular-nums">Up to US$5,000</dd>
           </div>
           <div className="flex items-baseline justify-between gap-4 py-3.5">
             <dt className="text-ink-soft">Available to</dt>
@@ -43,7 +43,8 @@ export function OfferCard() {
           </div>
         </dl>
 
-        <p className="mt-3 text-sm text-ink-soft">{site.name} · Custom ERP, AI agents and ERP automation</p>
+        <p className="mt-3 text-sm font-medium text-ink">{offerCard.notCash}</p>
+        <p className="mt-1 text-sm text-ink-soft">{site.name} · Custom ERP, AI agents and ERP automation</p>
       </PaperStack>
     </div>
   );

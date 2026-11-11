@@ -1,11 +1,11 @@
 export const about = {
   heading: "We build ERP systems that actually fit",
   intro:
-    "SesameERP is a product of Sesame Labs — a small, focused team that builds custom ERP systems with AI agents woven in from day one. We work directly with business owners to design systems around how they actually operate, not how a template says they should.",
+    "SesameERP is a small, focused team that builds custom ERP systems with AI agents woven in from day one. We work directly with business owners to design systems around how they actually operate, not how a template says they should.",
 
   mission: {
     heading: "Why we exist",
-    body: "Most businesses are stuck choosing between bloated enterprise software that takes months to deploy or generic tools stitched together with spreadsheets. We started Sesame Labs because we believed there was a better way — purpose-built systems, delivered fast, with AI doing the repetitive work so your team doesn't have to.",
+    body: "Most businesses are stuck choosing between bloated enterprise software that takes months to deploy or generic tools stitched together with spreadsheets. We started SesameERP because we believed there was a better way — purpose-built systems, delivered fast, with AI doing the repetitive work so your team doesn't have to.",
   },
 
   approach: {

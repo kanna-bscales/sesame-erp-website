@@ -41,6 +41,11 @@ export function SiteFooter() {
               </li>
             ))}
             <li>
+              <Link href="/plma-2026" className="transition-colors hover:text-white">
+                PLMA 2026
+              </Link>
+            </li>
+            <li>
               <Link href="/about" className="transition-colors hover:text-white">
                 About
               </Link>

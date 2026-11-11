@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: `${site.name} | Custom ERP systems with AI agents built in`,
     description: site.description,
-    url: "https://sesameerp.ai",
+    url: "https://www.sesameerp.ai",
     siteName: site.name,
     type: "website",
     locale: "en_US",
@@ -38,7 +38,8 @@ export const metadata: Metadata = {
     title: `${site.name} | Custom ERP systems with AI agents built in`,
     description: site.description,
   },
-  metadataBase: new URL("https://sesameerp.ai"),
+  // www is the production host (the apex redirects to it).
+  metadataBase: new URL("https://www.sesameerp.ai"),
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

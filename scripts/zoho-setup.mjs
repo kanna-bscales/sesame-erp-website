@@ -3,8 +3,14 @@
 //
 //   node scripts/zoho-setup.mjs token   Exchange a Self Client "grant code" for a refresh token and
 //                                       save it as ZOHO_REFRESH_TOKEN in .env.local.
+//   node scripts/zoho-setup.mjs campaign-test
+//                                       Proves the token can set a PLMA campaign member to
+//                                       "Responded": creates ONE temporary fake Lead ("PLMA 2026
+//                                       (test)"), adds it to the campaign, sets Responded, reads it
+//                                       back, then deletes the fake Lead. No email, workflows off.
 //   node scripts/zoho-setup.mjs check   Confirm the credentials in .env.local work (read-only:
-//                                       counts PLMA 2026 Leads; prints no personal data).
+//                                       lists the granted scopes, flags missing ones, counts
+//                                       PLMA 2026 Leads; prints no personal data).
 //
 // Secrets are read from and written to .env.local only. Nothing secret is printed.
 
@@ -34,6 +40,15 @@ function setEnvValue(key, value) {
 }
 
 const env = readEnv();
+
+// Every scope the website needs. campaigns.UPDATE sets the campaign member status to "Responded".
+const REQUIRED_SCOPES = [
+  "ZohoCRM.modules.leads.ALL",
+  "ZohoCRM.modules.campaigns.READ",
+  "ZohoCRM.modules.campaigns.UPDATE",
+  "ZohoCRM.modules.notes.CREATE",
+  "ZohoCRM.coql.READ",
+];
 
 // Shape checks that never print the values themselves.
 function checkShapes() {
@@ -123,7 +138,23 @@ async function check() {
     console.error(`Token refresh failed (${t.error ?? "unknown"}). Check the three values and the data centre.`);
     exit(1);
   }
-  console.log("1/2 Access token: OK");
+  console.log("1/3 Access token: OK");
+  // Scope names are not secret. Zoho returns them space- or comma-separated.
+  const granted = String(t.scope ?? "").split(/[\s,]+/).filter(Boolean);
+  if (granted.length) {
+    const has = (s) => granted.some((g) => g.toLowerCase() === s.toLowerCase() || (s.endsWith(".UPDATE") && g.toLowerCase() === s.replace(/\.UPDATE$/, ".ALL").toLowerCase()));
+    const missing = REQUIRED_SCOPES.filter((s) => !has(s));
+    console.log(`2/3 Granted scopes: ${granted.join(", ")}`);
+    if (missing.length) {
+      console.error(`    Missing: ${missing.join(", ")}`);
+      console.error("    Generate a new grant code with ALL of these scopes and run: node scripts/zoho-setup.mjs token");
+      console.error(`    ${REQUIRED_SCOPES.join(",")}`);
+    } else {
+      console.log("    All required scopes present (campaign status can be set to Responded).");
+    }
+  } else {
+    console.log("2/3 Granted scopes: not reported by Zoho for this token (use the 'Campaign status' test in docs).");
+  }
   const r = await fetch(`${api}/crm/v8/coql`, {
     method: "POST",
     headers: { Authorization: `Zoho-oauthtoken ${t.access_token}`, "Content-Type": "application/json" },
@@ -132,16 +163,69 @@ async function check() {
   const j = await r.json().catch(() => ({}));
   const count = j?.data?.[0] ? Object.values(j.data[0])[0] : null;
   if (!r.ok || count === null) {
-    console.error(`2/2 CRM query failed (${j.code ?? r.status}). Check the scopes include ZohoCRM.coql.READ and ZohoCRM.modules.leads.ALL.`);
+    console.error(`3/3 CRM query failed (${j.code ?? r.status}). Check the scopes include ZohoCRM.coql.READ and ZohoCRM.modules.leads.ALL.`);
     exit(1);
   }
-  console.log(`2/2 CRM access: OK — ${count} PLMA 2026 Leads visible (expected 718).`);
+  console.log(`3/3 CRM access: OK — ${count} PLMA 2026 Leads visible (718 primary attendees + additional contacts).`);
+}
+
+async function campaignTest() {
+  need("ZOHO_CLIENT_ID", "ZOHO_CLIENT_SECRET", "ZOHO_REFRESH_TOKEN");
+  const campaign = env.ZOHO_PLMA_CAMPAIGN_ID || "7671386000000694366";
+  const t = await fetch(`${accounts}/oauth/v2/token`, {
+    method: "POST",
+    body: new URLSearchParams({
+      grant_type: "refresh_token",
+      client_id: env.ZOHO_CLIENT_ID,
+      client_secret: env.ZOHO_CLIENT_SECRET,
+      refresh_token: env.ZOHO_REFRESH_TOKEN,
+    }),
+  }).then((r) => r.json());
+  if (!t.access_token) {
+    console.error(`Token refresh failed (${t.error ?? "unknown"}).`);
+    exit(1);
+  }
+  const H = { Authorization: `Zoho-oauthtoken ${t.access_token}`, "Content-Type": "application/json" };
+  const call = async (path, init = {}) => {
+    const r = await fetch(`${api}/crm/v8${path}`, { ...init, headers: H });
+    return { status: r.status, json: await r.json().catch(() => ({})) };
+  };
+  const created = await call("/Leads", {
+    method: "POST",
+    body: JSON.stringify({
+      data: [{ Last_Name: "PLMA campaign test (delete me)", Company: "PLMA TEST", Conference_Name: "PLMA 2026 (test)", Email_Opt_Out: true }],
+      trigger: [],
+    }),
+  });
+  const id = created.json?.data?.[0]?.details?.id;
+  if (!id) {
+    console.error(`Could not create the temporary test Lead (HTTP ${created.status}).`);
+    exit(1);
+  }
+  let ok = false;
+  try {
+    const planned = await call(`/Leads/${id}/Campaigns`, { method: "PUT", body: JSON.stringify({ data: [{ id: campaign, Member_Status: "Planned" }] }) });
+    const responded = await call(`/Leads/${id}/Campaigns`, { method: "PUT", body: JSON.stringify({ data: [{ id: campaign, Member_Status: "Responded" }] }) });
+    const read = await call(`/Leads/${id}/Campaigns?fields=Campaign_Name,Member_Status`);
+    const status = read.json?.data?.find((c) => c.id === campaign)?.$member_info?.Member_Status;
+    console.log(`Add to campaign: HTTP ${planned.status}; set Responded: HTTP ${responded.status}; status read back: ${status ?? "(none)"}`);
+    ok = status === "Responded";
+    if (!ok && (responded.status === 401 || responded.status === 403)) {
+      console.error("The token is missing ZohoCRM.modules.campaigns.UPDATE. Run 'check' for the full scope list.");
+    }
+  } finally {
+    const del = await call(`/Leads?ids=${id}&wf_trigger=false`, { method: "DELETE" });
+    console.log(`Temporary test Lead deleted: HTTP ${del.status}`);
+  }
+  console.log(ok ? "PASS: campaign status can be set to Responded." : "FAIL: campaign status was not set to Responded.");
+  exit(ok ? 0 : 1);
 }
 
 const cmd = argv[2];
 if (cmd === "token") await token();
 else if (cmd === "check") await check();
+else if (cmd === "campaign-test") await campaignTest();
 else {
-  console.log("Usage: node scripts/zoho-setup.mjs token | check");
+  console.log("Usage: node scripts/zoho-setup.mjs token | check | campaign-test");
   exit(1);
 }

@@ -2,14 +2,17 @@
 
 import Link from "next/link";
 import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from "react";
-import { CircleAlert, CircleCheck, LoaderCircle } from "lucide-react";
+import { CircleAlert, CircleCheck, LoaderCircle, Plus, X } from "lucide-react";
 import { leadForm, zohoLeadForm, zohoWebform } from "@/content/chicago-event";
 import { termsAcceptance, termsMeta, termsPath } from "@/content/plma-2026-terms";
 import {
   BOOTH_RE,
   isValidRef,
+  LIMITS,
   refParam,
   type AttendeeLookupResponse,
+  type CompanyContext,
+  type ContactInput,
   type EnquiryErrorKey,
   type EnquiryResponse,
 } from "@/lib/plma/reference";
@@ -18,8 +21,13 @@ import {
 //
 // Personal invitation links (…/chicago-event?ref=<attendee reference>) pre-fill the form: the
 // reference is sent to /api/plma/attendee, which looks the Lead up in Zoho CRM on the server and
-// returns only Name, Email, Company, Phone, Booth, Job title and Website. Everything stays
-// editable, and the consent and terms boxes are never pre-ticked.
+// returns only Name, Email, Company, Phone, Booth, Job title, Website and the person's own extra
+// emails (latest submitted values first, otherwise the original CRM values). Everything stays
+// editable, and the consent and terms boxes are never pre-ticked. It may also return how many OTHER
+// people at the same company have already submitted (a number only).
+//
+// "Add another email" collects extra addresses for the same person (one Lead).
+// "Add another contact" collects colleagues; the server records each new person as a separate Lead.
 //
 // Submissions go to /api/plma/enquiry, which updates the attendee's existing Lead (matched by the
 // reference, then by email) or creates a new one. If the server has no Zoho credentials it answers
@@ -38,11 +46,14 @@ declare global {
   }
 }
 
-type FieldKey = "name" | "email" | "phone" | "company" | "booth" | "website" | "consent" | "terms";
+type FieldKey = EnquiryErrorKey;
+type ContactRow = ContactInput & { key: number };
 
 // Clickwrap acceptance of the PLMA offer terms. Checked in the browser only: it is removed from the
 // payload before it is sent, so the Zoho submission is unchanged.
 const TERMS_FIELD = "plma_terms_accept";
+// Optional: may colleagues at the same company see this person's first name? (PLMA_Show_First_Name)
+const SHOW_NAME_FIELD = "plma_show_first_name";
 type Errors = Partial<Record<FieldKey, string>>;
 type Status = "idle" | "submitting" | "success" | "error";
 
@@ -83,7 +94,7 @@ function splitName(full: string): { first: string; last: string } {
   };
 }
 
-function validate(data: FormData): Errors {
+function validate(data: FormData, extraEmails: string[], contacts: ContactRow[]): Errors {
   const text = (name: string) => String(data.get(name) ?? "").trim();
   const errors: Errors = {};
   const e = leadForm.errors;
@@ -106,6 +117,13 @@ function validate(data: FormData): Errors {
 
   const website = text(F.website);
   if (website && !WEBSITE_RE.test(website)) errors.website = e.website;
+
+  if (extraEmails.some((x) => x.trim() && !EMAIL_RE.test(x.trim()))) errors.additionalEmails = leadForm.additionalEmails.error;
+  contacts.forEach((c, i) => {
+    if (!c.name.trim() && !c.email.trim() && !c.jobTitle.trim()) return; // empty rows are ignored
+    if (!c.name.trim()) errors[`contact.${i}.name`] = leadForm.contacts.nameError;
+    if (!EMAIL_RE.test(c.email.trim())) errors[`contact.${i}.email`] = leadForm.contacts.emailError;
+  });
 
   if (!data.get(F.consent)) errors.consent = e.consent;
   if (!data.get(TERMS_FIELD)) errors.terms = termsAcceptance.error;
@@ -148,6 +166,11 @@ export function ZohoLeadForm() {
   const [errors, setErrors] = useState<Errors>({});
   const [submitted, setSubmitted] = useState(false);
   const [prefilled, setPrefilled] = useState(false);
+  const [company, setCompany] = useState<CompanyContext | null>(null);
+  const [extraEmails, setExtraEmails] = useState<string[]>([]);
+  const [contacts, setContacts] = useState<ContactRow[]>([]);
+  const [contactsAdded, setContactsAdded] = useState(0);
+  const rowKey = useRef(0);
   const attendeeRef = useRef<string | null>(null);
 
   // Remember UTM values from the landing URL for the rest of the visit (first touch wins).
@@ -204,7 +227,12 @@ export function ZohoLeadForm() {
             filled = true;
           }
         }
+        if (result.fields.additionalEmails.length) {
+          setExtraEmails((current) => (current.length ? current : result.fields.additionalEmails.slice(0, LIMITS.additionalEmails)));
+          filled = true;
+        }
         if (filled) setPrefilled(true);
+        if (result.company && result.company.otherSubmitted > 0) setCompany(result.company);
       })
       .catch(() => {
         // Lookup unavailable: the visitor fills the form in by hand.
@@ -233,12 +261,27 @@ export function ZohoLeadForm() {
   // After the first submit attempt, re-check a field as soon as it changes.
   const revalidate = () => {
     if (!submitted || !formRef.current) return;
-    setErrors(validate(new FormData(formRef.current)));
+    setErrors(validate(new FormData(formRef.current), extraEmails, contacts));
   };
+
+  // Controlled rows re-validate after state updates (the form's onChange runs before them).
+  useEffect(() => {
+    if (!submitted || !formRef.current) return;
+    const form = formRef.current;
+    const timer = window.setTimeout(() => setErrors(validate(new FormData(form), extraEmails, contacts)), 0);
+    return () => window.clearTimeout(timer);
+  }, [extraEmails, contacts, submitted]);
+
+  const addContact = () =>
+    setContacts((rows) => (rows.length >= LIMITS.contacts ? rows : [...rows, { key: ++rowKey.current, name: "", email: "", jobTitle: "" }]));
+  const updateContact = (key: number, field: keyof ContactInput, value: string) =>
+    setContacts((rows) => rows.map((r) => (r.key === key ? { ...r, [field]: value } : r)));
+  const removeContact = (key: number) => setContacts((rows) => rows.filter((r) => r.key !== key));
 
   function errorText(key: EnquiryErrorKey): string {
     const e = leadForm.errors;
-    const map: Record<EnquiryErrorKey, string> = {
+    if (key.startsWith("contact.")) return key.endsWith(".name") ? leadForm.contacts.nameError : leadForm.contacts.emailError;
+    const map: Record<string, string> = {
       name: e.name,
       email: e.email,
       phone: e.phone,
@@ -247,12 +290,19 @@ export function ZohoLeadForm() {
       website: e.website,
       consent: e.consent,
       terms: termsAcceptance.error,
+      additionalEmails: leadForm.additionalEmails.error,
     };
-    return map[key];
+    return map[key] ?? leadForm.errors.summary;
   }
 
+  const filledExtraEmails = () => extraEmails.map((x) => x.trim()).filter(Boolean);
+  const filledContacts = () =>
+    contacts
+      .map((c) => ({ name: c.name.trim(), email: c.email.trim(), jobTitle: c.jobTitle.trim() }))
+      .filter((c) => c.name || c.email || c.jobTitle);
+
   /** Sends the enquiry to our server route. "fallback" means: use the Zoho webform instead. */
-  async function submitToApi(data: FormData): Promise<"ok" | "error" | "fallback" | EnquiryErrorKey[]> {
+  async function submitToApi(data: FormData): Promise<{ added: number } | "error" | "fallback" | EnquiryErrorKey[]> {
     const value = (name: string) => String(data.get(name) ?? "").trim();
     const controller = new AbortController();
     const timer = window.setTimeout(() => controller.abort(), 25000);
@@ -266,12 +316,15 @@ export function ZohoLeadForm() {
           ref: attendeeRef.current,
           name: value(C.fullName),
           email: value(F.email),
+          additionalEmails: filledExtraEmails(),
           phone: value(F.phone),
           company: value(F.company),
           booth: value(C.booth),
           jobTitle: value(F.jobTitle),
           website: value(F.website),
           requirements: value(F.requirements),
+          contacts: filledContacts(),
+          showName: Boolean(data.get(SHOW_NAME_FIELD)),
           consent: Boolean(data.get(F.consent)),
           terms: Boolean(data.get(TERMS_FIELD)),
           termsVersion: termsMeta.updated,
@@ -281,7 +334,7 @@ export function ZohoLeadForm() {
       });
       if (response.status === 404) return "fallback"; // route not deployed
       const result = (await response.json().catch(() => null)) as EnquiryResponse | null;
-      if (result?.ok) return "ok";
+      if (result?.ok) return { added: result.contactsAdded ?? 0 };
       if (result?.reason === "not_configured") return "fallback";
       if (result?.reason === "invalid" && result.errors.length) return result.errors;
       return "error";
@@ -299,7 +352,7 @@ export function ZohoLeadForm() {
     let data = new FormData(form);
 
     setSubmitted(true);
-    const found = validate(data);
+    const found = validate(data, extraEmails, contacts);
     setErrors(found);
     const firstInvalid = (Object.keys(found) as FieldKey[])[0];
     if (firstInvalid) {
@@ -311,7 +364,8 @@ export function ZohoLeadForm() {
     setStatus("submitting");
     try {
       const outcome = await submitToApi(data);
-      if (outcome === "ok") {
+      if (typeof outcome === "object" && !Array.isArray(outcome)) {
+        setContactsAdded(outcome.added);
         setStatus("success");
         return;
       }
@@ -341,12 +395,23 @@ export function ZohoLeadForm() {
     }
     data = new FormData(form);
     data.delete(TERMS_FIELD);
+    data.delete(SHOW_NAME_FIELD); // not a webform field
 
     // Single Name input -> Zoho's First Name / Last Name.
     const { first, last } = splitName(String(data.get(C.fullName) ?? ""));
     data.delete(C.fullName);
     data.set(F.firstName, first);
     data.set(F.lastName, last);
+
+    // The webform has no fields for extra emails or colleagues: list them in the enquiry text.
+    const extras = [
+      filledExtraEmails().length ? `Other emails for me: ${filledExtraEmails().join(", ")}` : "",
+      ...filledContacts().map((c) => `Colleague: ${c.name} <${c.email}>${c.jobTitle ? `, ${c.jobTitle}` : ""}`),
+    ].filter(Boolean);
+    if (extras.length) {
+      const notes = String(data.get(F.requirements) ?? "").trim();
+      data.set(F.requirements, `${notes}${notes ? "\n\n" : ""}${extras.join("\n")}`.slice(0, zohoLeadForm.maxLength.requirements));
+    }
 
     // Booth number: its own Zoho field once one exists, otherwise the first line of ERP Requirements.
     const booth = String(data.get(C.booth) ?? "").trim();
@@ -421,6 +486,9 @@ export function ZohoLeadForm() {
         <CircleCheck aria-hidden className="size-12 text-ballpoint-ink" strokeWidth={1.75} />
         <h3 className="font-semiwide mt-5 text-2xl font-extrabold sm:text-3xl">{leadForm.successHeading}</h3>
         <p className="mt-3 max-w-[32rem] text-lg leading-relaxed text-ink-soft">{leadForm.successBody}</p>
+        {contactsAdded > 0 && (
+          <p className="mt-3 max-w-[32rem] leading-relaxed text-ink-soft">{leadForm.successContacts(contactsAdded)}</p>
+        )}
       </div>
     );
   }
@@ -462,6 +530,14 @@ export function ZohoLeadForm() {
       <div aria-hidden className="absolute -left-[9999px] h-px w-px overflow-hidden">
         <input type="text" name={zohoLeadForm.honeypot} tabIndex={-1} autoComplete="off" defaultValue="" />
       </div>
+
+      {company && (
+        <p role="status" className="mt-6 rounded-lg bg-canary px-4 py-3 text-[0.95rem] leading-relaxed text-night">
+          {company.names.length
+            ? leadForm.companyNamed(company.names, company.otherSubmitted - company.names.length, company.name)
+            : leadForm.companyEnquiries(company.otherSubmitted, company.name)}
+        </p>
+      )}
 
       {prefilled && (
         <p role="status" className="mt-6 rounded-lg border border-rule bg-paper px-4 py-3 text-[0.95rem] leading-relaxed">
@@ -507,6 +583,53 @@ export function ZohoLeadForm() {
             className={inputClasses}
           />
         </Field>
+
+        <div className="sm:col-span-2 -mt-2">
+          {extraEmails.map((value, i) => (
+            <div key={i} className="mt-3 flex items-end gap-2">
+              <div className="flex-1">
+                <label htmlFor={id(`extra-${i}`)} className="block text-[0.95rem] font-semibold text-ink">
+                  {leadForm.additionalEmails.label}
+                </label>
+                <input
+                  id={id(`extra-${i}`)}
+                  type="email"
+                  inputMode="email"
+                  autoComplete="off"
+                  maxLength={zohoLeadForm.maxLength.email}
+                  value={value}
+                  onChange={(event) => {
+                    const next = event.target.value;
+                    setExtraEmails((list) => list.map((x, j) => (j === i ? next : x)));
+                  }}
+                  aria-invalid={errors.additionalEmails && value.trim() && !EMAIL_RE.test(value.trim()) ? true : undefined}
+                  className={inputClasses}
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => setExtraEmails((list) => list.filter((_, j) => j !== i))}
+                className="inline-flex size-12 shrink-0 items-center justify-center rounded-lg border border-rule bg-paper text-ink-soft transition-colors hover:border-ink/40 hover:text-ink"
+              >
+                <X aria-hidden className="size-4" />
+                <span className="sr-only">{leadForm.additionalEmails.remove}</span>
+              </button>
+            </div>
+          ))}
+          {errors.additionalEmails && <ErrorText id={errId("additionalEmails")}>{errors.additionalEmails}</ErrorText>}
+          {extraEmails.length < LIMITS.additionalEmails && (
+            <button
+              type="button"
+              id={id("additionalEmails")}
+              onClick={() => setExtraEmails((list) => [...list, ""])}
+              className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-rule bg-sheet px-3.5 py-2 text-[0.95rem] font-semibold text-ink transition-colors hover:border-ink/40"
+            >
+              <Plus aria-hidden className="size-4" />
+              {leadForm.additionalEmails.add}
+            </button>
+          )}
+          {extraEmails.length > 0 && <p className="mt-2 text-sm leading-relaxed text-ink-soft">{leadForm.additionalEmails.hint}</p>}
+        </div>
 
         <Field id={id("company")} errorId={errId("company")} label={leadForm.labels.company} required error={errors.company}>
           <input
@@ -593,6 +716,70 @@ export function ZohoLeadForm() {
           />
         </Field>
 
+        <fieldset className="sm:col-span-2 rounded-lg border border-rule bg-paper p-4 sm:p-5">
+          <legend className="float-left w-full text-[0.95rem] font-semibold text-ink">{leadForm.contacts.heading}</legend>
+          <p className="clear-left pt-1.5 text-sm leading-relaxed text-ink-soft">{leadForm.contacts.description}</p>
+          {contacts.map((row, i) => (
+            <div key={row.key} className="mt-4 border-t border-rule pt-4">
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-semibold text-ink">{leadForm.contacts.rowLabel(i + 1)}</p>
+                <button
+                  type="button"
+                  onClick={() => removeContact(row.key)}
+                  className="inline-flex items-center gap-1 text-sm font-medium text-ink-soft hover:text-ink"
+                >
+                  <X aria-hidden className="size-4" />
+                  {leadForm.contacts.remove}
+                  <span className="sr-only"> {i + 1}</span>
+                </button>
+              </div>
+              <div className="mt-1 grid gap-x-4 gap-y-3 sm:grid-cols-3">
+                {(["name", "email", "jobTitle"] as const).map((field) => {
+                  const key = `contact.${i}.${field}` as EnquiryErrorKey;
+                  const error = field === "jobTitle" ? undefined : errors[key];
+                  return (
+                    <div key={field} className="flex flex-col">
+                      <label htmlFor={id(key)} className="block flex-1 text-sm font-semibold text-ink">
+                        {leadForm.contacts[field]}
+                        {field !== "jobTitle" && (
+                          <span className="text-ballpoint-ink" aria-hidden>
+                            {" "}*
+                          </span>
+                        )}
+                      </label>
+                      <input
+                        id={id(key)}
+                        type={field === "email" ? "email" : "text"}
+                        inputMode={field === "email" ? "email" : undefined}
+                        autoComplete="off"
+                        maxLength={field === "email" ? zohoLeadForm.maxLength.email : field === "name" ? zohoLeadForm.maxLength.name : zohoLeadForm.maxLength.jobTitle}
+                        value={row[field]}
+                        onChange={(event) => updateContact(row.key, field, event.target.value)}
+                        aria-invalid={error ? true : undefined}
+                        aria-describedby={error ? errId(key) : undefined}
+                        className={inputClasses}
+                      />
+                      {error && <ErrorText id={errId(key)}>{error}</ErrorText>}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+          {contacts.length < LIMITS.contacts ? (
+            <button
+              type="button"
+              onClick={addContact}
+              className="mt-4 inline-flex items-center gap-1.5 rounded-lg border border-rule bg-sheet px-3.5 py-2 text-[0.95rem] font-semibold text-ink hover:border-ink/40"
+            >
+              <Plus aria-hidden className="size-4" />
+              {leadForm.contacts.add}
+            </button>
+          ) : (
+            <p className="mt-4 text-sm text-ink-soft">{leadForm.contacts.limit(LIMITS.contacts)}</p>
+          )}
+        </fieldset>
+
         <div className="sm:col-span-2">
           <label
             htmlFor={id("consent")}
@@ -643,6 +830,18 @@ export function ZohoLeadForm() {
             </span>
           </label>
           {errors.terms && <ErrorText id={errId("terms")}>{errors.terms}</ErrorText>}
+          <label
+            htmlFor={id("showName")}
+            className="mt-3 flex cursor-pointer items-start gap-3 rounded-lg border border-rule bg-paper p-4 leading-relaxed transition-colors hover:border-ink/40"
+          >
+            <input
+              id={id("showName")}
+              name={SHOW_NAME_FIELD}
+              type="checkbox"
+              className="mt-1 size-4.5 shrink-0 accent-ballpoint"
+            />
+            <span>{leadForm.showFirstName}</span>
+          </label>
         </div>
       </div>
 

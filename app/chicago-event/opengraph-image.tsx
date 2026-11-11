@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "PLMA 2026 exclusive: complimentary development of one ERP module, US$5,000 worth of ERP development work — SesameERP";
+export const alt = "PLMA 2026 exclusive: complimentary development of one approved ERP module, development services valued up to US$5,000 — SesameERP";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -104,7 +104,7 @@ export default async function PlmaOgImage() {
             display: "flex",
           }}
         >
-          US$5,000 worth of ERP development work, for PLMA 2026 attendees.
+          Development services valued up to US$5,000, for PLMA 2026 attendees.
         </div>
 
         {/* Bottom bar */}

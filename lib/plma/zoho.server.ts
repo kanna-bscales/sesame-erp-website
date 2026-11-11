@@ -6,7 +6,7 @@
 // Required OAuth scopes for the Self Client refresh token:
 //   ZohoCRM.modules.leads.ALL,ZohoCRM.modules.campaigns.READ,ZohoCRM.modules.campaigns.UPDATE,ZohoCRM.modules.notes.CREATE,ZohoCRM.coql.READ
 
-import { createHash } from "node:crypto";
+import { createHash, randomBytes } from "node:crypto";
 
 if (typeof window !== "undefined") {
   throw new Error("lib/plma/zoho.server.ts must only run on the server");
@@ -113,6 +113,7 @@ export type CrmLead = {
   First_Name?: string | null;
   Last_Name?: string | null;
   Email?: string | null;
+  Secondary_Email?: string | null;
   Company?: string | null;
   Phone?: string | null;
   Mobile?: string | null;
@@ -121,9 +122,119 @@ export type CrmLead = {
   Website?: string | null;
   ERP_Requirements?: string | null;
   Conference_Name?: string | null;
+  PLMA_Company_ID?: string | null;
+  PLMA_Contact_Role?: string | null;
+  PLMA_Response_Status?: string | null;
+  Submitted_Name?: string | null;
+  Submitted_Email?: string | null;
+  Submitted_Company?: string | null;
+  Submitted_Phone?: string | null;
+  Submitted_Job_Title?: string | null;
+  Submitted_Website?: string | null;
+  Submitted_Booth_Number?: string | null;
+  Submitted_Additional_Emails?: string | null;
+  PLMA_Show_First_Name?: boolean | null;
 };
 
-const LEAD_FIELDS = "id, First_Name, Last_Name, Email, Company, Phone, Mobile, Booth_Number, Designation, Website, ERP_Requirements, Conference_Name";
+// Phase 2 fields (Leads): PLMA_Company_ID, PLMA_Contact_Role, Submitted_* (what the person typed;
+// the original imported fields are never overwritten), PLMA_Duplicate_Review/_Reason.
+const LEAD_FIELDS = [
+  "id", "First_Name", "Last_Name", "Email", "Secondary_Email", "Company", "Phone", "Mobile", "Booth_Number",
+  "Designation", "Website", "ERP_Requirements", "Conference_Name", "PLMA_Company_ID", "PLMA_Contact_Role",
+  "PLMA_Response_Status", "Submitted_Name", "Submitted_Email", "Submitted_Company", "Submitted_Phone",
+  "Submitted_Job_Title", "Submitted_Website", "Submitted_Booth_Number",
+].join(", ");
+
+/** Company IDs are minted by us ("PLMA26-C0003", "PLMA26-W7Q2K9XD"): safe inside a COQL literal. */
+export const COMPANY_ID_RE = /^PLMA26-[A-Z0-9]{4,12}$/;
+/** Emails that can be put in a COQL string literal as they are. */
+const COQL_EMAIL_RE = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+$/;
+
+const OFFER_BASE = "https://www.sesameerp.ai/chicago-event";
+
+/** A new secure reference for a new person: the link (kept by the CRM in Offer URL) and its hash. */
+export function newReference() {
+  const ref = randomBytes(16).toString("base64url"); // 22 characters, 128 bits
+  return { ref, hash: hashReference(ref), offerUrl: `${OFFER_BASE}?ref=${ref}` };
+}
+
+/** New company identifier for a company that is not on the imported list (self-registered). */
+export function newCompanyId() {
+  const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  const bytes = randomBytes(8);
+  return `PLMA26-W${Array.from(bytes, (b) => alphabet[b % alphabet.length]).join("")}`;
+}
+
+/** One Lead by id with the extra (multi-line) fields the form needs. */
+export async function getLeadExtras(id: string): Promise<{ Submitted_Additional_Emails?: string | null } | null> {
+  if (!/^[A-Za-z0-9]{1,25}$/.test(id)) return null;
+  const result = await zoho<{ data?: { Submitted_Additional_Emails?: string | null }[] }>(
+    `/Leads/${id}?fields=Submitted_Additional_Emails`,
+  );
+  return result?.data?.[0] ?? null;
+}
+
+/**
+ * Leads whose primary, secondary or previously submitted email is this address (COQL, real time).
+ * Addresses that cannot be put in a COQL literal fall back to the search API (primary email only).
+ */
+export async function findLeadsByAnyEmail(email: string): Promise<CrmLead[]> {
+  if (COQL_EMAIL_RE.test(email)) {
+    const result = await zoho<{ data?: CrmLead[] }>("/coql", {
+      method: "POST",
+      body: {
+        // Zoho COQL accepts at most two conditions per group, so three are nested in pairs.
+        select_query: `select ${LEAD_FIELDS} from Leads where ((Email = '${email}' or Secondary_Email = '${email}') or Submitted_Email = '${email}') order by Modified_Time desc limit 20`,
+      },
+    });
+    return result?.data ?? [];
+  }
+  return findLeadsByEmail(email);
+}
+
+/** Every Lead with this Company ID (people at one company). */
+export async function findLeadsByCompanyId(companyId: string): Promise<CrmLead[]> {
+  if (!COMPANY_ID_RE.test(companyId)) return [];
+  const result = await zoho<{ data?: CrmLead[] }>("/coql", {
+    method: "POST",
+    body: { select_query: `select ${LEAD_FIELDS} from Leads where PLMA_Company_ID = '${companyId}' limit 200` },
+  });
+  return result?.data ?? [];
+}
+
+type SubmitterRow = Pick<CrmLead, "id" | "First_Name" | "Last_Name" | "Submitted_Name" | "PLMA_Show_First_Name">;
+
+/** A person's first name for display: the name they submitted, else the CRM first name. Null when unusable. */
+export function displayFirstName(row: Pick<CrmLead, "First_Name" | "Last_Name" | "Submitted_Name">): string | null {
+  const fromSubmitted = (row.Submitted_Name ?? "").trim().split(/\s+/)[0] ?? "";
+  const fromCrm = (row.First_Name ?? "").trim().split(/\s+/)[0] ?? "";
+  const first = (fromSubmitted || fromCrm).replace(/[.,]$/, "");
+  // Letters, apostrophes and hyphens only (no emails, numbers or initials); 2–40 characters.
+  return /^[\p{L}][\p{L}'’-]{1,39}$/u.test(first) ? first : null;
+}
+
+/**
+ * OTHER people at this company (same PLMA Company ID) whose PLMA Response Status is Submitted, the
+ * current person excluded. Returns the total and the first names of those who gave permission to
+ * show their first name (PLMA_Show_First_Name), earliest submission first.
+ */
+export async function otherSubmitters(companyId: string, selfId: string): Promise<{ count: number; names: string[] }> {
+  if (!COMPANY_ID_RE.test(companyId)) return { count: 0, names: [] };
+  const result = await zoho<{ data?: SubmitterRow[] }>("/coql", {
+    method: "POST",
+    body: {
+      select_query: `select id, First_Name, Last_Name, Submitted_Name, PLMA_Show_First_Name from Leads where PLMA_Company_ID = '${companyId}' and PLMA_Response_Status = 'Submitted' order by PLMA_Submission_Date asc limit 200`,
+    },
+  });
+  const others = (result?.data ?? []).filter((row) => row.id !== selfId);
+  const names: string[] = [];
+  for (const row of others) {
+    if (row.PLMA_Show_First_Name !== true) continue;
+    const first = displayFirstName(row);
+    if (first) names.push(first);
+  }
+  return { count: others.length, names };
+}
 
 /** The lead whose Attendee Reference Hash matches. Null when none, or when (unexpectedly) more than one. */
 export async function findLeadByReference(ref: string): Promise<CrmLead | null> {
