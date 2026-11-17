@@ -4,7 +4,6 @@ import { ArrowUpRight, Check } from "lucide-react";
 import { EventFaq } from "@/components/chicago-event/EventFaq";
 import { ButtonLink } from "@/components/ui/ButtonLink";
 import { plmaDisclaimer, plmaFacts, plmaPage, plmaPageSeo, plmaPageUrl, plmaSources } from "@/content/plma-2026";
-import { termsPath } from "@/content/plma-2026-terms";
 
 // Informational SEO page. The conversion page (offer + form) stays /chicago-event.
 
@@ -193,7 +192,37 @@ export default function Plma2026Page() {
         </div>
       </section>
 
-      <section aria-labelledby="why-erp" className="border-y border-rule bg-sheet">
+      <section aria-labelledby="erp-guide" className="border-t border-rule bg-sheet">
+        <div className={`page-container ${band}`}>
+          <h2 id="erp-guide" className={`${sectionTitle} max-w-4xl`}>
+            {p.erpGuide.heading}
+          </h2>
+          <p className="mt-5 max-w-[46rem] text-lg leading-relaxed text-ink-soft">{p.erpGuide.intro}</p>
+          <ul className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            {p.erpGuide.topics.map((topic) => (
+              <li key={topic.title} className="flex flex-col rounded-lg bg-paper p-6 ring-1 ring-ink/10">
+                <h3 className="font-semiwide text-lg font-extrabold">{topic.title}</h3>
+                <p className="mt-2 leading-relaxed text-ink-soft">{topic.body}</p>
+                <p className="mt-4 text-sm font-semibold">What to look for</p>
+                <ul className="mt-2 space-y-2">
+                  {topic.lookFor.map((item) => (
+                    <li key={item} className="flex gap-2 text-[0.95rem] leading-relaxed">
+                      <Check aria-hidden className="mt-1 size-4 shrink-0 text-ballpoint-ink" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ))}
+          </ul>
+          <div className="mt-10 max-w-[46rem] border-l-4 border-ballpoint pl-5">
+            <h3 className="font-semiwide text-xl font-extrabold">{p.erpGuide.choosing.heading}</h3>
+            <p className="mt-2 leading-relaxed text-ink-soft">{p.erpGuide.choosing.body}</p>
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="why-erp" className="border-y border-rule">
         <div className={`page-container grid gap-12 lg:grid-cols-12 ${band}`}>
           <div className="lg:col-span-5">
             <h2 id="why-erp" className={sectionTitle}>
@@ -234,21 +263,17 @@ export default function Plma2026Page() {
 
       <section aria-labelledby="offer">
         <div className={`page-container ${band}`}>
-          <div className="rounded-xl bg-canary p-8 text-night sm:p-12">
-            <h2 id="offer" className={`${sectionTitle} text-night`}>
+          <div className="rounded-xl bg-canary p-8 text-night sm:p-10">
+            <h2 id="offer" className="font-semiwide text-2xl font-extrabold text-night">
               {p.offer.heading}
             </h2>
-            {p.offer.body.map((para) => (
-              <p key={para} className="mt-4 max-w-[42rem] text-lg leading-relaxed">
-                {para}
-              </p>
-            ))}
-            <div className="mt-8 flex flex-wrap items-center gap-5">
-              <ButtonLink href={p.offer.ctaHref}>{p.offer.cta}</ButtonLink>
-              <Link href={termsPath} className="font-semibold underline underline-offset-4">
-                {p.offer.terms}
-              </Link>
-            </div>
+            <p className="mt-3 max-w-[46rem] text-lg leading-relaxed">
+              {p.offer.body}{" "}
+              <Link href={p.offer.linkHref} className="font-semibold underline underline-offset-4">
+                {p.offer.linkLabel}
+              </Link>{" "}
+              {p.offer.linkAfter}
+            </p>
           </div>
         </div>
       </section>

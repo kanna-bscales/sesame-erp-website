@@ -25,6 +25,9 @@ references are never in Git (`data/` is git-ignored).
 | Submitted Additional Emails (`Submitted_Additional_Emails`) | large multi-line | The person's own extra addresses, one per line (max 5 per submission) |
 | PLMA Duplicate Review (`PLMA_Duplicate_Review`) | checkbox | Set when identity is uncertain; see the Duplicate Review view |
 | PLMA Duplicate Reason (`PLMA_Duplicate_Reason`) | text 255 | Why |
+| PLMA Latest Enquiry (`PLMA_Latest_Enquiry`) | large multi-line | The enquiry text of the latest new submission (for the internal email) |
+| PLMA Colleagues Added (`PLMA_Colleagues_Added`) | large multi-line | Colleagues listed in the latest new submission and what happened to each, one per line ("None" if none) |
+| PLMA Last Submission Key (`PLMA_Last_Submission_Key`) | text 64 | Key of the last submission that started the email workflow; a retry with the same key sends nothing |
 
 Existing: Attendee Reference Hash, Offer URL, PLMA Response Status (Not Submitted / Submitted),
 PLMA Submission Date, Conference Name/Source, Booth Number.
@@ -94,7 +97,37 @@ submitter's Lead lists the outcome. Test submitters (Conference Name "PLMA 2026 
 colleagues.
 
 Limits: request ≤ 24 KB, ≤ 5 extra emails, ≤ 10 colleagues, 6 submissions per IP per 10 minutes,
-20 lookups per IP per 10 minutes, honeypot. All writes `trigger: []` (no workflows, no emails).
+20 lookups per IP per 10 minutes, honeypot. All writes `trigger: []` (no workflows, no emails),
+except the one write described under "Enquiry emails" below.
+
+## Enquiry emails (Zoho CRM workflow, Nov 17, 2026)
+
+The website does not send email. Zoho CRM sends both emails from its own workflow:
+
+| Zoho item | Setting |
+| --- | --- |
+| Workflow rule "PLMA 2026 New enquiry - TEST ONLY" (Leads) | Runs when **PLMA Submission Date** is updated, if PLMA Response Status = Submitted and (while testing) Conference Name = "PLMA 2026 (test)". **Inactive until the owner approves the templates and the test flow.** |
+| Email "PLMA 2026 – Internal enquiry notification" | To rattan@businessscales.com; all submitted details (Submitted_* fields, Country, PLMA Submission Date, PLMA Latest Enquiry, PLMA Colleagues Added) |
+| Email "PLMA 2026 – Customer confirmation" | To the Lead's **Submitted Email** only (never additional emails or colleagues) |
+| Task "Follow up: PLMA 2026 enquiry – {Submitted Company}" | High priority, due 1 day later, Lead owner |
+| Sender | admin@sesamelabs.ai until rattan@businessscales.com is verified in Zoho (and SPF/DKIM added for businessscales.com) |
+
+How the website triggers it exactly once per new enquiry:
+
+1. The form creates a random submission id per enquiry and sends the same id again on a retry.
+2. The enquiry route saves everything with `trigger: []` (Submitted_* fields, status, notes,
+   colleagues), then makes one final write with `trigger: ["workflow"]`: PLMA Submission Date,
+   PLMA Latest Enquiry, PLMA Colleagues Added and PLMA Last Submission Key.
+3. If the Lead's PLMA Last Submission Key already equals this submission's key (a retry of a
+   request that already succeeded), the final write is skipped: no second email or task.
+4. If the final write fails, the visitor sees the error and can resend; the retry then triggers the
+   workflow once.
+5. Duplicate-review cases (scenario C) never trigger the workflow; they are checked in the
+   "PLMA – Duplicate Review" view. New Leads for colleagues are created with `trigger: []`.
+
+Manual edits in Zoho never send these emails, because they do not change PLMA Submission Date.
+The 15 Leads submitted before Nov 17, 2026 were not re-processed. Go-live: change the internal
+recipient if needed, remove the Conference Name test criterion, activate the rule.
 
 ## Views and reports (Zoho CRM › Leads)
 

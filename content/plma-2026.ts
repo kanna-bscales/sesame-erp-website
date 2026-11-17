@@ -19,12 +19,14 @@ export const plmaPageUrl = `${siteOrigin}${plmaPagePath}`;
 // "custom ERP for manufacturers", "AI agents for ERP". No search volumes were available to validate.
 export const plmaPageSeo = {
   title: "PLMA 2026 Chicago Guide & ERP for Private Label | SesameERP",
+  // SEO update (Nov 17, 2026): 149 characters; informational only (offer searches belong to /chicago-event).
   description:
-    "Plan PLMA 2026 in Chicago (Nov 15–17): schedule, venues and who attends, plus how custom ERP and AI agents help private label and CPG manufacturers.",
+    "PLMA 2026 in Chicago (Nov 15–17, 2026): schedule, venues and who attends, plus a practical ERP guide for private label and store brand manufacturers.",
   keywords: [
     "PLMA 2026",
     "PLMA Chicago 2026",
     "PLMA 2026 schedule",
+    "PLMA show Rosemont",
     "private label manufacturers",
     "ERP for private label manufacturers",
     "store brands",
@@ -41,6 +43,8 @@ export const plmaSources = [
   { label: "PLMA – Trade Show Schedule", href: "https://plma.com/events/plmas-2026-private-label-trade-show/trade-show-schedule" },
   { label: "PLMA – Why Visit", href: "https://plma.com/events/plmas-2026-private-label-trade-show/why-visit" },
   { label: "PLMA – News releases (November 3, 2026)", href: "https://plma.com/events/press-room/plma-news-releases" },
+  { label: "PLMA – Store Brand Facts (Circana data)", href: "https://www.plma.com/about_industry/store_brand_facts" },
+  { label: "Rosemont – DES Convention Center event page", href: "https://rosemont.com/desconvention/event/plmas-2026-private-label-show/" },
 ];
 
 export const plmaFacts = {
@@ -50,6 +54,8 @@ export const plmaFacts = {
   endDate: "2026-11-17",
   dates: "November 15–17, 2026",
   venue: "Donald E. Stephens Convention Center",
+  // Venue address and airport distance: rosemont.com event page (checked 2026-11-17).
+  venueAddress: "5555 N. River Road, Rosemont, IL 60018",
   // PLMA writes "Chicago". The convention center and the hotel are in Rosemont, Illinois, next to
   // Chicago. "Rosemont (Chicago), Illinois" confirmed by the owner (Nov 11, 2026).
   locality: "Rosemont",
@@ -75,9 +81,10 @@ export const plmaPage = {
   hero: {
     eyebrow: "PLMA 2026 · Chicago · November 15–17",
     heading: "PLMA 2026 in Chicago: a guide for private label manufacturers",
+    // Post-event wording (the show ran November 15–17, 2026).
     intro:
-      "When and where everything happens at PLMA 2026, who you are likely to meet, and the operational questions private label and store brand manufacturers face, with a practical look at what an ERP should handle for them.",
-    cta: "See the PLMA 2026 ERP offer",
+      "How PLMA 2026 was organised, who attends PLMA's Chicago show, and the operational questions private label and store brand manufacturers face, with a practical guide to what an ERP should handle for them.",
+    cta: "PLMA 2026 attendee ERP offer",
     ctaHref: campaignPath,
     secondary: "Official event page",
   },
@@ -99,20 +106,20 @@ export const plmaPage = {
   whatIs2026: {
     heading: "What is PLMA 2026?",
     body: [
-      "PLMA 2026 is the association's annual private label trade show in Chicago, branded “Store Brands Marketplace”. It is where retailers and wholesalers look for manufacturers to make their own-brand products, and where manufacturers meet buyers from the U.S. and Canada.",
-      "PLMA reports nearly 1,900 suppliers from about 60 countries for 2026, spread over three exhibit halls and grouped into food and beverages; home, health and self care; and international pavilions.",
+      "PLMA 2026 was the association's annual private label trade show in Chicago, held November 15–17, 2026 and branded “Store Brands Marketplace”. It is where retailers and wholesalers look for manufacturers to make their own-brand products, and where manufacturers meet buyers from the U.S. and Canada.",
+      "PLMA reported nearly 1,900 suppliers from about 60 countries for 2026, spread over three exhibit halls and grouped into food and beverages; home, health and self care; and international pavilions.",
     ],
   },
   conference: {
     heading: "PLMA 2026 schedule and venues",
-    lead: "Sunday is for education at the Hyatt Regency O'Hare. The trade show floor opens on Monday and Tuesday at the Donald E. Stephens Convention Center. Times below are local, from PLMA's published schedule.",
+    lead: "Sunday was for education at the Hyatt Regency O'Hare. The trade show floor was open on Monday and Tuesday at the Donald E. Stephens Convention Center. Times below are local, from PLMA's published schedule.",
     items: [
       {
         title: "Sunday, November 15: education day",
-        body: "Executive Education Insight Series (10:00 a.m.–12:30 p.m.) and Opening Seminars (2:00–4:30 p.m.) at the Hyatt Regency O'Hare. Badge registration opens at noon at the convention center. The show floor is closed on Sunday.",
+        body: "Executive Education Insight Series (10:00 a.m.–12:30 p.m.) and Opening Seminars (2:00–4:30 p.m.) at the Hyatt Regency O'Hare. Badge registration opened at noon at the convention center. The show floor was closed on Sunday.",
       },
       {
-        title: "Monday, November 16: show floor opens",
+        title: "Monday, November 16: show floor opened",
         body: "Keynote Breakfast (8:00–9:00 a.m.) at the Hyatt Regency O'Hare. Trade show and World of Ideas™ (9:00 a.m.–6:00 p.m.), followed by an evening networking reception (6:00–7:30 p.m.), at the Donald E. Stephens Convention Center.",
       },
       {
@@ -124,6 +131,10 @@ export const plmaPage = {
         body: "PLMA's World of Ideas™ displays store brand products from many countries, and its New Product Expo highlights new food and non-food launches.",
       },
       {
+        title: "Getting to the venue",
+        body: "The Donald E. Stephens Convention Center is at 5555 N. River Road, Rosemont, IL 60018, about 10 minutes from Chicago O'Hare International Airport, according to the venue.",
+      },
+      {
         title: "Booking meetings",
         body: "Retail buyers can find exhibitors and book appointments in advance through PLMA's own online tools, so many meetings are planned before the show starts.",
       },
@@ -131,8 +142,8 @@ export const plmaPage = {
     scheduleLink: "PLMA's full schedule",
   },
   whoAttends: {
-    heading: "Who you will meet at PLMA 2026",
-    body: "PLMA 2026 is a business-to-business event: buyers come to source store brand products, and manufacturers come to win and grow retail programmes.",
+    heading: "Who attends PLMA's Chicago show",
+    body: "PLMA's Chicago show is a business-to-business event: buyers come to source store brand products, and manufacturers come to win and grow retail programmes.",
     items: [
       { title: "Retail and trade buyers", body: "Buyers for supermarkets, supercenters, drug chains, specialty stores, mass merchandisers, wholesale clubs, dollar stores and online retailers, plus importers and exporters." },
       { title: "Private label manufacturers", body: "CPG manufacturers making food, beverages, and home, health and personal care products under retailers' own brands, from small plants to multinational groups." },
@@ -151,8 +162,76 @@ export const plmaPage = {
       { title: "Unpredictable demand", body: "Promotions, new listings and lost listings change volumes quickly, and production plans need to follow without overstocking." },
     ],
   },
+  // Practical guide (SEO update, Nov 17, 2026). Original SesameERP copy written from a manufacturer's
+  // point of view; competitor pages were reviewed only to see which topics searchers expect. It
+  // describes what to look for in any ERP and claims no SesameERP feature beyond `howWeHelp`.
+  erpGuide: {
+    heading: "ERP for private label manufacturers: a practical guide",
+    intro:
+      "A private label plant answers to several retailers at once, and each one sets its own specifications, prices, packaging and audit expectations. These are the areas an ERP has to keep in step, and what to look for in each.",
+    topics: [
+      {
+        title: "Retailer-specific products and specifications",
+        body: "The same base recipe often ships as several retailer items, each with its own item number, label, artwork, pack size and approved specification.",
+        lookFor: [
+          "One base product linked to each retailer's version of it",
+          "Specification and artwork versions with an approval status",
+          "Retailer item numbers on orders, pick lists and invoices",
+        ],
+      },
+      {
+        title: "Production planning",
+        body: "Orders and forecasts from different retailers compete for the same lines, and every changeover between retailer packs costs time.",
+        lookFor: [
+          "Work orders created from confirmed retailer orders",
+          "Materials converted from raw to semi-finished to finished goods",
+          "Actual yields recorded so costs reflect what really happened",
+        ],
+      },
+      {
+        title: "Purchasing",
+        body: "Shared ingredients can be bought in bulk, but retailer-specific packaging is only useful for one customer and can become obsolete when a listing changes.",
+        lookFor: [
+          "Several suppliers per material, with RFQs to compare quotes",
+          "Minimum order quantities and lead times on the purchase order",
+          "Retailer-specific packaging kept visible as its own stock",
+        ],
+      },
+      {
+        title: "Inventory",
+        body: "Stock moves through several stages, and finished goods are often committed to one retailer's order before they leave the plant.",
+        lookFor: [
+          "Stock levels by production stage, updated as orders and production move",
+          "Lot or batch numbers and dates where your products need them",
+          "Stock reserved per customer order, so promises match the shelf",
+        ],
+      },
+      {
+        title: "Traceability and audits",
+        body: "Retailers and auditors ask which material lots went into a batch and where that batch was shipped, and they expect a fast answer.",
+        lookFor: [
+          "Records that link supplier lots to batches and shipments",
+          "A one-step-back, one-step-forward lookup for recalls and mock recalls",
+          "Specifications, approvals and certificates stored with the product",
+        ],
+      },
+      {
+        title: "Costing and margins",
+        body: "Retail pricing leaves little room for error, so a change in material or packaging cost has to show up in quotes quickly.",
+        lookFor: [
+          "Cost roll-ups from materials through to each finished item",
+          "Margin by retailer and by item",
+          "Price updates that flow to every product that uses a material",
+        ],
+      },
+    ],
+    choosing: {
+      heading: "Packaged ERP or custom modules?",
+      body: "A packaged ERP can suit a plant whose processes match its standard workflows. Custom modules make sense when retailer-specific rules, approvals or reports are where the team loses time, or when the rest of your systems already work and only one area needs fixing. Either way, start with the area that costs the most time today.",
+    },
+  },
   whyErp: {
-    heading: "ERP for private label manufacturers: what it should cover",
+    heading: "Quick ERP checklist for store brand manufacturers",
     body: [
       "Spreadsheets and disconnected tools can run a small private label business, but every new retailer adds another set of prices, specifications and orders to keep in step. An ERP gives the whole team one record of customers, products, stock, purchasing and production.",
       "For store brand and CPG manufacturers, look for an ERP that covers at least:",
@@ -191,39 +270,48 @@ export const plmaPage = {
       },
     ],
   },
+  // Kept brief on purpose (SEO update, Nov 17, 2026): the offer details and the enquiry form live on
+  // /chicago-event, which should be the page that ranks for offer searches.
   offer: {
-    heading: "The complimentary PLMA 2026 offer",
-    body: [
-      `PLMA 2026 attendees can request the following from SesameERP: ${offerStatement.charAt(0).toLowerCase()}${offerStatement.slice(1)}`,
-      offerNotCash,
-      "You choose the area of your operations to start with; each request is reviewed individually, and the offer terms apply.",
-    ],
-    cta: "Request your complimentary module",
-    ctaHref: `${campaignPath}#register`,
-    terms: "Read the offer terms",
+    heading: "For PLMA 2026 attendees",
+    body: "Business Scales LLC, the company behind SesameERP, offers PLMA 2026 participants complimentary development of one approved ERP module (development services valued up to US$5,000; not cash or credit). Eligibility, terms and the enquiry form are on the",
+    linkLabel: "PLMA 2026 attendee ERP offer",
+    linkHref: campaignPath,
+    linkAfter: "page.",
   },
   faq: {
     heading: "PLMA 2026 and private label ERP: questions",
+    // SEO update (Nov 17, 2026): past tense after the show; Google "People also ask" questions added
+    // ("What is the PLMA show?", "Where is the PLMA trade show located in Chicago?"); offer questions
+    // reduced to one pointer, because the offer FAQ lives on /chicago-event.
     items: [
       {
-        q: "When and where is PLMA 2026?",
-        a: "PLMA's 2026 Private Label Trade Show runs from Sunday, November 15 to Tuesday, November 17, 2026. Sunday's education sessions are at the Hyatt Regency O'Hare. The trade show floor is open on Monday, November 16 (9:00 a.m.–6:00 p.m.) and Tuesday, November 17 (9:00 a.m.–4:00 p.m.) at the Donald E. Stephens Convention Center in Rosemont, next to Chicago.",
+        q: "What is the PLMA show?",
+        a: "It is the Private Label Manufacturers Association's annual U.S. trade show for store brands, held in the Chicago area each November. Retailers and wholesalers meet the manufacturers that make their own-brand products. PLMA also runs a separate show in Amsterdam.",
+      },
+      {
+        q: "When and where was PLMA 2026?",
+        a: "PLMA's 2026 Private Label Trade Show ran from Sunday, November 15 to Tuesday, November 17, 2026. Sunday's education sessions were at the Hyatt Regency O'Hare. The trade show floor was open on Monday, November 16 (9:00 a.m.–6:00 p.m.) and Tuesday, November 17 (9:00 a.m.–4:00 p.m.) at the Donald E. Stephens Convention Center in Rosemont, next to Chicago.",
+      },
+      {
+        q: "Where is the PLMA trade show located in Chicago?",
+        a: "At the Donald E. Stephens Convention Center, 5555 N. River Road, Rosemont, IL 60018, next to Chicago and about 10 minutes from O'Hare International Airport. Sunday education sessions in 2026 were held at the nearby Hyatt Regency O'Hare.",
       },
       {
         q: "What does PLMA stand for?",
         a: "PLMA stands for the Private Label Manufacturers Association, a non-profit trade association founded in 1979 to promote store brands, with over 5,200 member companies in more than 80 countries.",
       },
       {
-        q: "Who exhibits at PLMA 2026?",
-        a: "Private label manufacturers and their suppliers. PLMA reports nearly 1,900 suppliers from about 60 countries for 2026, covering food and beverages, home, health and self care, and international pavilions.",
+        q: "Who exhibited at PLMA 2026?",
+        a: "Private label manufacturers and their suppliers. PLMA reported nearly 1,900 suppliers from about 60 countries for 2026, covering food and beverages, home, health and self care, and international pavilions.",
+      },
+      {
+        q: "Are store brands still growing?",
+        a: "Yes, according to PLMA's figures based on Circana data: U.S. store brand sales reached a record $282.8 billion in 2025, a 21.3% dollar share, with dollar sales up 3.3% against 1.2% for national brands. Profitability for a manufacturer still depends on its own costs and retailer terms.",
       },
       {
         q: "What is the difference between private label, store brands and private brands?",
         a: "In everyday use they describe the same thing: products sold under a retailer's or wholesaler's own brand and made for it by a manufacturer. “Store brands” and “private brands” are the terms many retailers prefer; “private label” is common among manufacturers.",
-      },
-      {
-        q: "Is SesameERP part of PLMA, or is this a PLMA offer?",
-        a: "No. SesameERP is an independent ERP provider and is not affiliated with, sponsored by or endorsed by PLMA. The complimentary ERP offer is provided by Business Scales LLC, the company behind SesameERP. Product demos and meetings are arranged individually after you get in touch.",
       },
       {
         q: "What ERP features do private label manufacturers need?",
@@ -234,24 +322,12 @@ export const plmaPage = {
         a: "They take on repetitive work inside the system. In SesameERP that includes forecasting stock needs, entering routine data, preparing quotations, answering customer questions and generating reports, so the team spends less time re-keying information.",
       },
       {
-        q: "What is the PLMA 2026 development offer?",
-        a: `${offerStatement} ${offerNotCash} It covers one ERP module: a single area of your operations, built as a custom SesameERP module.`,
-      },
-      {
-        q: "Who can request it?",
-        a: "The offer is for PLMA 2026 attendees. Each request is reviewed individually against the offer terms, so submitting an enquiry does not guarantee approval.",
-      },
-      {
-        q: "How do I request the complimentary ERP module?",
-        a: "Use the enquiry form on the SesameERP PLMA 2026 offer page (www.sesameerp.ai/chicago-event). Enter your details and what you would like to discuss, agree to be contacted, accept the offer terms and submit. If you received a personal invitation link, the form is filled in for you to check. Our team reviews each enquiry and contacts you.",
-      },
-      {
-        q: "Does the offer expire?",
-        a: "No expiry date has been set for the offer. The offer terms explain how the promotion may be changed.",
+        q: "Is SesameERP part of PLMA, or is this a PLMA offer?",
+        a: "No. SesameERP is an independent ERP provider and is not affiliated with, sponsored by or endorsed by PLMA. The complimentary ERP offer for PLMA 2026 attendees is provided by Business Scales LLC, the company behind SesameERP; its details and enquiry form are on the SesameERP PLMA 2026 offer page.",
       },
     ],
   },
-  sourcesLabel: "Event facts checked against official PLMA pages on November 11, 2026:",
+  sourcesLabel: "Event facts checked against official PLMA pages on November 11, 2026; venue address and store brand figures checked on November 17, 2026:",
 };
 
 // ---------------------------------------------------------------------------------------------
@@ -266,9 +342,9 @@ export const plmaLanding = {
     { label: "Mon–Tue, Nov 16–17: trade show", value: "Donald E. Stephens Convention Center" },
     { label: "Location", value: "Rosemont (Chicago), Illinois, USA" },
   ],
-  guideLink: "PLMA 2026 guide: schedule, who attends and ERP for private label",
+  guideLink: "PLMA 2026 guide: schedule, venues and ERP for private label manufacturers",
   // Section after the event band.
-  fitHeading: "Built for private label manufacturers",
+  fitHeading: "ERP software built for private label manufacturers",
   fitLead:
     "Private label manufacturers juggle several retailers' prices, specifications and order patterns at once. One complimentary ERP module can start with the area that costs your team the most time.",
   fitItems: [
@@ -288,8 +364,8 @@ export const plmaLandingFaq = [
     a: `No. ${offerStatement} ${offerNotCash}`,
   },
   {
-    q: "When and where is PLMA 2026?",
-    a: "November 15–17, 2026. Sunday's education sessions are at the Hyatt Regency O'Hare; the trade show floor is open Monday and Tuesday at the Donald E. Stephens Convention Center. The full schedule is in our PLMA 2026 guide.",
+    q: "When and where was PLMA 2026?",
+    a: "November 15–17, 2026. Sunday's education sessions were at the Hyatt Regency O'Hare; the trade show floor was open Monday and Tuesday at the Donald E. Stephens Convention Center. The full schedule is in our PLMA 2026 guide.",
   },
   {
     q: "Is this offer from PLMA?",

@@ -322,3 +322,14 @@ export const finalCta = {
     "Tell us how your business runs today — we'll show you what a custom system with AI agents built in looks like, and how fast we can deliver it.",
   cta: "Get a free consultation",
 };
+
+// Homepage link band to the two PLMA pages (SEO update, Nov 17, 2026: internal links from the
+// homepage to the PLMA guide and to the enquiry page, with descriptive anchor text).
+export const plmaBand = {
+  label: "PLMA 2026",
+  before: "Met private label buyers at PLMA 2026? Read our",
+  guideLabel: "PLMA 2026 guide for private label manufacturers",
+  middle: "or see the",
+  offerLabel: "PLMA 2026 attendee ERP offer",
+  after: ".",
+};

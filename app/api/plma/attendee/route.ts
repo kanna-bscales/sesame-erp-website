@@ -13,6 +13,7 @@ import { parseEmailList } from "@/lib/plma/identity";
 import { clientIp, rateLimit } from "@/lib/plma/rate-limit";
 import { isValidRef, type AttendeeLookupResponse } from "@/lib/plma/reference";
 import {
+  displayFirstName,
   otherSubmitters,
   findLeadByReference,
   getLeadExtras,
@@ -68,6 +69,8 @@ export async function POST(request: Request) {
         website: latest(lead.Submitted_Website, lead.Website, 255),
         additionalEmails: parseEmailList(extras?.Submitted_Additional_Emails).slice(0, 5),
       },
+      // The person's own first name from their verified Lead, for the welcome message.
+      firstName: lead.Last_Name === PLACEHOLDER_LAST_NAME && !lead.Submitted_Name ? null : displayFirstName(lead),
       // The verified company name comes from the original import, not from anything submitted.
       company: lead.PLMA_Company_ID
         ? { name: clean(lead.Company, 200), otherSubmitted: others.count, names: others.names.slice(0, 10) }

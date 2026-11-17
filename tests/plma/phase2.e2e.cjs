@@ -2,6 +2,7 @@
 // Fake people and companies only. Run: node e2e2.js
 const { chromium } = require('playwright');
 const crypto = require('crypto');
+const fs = require('fs');
 const A = 'http://localhost:3061', NOCREDS = 'http://localhost:3062', MOCK = 'http://127.0.0.1:4010';
 const results = [];
 const ok = (n, cond, info = '') => { results.push([n, !!cond, cond ? '' : info]); };
@@ -22,10 +23,10 @@ const R = { P1: 'R1abcdefghijklmnopqrst', R2: 'R2abcdefghijklmnopqrst', R3: 'R3a
   // ---------- Test 1: SEO page, canonical, sitemap, robots ----------
   const html = await fetch(A + '/plma-2026').then(r => r.text());
   const ld = [...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/gs)].map(m => JSON.parse(m[1])).flat();
-  ok('1a /plma-2026 title, description, canonical, OG', /<title>PLMA 2026 Chicago Guide &amp; ERP for Private Label/.test(html) && html.includes('<link rel="canonical" href="https://www.sesameerp.ai/plma-2026"') && html.includes('property="og:url" content="https://www.sesameerp.ai/plma-2026"') && /name="description" content="Plan PLMA 2026 in Chicago \(Nov 15–17\)/.test(html));
+  ok('1a /plma-2026 title, description, canonical, OG', /<title>PLMA 2026 Chicago Guide &amp; ERP for Private Label/.test(html) && html.includes('<link rel="canonical" href="https://www.sesameerp.ai/plma-2026"') && html.includes('property="og:url" content="https://www.sesameerp.ai/plma-2026"') && /name="description" content="PLMA 2026 in Chicago \(Nov 15–17, 2026\)/.test(html));
   ok('1b Event + FAQ JSON-LD', ld.some(x => x['@type'] === 'Event' && x.startDate === '2026-11-15' && x.endDate === '2026-11-17' && x.location[0].name === 'Donald E. Stephens Convention Center') && ld.some(x => x['@type'] === 'FAQPage' && x.mainEntity.length >= 5), JSON.stringify(ld).slice(0, 300));
-  ok('1c content sections present', ['What is PLMA?', 'What is PLMA 2026?', 'PLMA 2026 schedule and venues', 'Who you will meet at PLMA 2026', 'What private label manufacturers deal with every day', 'ERP for private label manufacturers: what it should cover', 'How SesameERP helps manufacturers', 'The complimentary PLMA 2026 offer', 'not affiliated with, sponsored by or endorsed by PLMA'].every(h => html.includes(h)));
-  ok('1d links to /chicago-event (offer page)', html.includes('href="/chicago-event"') && html.includes('href="/chicago-event#register"'));
+  ok('1c content sections present', ['What is PLMA?', 'What is PLMA 2026?', 'PLMA 2026 schedule and venues', 'Who attends PLMA', 'What private label manufacturers deal with every day', 'ERP for private label manufacturers: a practical guide', 'Quick ERP checklist for store brand manufacturers', 'How SesameERP helps manufacturers', 'For PLMA 2026 attendees', 'not affiliated with, sponsored by or endorsed by PLMA'].every(h => html.includes(h)));
+  ok('1d links to /chicago-event (offer page) with descriptive anchor text', /<a[^>]*href="\/chicago-event"[^>]*>PLMA 2026 attendee ERP offer<\/a>/.test(html));
   const robots = await fetch(A + '/robots.txt').then(r => r.text());
   ok('1e robots.txt allows site, blocks /api/, lists sitemap', /Allow: \//.test(robots) && /Disallow: \/api\//.test(robots) && robots.includes('Sitemap: https://www.sesameerp.ai/sitemap.xml'), robots);
   const sm = await fetch(A + '/sitemap.xml').then(r => r.text());
@@ -37,12 +38,30 @@ const R = { P1: 'R1abcdefghijklmnopqrst', R2: 'R2abcdefghijklmnopqrst', R3: 'R3a
   const ev = ld.find(x => x['@type'] === 'Event');
   ok('1k Event JSON-LD lists both venues (show floor + Sunday education)', Array.isArray(ev.location) && ev.location.map(l => l.name).join('|') === "Donald E. Stephens Convention Center|Hyatt Regency O'Hare");
   const txt = html.replace(/<[^>]+>/g, ' ').replace(/&#x27;|&#39;/g, "'").replace(/\s+/g, ' ');
-  ok('1l guide separates Sunday education (Hyatt) from the trade show (Mon–Tue, convention center)', txt.includes("Executive Education Insight Series (10:00 a.m.–12:30 p.m.) and Opening Seminars (2:00–4:30 p.m.) at the Hyatt Regency O'Hare") && txt.includes('The show floor is closed on Sunday') && txt.includes('Trade show (9:00 a.m.–4:00 p.m.)') && txt.includes('Keynote Breakfast (8:00–9:00 a.m.) at the Hyatt Regency O'));
-  ok('1m offer explained as development work, not cash or credit (guide)', txt.includes('with development services valued up to US$5,000. It is not cash or credit.') && !txt.includes('worth of ERP development work'));
+  ok('1l guide separates Sunday education (Hyatt) from the trade show (Mon–Tue, convention center)', txt.includes("Executive Education Insight Series (10:00 a.m.–12:30 p.m.) and Opening Seminars (2:00–4:30 p.m.) at the Hyatt Regency O'Hare") && txt.includes('The show floor was closed on Sunday') && txt.includes('Trade show (9:00 a.m.–4:00 p.m.)') && txt.includes('Keynote Breakfast (8:00–9:00 a.m.) at the Hyatt Regency O'));
+  ok('1m offer explained as development work, not cash or credit (guide)', txt.includes('development services valued up to US$5,000; not cash or credit') && !txt.includes('worth of ERP development work'));
   const ldFaq = ld.find(x => x['@type'] === 'FAQPage');
-  ok('1n FAQ JSON-LD matches the visible FAQ (11 questions, all answered)', ldFaq.mainEntity.length === 11 && ldFaq.mainEntity.every(q => q.acceptedAnswer.text.length > 60 && txt.includes(q.name)));
+  ok('1n FAQ JSON-LD matches the visible FAQ (10 questions, every answer in the HTML)', ldFaq.mainEntity.length === 10 && ldFaq.mainEntity.every(q => q.acceptedAnswer.text.length > 60 && txt.includes(q.name) && txt.includes(q.acceptedAnswer.text.slice(0, 80))), ldFaq.mainEntity.filter(q => !txt.includes(q.acceptedAnswer.text.slice(0, 80))).map(q => q.name).join(' | '));
   const cetxt = ce.replace(/<[^>]+>/g, ' ').replace(/&#x27;|&#39;/g, "'").replace(/\s+/g, ' ');
-  ok('1o landing page: event facts split, cash FAQ, no duplicated guide sections', cetxt.includes("Sunday, Nov 15: education") && cetxt.includes("Hyatt Regency O'Hare") && cetxt.includes('Is the offer paid as cash or credit?') && /development services valued up to US\$5,000/i.test(cetxt) && !cetxt.includes('worth of ERP development work') && cetxt.includes('provided by Business Scales LLC') && cetxt.includes('Built for private label manufacturers') && cetxt.includes('Development work, not cash or credit') && cetxt.includes('not affiliated with, sponsored by or endorsed by PLMA') && !/Sesame Labs/.test(ce + html) && !cetxt.includes('founded in 1979') && !cetxt.includes('About PLMA and the 2026 show') && !cetxt.includes('Who attends'));
+  ok('1o landing page: event facts split, cash FAQ, no duplicated guide sections', cetxt.includes("Sunday, Nov 15: education") && cetxt.includes("Hyatt Regency O'Hare") && cetxt.includes('Is the offer paid as cash or credit?') && /development services valued up to US\$5,000/i.test(cetxt) && !cetxt.includes('worth of ERP development work') && cetxt.includes('provided by Business Scales LLC') && /built for private label manufacturers/i.test(cetxt) && cetxt.includes('Development work, not cash or credit') && cetxt.includes('not affiliated with, sponsored by or endorsed by PLMA') && !/Sesame Labs/.test(ce + html) && !cetxt.includes('founded in 1979') && !cetxt.includes('About PLMA and the 2026 show') && !cetxt.includes('Who attends'));
+  // ---------- SEO update (Nov 17, 2026) ----------
+  const ldOf = h => [...h.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/gs)].map(m => JSON.parse(m[1])).flat();
+  const h1s = h => [...h.matchAll(/<h1[^>]*>(.*?)<\/h1>/gs)].map(m => m[1].replace(/<[^>]+>/g, ''));
+  const titleOf = h => (h.match(/<title>(.*?)<\/title>/) || [])[1] || '';
+  const descOf = h => ((h.match(/<meta name="description" content="(.*?)"/) || [])[1] || '').replace(/&amp;/g, '&');
+  ok('S1 /chicago-event title + description (lengths, approved offer wording)', titleOf(ce) === 'PLMA 2026 ERP Offer: Complimentary ERP Module | SesameERP' && descOf(ce).length >= 145 && descOf(ce).length <= 160 && descOf(ce).includes('valued up to US$5,000') && descOf(ce).includes('Not cash or credit'), titleOf(ce) + ' / ' + descOf(ce).length);
+  ok('S2 exactly one H1 on /, /plma-2026 and /chicago-event; landing H1 names the offer', [home, html, ce].every(h => h1s(h).length === 1) && h1s(ce)[0] === 'PLMA 2026 ERP offer: complimentary development of one approved ERP module', JSON.stringify([home, html, ce].map(h1s)));
+  const ceFaq = ldOf(ce).find(x => x['@type'] === 'FAQPage');
+  ok('S3 /chicago-event FAQPage = the 15 visible questions, every answer in the HTML', ceFaq && ceFaq.mainEntity.length === 15 && ceFaq.mainEntity.every(q => cetxt.includes(q.name) && cetxt.includes(q.acceptedAnswer.text.slice(0, 80))), ceFaq ? ceFaq.mainEntity.filter(q => !cetxt.includes(q.acceptedAnswer.text.slice(0, 80))).map(q => q.name).join(' | ') : 'none');
+  const orgOk = h => { const o = ldOf(h).find(x => x['@type'] === 'Organization'); return o && o.name === 'SesameERP' && o.email === 'hi@sesamelabs.ai' && o.parentOrganization.name === 'Business Scales LLC' && !o.sameAs && ldOf(h).some(x => x['@type'] === 'WebSite'); };
+  ok('S4 Organization (+ WebSite) structured data on every page, no invented profiles', [home, html, ce].every(orgOk));
+  ok('S5 internal links: home -> guide + offer page; offer page -> guide (descriptive anchors)', /href="\/plma-2026"[^>]*>PLMA 2026 guide for private label manufacturers</.test(home) && /href="\/chicago-event"[^>]*>PLMA 2026 attendee ERP offer</.test(home) && /href="\/plma-2026"[^>]*>PLMA 2026 guide: schedule, venues and ERP for private label manufacturers</.test(ce));
+  ok('S6 keyword overlap: guide title/description/FAQ do not target the offer searches', !/offer/i.test(titleOf(html) + descOf(html)) && !txt.includes('What is the PLMA 2026 development offer') && !txt.includes('How do I request the complimentary ERP module'));
+  const termsHtml = await fetch(A + '/plma-2026-terms').then(r => r.text());
+  const sm2 = await fetch(A + '/sitemap.xml').then(r => r.text());
+  ok('S7 terms page stays noindex and out of the sitemap', /<meta name="robots" content="noindex, nofollow"/.test(termsHtml) && !sm2.includes('terms'));
+  ok('S8 post-event wording (show ran Nov 15–17, 2026); offer still described as open', cetxt.includes('After PLMA 2026: the ERP offer is still open') && !cetxt.includes('Are you attending PLMA 2026') && txt.includes("PLMA 2026 was the association's annual private label trade show") && txt.includes('Sunday was for education'));
+  ok('S9 venue address on the guide (long-tail: address / Rosemont)', txt.includes('5555 N. River Road, Rosemont, IL 60018'));
   const terms = await fetch(A + '/plma-2026-terms').then(r => r.text());
   ok('1i terms page still noindex', /<meta name="robots" content="noindex/.test(terms));
 
@@ -246,6 +265,59 @@ const R = { P1: 'R1abcdefghijklmnopqrst', R2: 'R2abcdefghijklmnopqrst', R3: 'R3a
   const nina = Object.values(s0.leads).find(l => l.Last_Name === 'Roy');
   ok('N12 colleagues added by someone else never get name permission', nina && nina.PLMA_Show_First_Name === false && nina.PLMA_Response_Status === 'Not Submitted');
 
+  // ---------- Welcome message (API) ----------
+  await reset();
+  const w1 = await lookup(R.P1), wb = await lookup('RBabcdefghijklmnopqrst'), wx = await lookup('ZZZZZZZZZZZZZZZZZZZZZZ');
+  ok('W1 welcome first name comes from the verified CRM record', w1.body.firstName === 'Ann' && Object.keys(w1.body).sort().join() === 'company,fields,firstName,found', JSON.stringify(Object.keys(w1.body)) + w1.body.firstName);
+  ok('W2 placeholder-name record: no first name (greeting without a name)', wb.body.found === true && wb.body.firstName === null, JSON.stringify(wb.body.firstName));
+  ok('W3 invalid reference: nothing returned, so no welcome', same(wx.body, { found: false }));
+
+  // ---------- Zoho email workflow trigger (no email is sent by the website) ----------
+  const wfWrites = (st, id) => st.writes.filter(w => (w.trigger || []).includes('workflow') && (!id || w.id === id));
+  const WF_FIELDS = ['PLMA_Submission_Date', 'PLMA_Latest_Enquiry', 'PLMA_Colleagues_Added', 'PLMA_Last_Submission_Key'];
+  await reset();
+  const SID = crypto.randomUUID();
+  const full = { ref: R.P1, submissionId: SID, name: 'Ann Able', email: 'ann.new@abcfoods.example', additionalEmails: ['ann@personal.example'], company: 'ABC Foods Inc', phone: '+1 312 555 0100', booth: 'F300', jobTitle: 'COO', website: 'abcfoods.example', requirements: 'We need an inventory module.\nAlso lot tracking.', contacts: [{ name: 'Lia Lane', email: 'lia.lane@abcfoods.example', jobTitle: 'QA lead' }] };
+  r = await enquiry(full); s = await state();
+  let wf = wfWrites(s, 'P1');
+  ok('Z1 new submission: exactly one workflow write, with the 4 workflow fields only', r.status === 200 && wfWrites(s).length === 1 && wf.length === 1 && same(wf[0].fields.sort(), [...WF_FIELDS].sort()), JSON.stringify(s.writes.map(w => [w.id, w.trigger, w.fields.length])));
+  ok('Z2 workflow fields hold the submitted enquiry, colleagues and key', s.leads.P1.PLMA_Latest_Enquiry === 'We need an inventory module.\nAlso lot tracking.' && s.leads.P1.PLMA_Colleagues_Added === 'Lia Lane, QA lead, lia.lane@abcfoods.example (added as a new Lead)' && s.leads.P1.PLMA_Last_Submission_Key === 's:' + SID && /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\+00:00$/.test(s.leads.P1.PLMA_Submission_Date), JSON.stringify(pick(s.leads.P1, WF_FIELDS)));
+  const lastP1 = s.writes.filter(w => w.id === 'P1').pop();
+  ok('Z3 workflow write comes last, after the Submitted status and details were saved', (lastP1.trigger || []).includes('workflow') && s.writes.filter(w => w.id === 'P1' && w.fields.includes('Submitted_Email')).every(w => same(w.trigger, [])) && s.leads.P1.PLMA_Response_Status === 'Submitted' && s.leads.P1.Submitted_Email === 'ann.new@abcfoods.example');
+  ok('Z4 every other write (colleague Lead, details) runs with trigger []', s.writes.filter(w => !(w.trigger || []).includes('workflow')).every(w => same(w.trigger, [])) && s.writes.some(w => w.method === 'POST'));
+  ok('Z5 originals, additional emails and colleague handling preserved', s.leads.P1.Email === 'ann.able@abcfoods.example' && s.leads.P1.Submitted_Additional_Emails === 'ann@personal.example' && Object.values(s.leads).filter(l => l.Email === 'lia.lane@abcfoods.example').length === 1);
+  const leadsBefore = Object.keys(s.leads).length, colleaguesBefore = s.leads.P1.PLMA_Colleagues_Added;
+  r = await enquiry(full); s = await state();
+  ok('Z6 retry of the same submission: no second workflow write, no duplicate Lead, fields unchanged', r.status === 200 && wfWrites(s).length === 1 && Object.keys(s.leads).length === leadsBefore && s.leads.P1.PLMA_Colleagues_Added === colleaguesBefore, `${wfWrites(s).length} workflow writes`);
+  r = await enquiry({ ...full, submissionId: crypto.randomUUID(), contacts: [], requirements: '' }); s = await state();
+  ok('Z7 a genuinely new enquiry triggers the workflow again (once); empty fields are explicit', r.status === 200 && wfWrites(s, 'P1').length === 2 && s.leads.P1.PLMA_Colleagues_Added === 'None' && s.leads.P1.PLMA_Latest_Enquiry === 'No message entered.' && Object.keys(s.leads).length === leadsBefore);
+  await reset();
+  r = await enquiry({ name: 'Una Known', email: 'hank@hotel.example', company: 'Other Co', submissionId: crypto.randomUUID(), contacts: [{ name: 'Zed Zee', email: 'zed@other.example', jobTitle: '' }] }); s = await state();
+  ok('Z8 duplicate-review case: flagged as before, workflow never triggered', r.status === 200 && s.leads.H1.PLMA_Duplicate_Review === true && wfWrites(s).length === 0 && !Object.values(s.leads).some(l => l.Last_Name === 'Zee'));
+  await reset();
+  const SID3 = crypto.randomUUID();
+  await fetch(MOCK + '/__failWorkflowWrite');
+  const rf = await enquiry({ ...full, submissionId: SID3 }); s = await state();
+  const failedFirst = rf.status === 502 && wfWrites(s).length === 0;
+  r = await enquiry({ ...full, submissionId: SID3 }); s = await state();
+  ok('Z9 workflow write fails: visitor sees the error; the retry triggers the workflow exactly once', failedFirst && r.status === 200 && wfWrites(s).length === 1 && s.leads.P1.PLMA_Last_Submission_Key === 's:' + SID3, JSON.stringify([rf.status, r.status, wfWrites(s).length]));
+  await reset();
+  const SID4 = crypto.randomUUID();
+  const newcomer = { submissionId: SID4, name: 'Nina New', email: 'nina@newco.example', company: 'NewCo Foods' };
+  r = await enquiry(newcomer); s = await state();
+  const ninaLead = Object.values(s.leads).find(l => l.Email === 'nina@newco.example');
+  const r2 = await enquiry(newcomer); const s2 = await state();
+  ok('Z10 new self-registered person: Lead created with trigger [], workflow once; retry finds her, no second', r.status === 200 && r2.status === 200 && ninaLead && same(s.writes.find(w => w.id === ninaLead.id && w.method === 'POST').trigger, []) && wfWrites(s, ninaLead.id).length === 1 && wfWrites(s2).length === 1 && Object.values(s2.leads).filter(l => l.Email === 'nina@newco.example').length === 1);
+  await reset();
+  const noId = { ref: R.L1, name: 'Test Person', email: 'test.person@example.com', company: 'Example Foods Inc', requirements: 'Older page without id' };
+  r = await enquiry(noId); await enquiry(noId); s = await state();
+  ok('Z11 older page (no submission id): identical request within the minute does not repeat', r.status === 200 && wfWrites(s).length === 1 && /^h:[a-f0-9]{40}$/.test(s.leads.L1.PLMA_Last_Submission_Key));
+  await reset();
+  const rBad = await enquiry({ ...full, submissionId: crypto.randomUUID(), consent: false }); const rNo = await enquiry({ ...full, submissionId: crypto.randomUUID() }, { base: NOCREDS }); s = await state();
+  ok('Z12 invalid submission or Zoho not configured: nothing written, no workflow', rBad.status === 400 && rNo.status === 503 && s.writes.length === 0);
+  const contactSrc = fs.readFileSync(__dirname + '/../../app/contact/actions.ts', 'utf8');
+  ok('Z13 no website email code for PLMA; general contact form keeps its own mailer', !fs.existsSync(__dirname + '/../../lib/plma/enquiry-notify.server.ts') && !fs.existsSync(__dirname + '/../../app/api/plma/email-retry') && !fs.existsSync(__dirname + '/../../lib/email') && /nodemailer|resend/i.test(contactSrc));
+
   // ---------- Browser: 15, company message, extra email + contacts UI ----------
   await reset();
   await enquiry({ ref: R.P1, name: 'Ann Able', email: 'ann.able@abcfoods.example', company: 'ABC Foods Inc' });
@@ -258,6 +330,17 @@ const R = { P1: 'R1abcdefghijklmnopqrst', R2: 'R2abcdefghijklmnopqrst', R3: 'R3a
   ok('15 consent and terms start unchecked after prefill', !v.consent && !v.terms);
   ok('5b booth from URL ignored, CRM booth used; ref removed from URL', v.booth === 'F300' && !v.url.includes('ref=') && !v.url.includes('booth='), JSON.stringify(v));
   ok('6c company message shown with the count only', v.statuses.some(t => t === 'We have already received enquiries from 2 other contacts at ABC Foods Inc. You can still submit your own enquiry.'), JSON.stringify(v.statuses));
+  const WELCOME_BODY = "Thank you for your interest in SesameERP at PLMA 2026. We've prefilled your details to make things easier. Please review them and let us know how we can help your business.";
+  ok('UI W-a welcome with the CRM first name, inline above the fields', v.statuses.some(t => t === 'Welcome to SesameERP, Cara!' + WELCOME_BODY), JSON.stringify(v.statuses));
+  const welcomeOrder = await pg.evaluate(() => { const w = [...document.querySelectorAll('form [role=status]')].find(e => e.textContent.startsWith('Welcome')); const first = document.querySelector('form input[name=plma_full_name]'); return !!w && !!(w.compareDocumentPosition(first) & Node.DOCUMENT_POSITION_FOLLOWING) && !document.querySelector('[role=dialog]'); });
+  ok('UI W-b welcome sits before the first field; no popup/modal', welcomeOrder);
+  const wq = await b.newPage(); await wq.goto(A + '/chicago-event'); await wq.waitForTimeout(1500);
+  const wqi = await b.newPage(); await wqi.goto(A + '/chicago-event?ref=ZZZZZZZZZZZZZZZZZZZZZZ'); await wqi.waitForTimeout(2000);
+  const hasWelcome = p => p.evaluate(() => document.body.innerText.includes('Welcome to SesameERP'));
+  ok('UI W-c no welcome without a valid reference (none / invalid)', !(await hasWelcome(wq)) && !(await hasWelcome(wqi)));
+  const wpn = await b.newPage(); await wpn.goto(A + '/chicago-event?ref=RBabcdefghijklmnopqrst'); await wpn.waitForTimeout(2500);
+  ok('UI W-d valid link without a usable first name: greeting without a name', await wpn.evaluate(() => [...document.querySelectorAll('form [role=status]')].some(e => e.textContent.startsWith('Welcome to SesameERP!Thank you'))));
+  await pg.locator('form').screenshot({ path: '' + (process.env.SHOT_DIR || '.') + '/welcome-form.png' });
   await pg.click('text=Add another email');
   await pg.fill('input[id$="-extra-0"]', 'cara.home@personal.example');
   await pg.click('text=Add another contact');

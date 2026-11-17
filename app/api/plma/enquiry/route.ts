@@ -14,8 +14,15 @@
 // - "Add another contact": each distinct new person becomes a separate Lead with the submitter's
 //   Company ID, a new secure reference and Offer URL, status Not Submitted. People already on a
 //   Lead are not created again; an email already used at another company is flagged for review.
-// Writes run with trigger: [] so no workflow, approval or email fires. Answers { ok: true } only
-// after Zoho has accepted the submitter's write.
+// Writes run with trigger: [] so no workflow, approval or email fires, with ONE exception: the
+// final write of a genuinely new successful submission (PLMA Submission Date, PLMA Latest Enquiry,
+// PLMA Colleagues Added, PLMA Last Submission Key) runs with trigger: ["workflow"], so Zoho's
+// "PLMA 2026 New enquiry" workflow sends the internal notification and the customer confirmation
+// and creates the follow-up task. A retry of the same submission (same submission key) does not
+// trigger it again. Duplicate-review cases never trigger it. Answers { ok: true } only after Zoho
+// has accepted the submitter's writes.
+
+import { createHash } from "node:crypto";
 
 import {
   normEmail,
@@ -76,6 +83,8 @@ type Input = {
   terms?: unknown;
   termsVersion?: unknown;
   honeypot?: unknown;
+  /** Random id the form creates once per enquiry; a retried request carries the same id. */
+  submissionId?: unknown;
   utm?: { source?: unknown; medium?: unknown; campaign?: unknown };
 };
 
@@ -248,11 +257,19 @@ export async function POST(request: Request) {
     // company see this person's first name? Each submission records the latest choice.
     PLMA_Show_First_Name: input.showName === true,
     PLMA_Response_Status: "Submitted",
-    PLMA_Submission_Date: zohoDateTime(submittedAt),
+    // PLMA_Submission_Date is written last, together with the workflow fields (step 4).
     ...(utm.source ? { UTM_Source: utm.source } : {}),
     ...(utm.medium ? { UTM_Medium: utm.medium } : {}),
     ...(utm.campaign ? { UTM_Campaign: utm.campaign } : {}),
   };
+
+  // Submission key: the form's random id, or (older page / no id) a hash of the content within the
+  // same minute. Stored on the Lead so a retried request is recognised and emails are not repeated.
+  const submissionId =
+    typeof input.submissionId === "string" && /^[A-Za-z0-9-]{8,60}$/.test(input.submissionId) ? input.submissionId : null;
+  const submissionKey = submissionId
+    ? `s:${submissionId}`
+    : `h:${createHash("sha256").update([s.email, s.name, s.requirements, submittedAt.slice(0, 16)].join("|")).digest("hex").slice(0, 40)}`;
 
   try {
     // 1. Who is submitting?
@@ -304,11 +321,14 @@ export async function POST(request: Request) {
     let companyName: string;
     let companyBooth: string;
     let submitterName: string;
+    let previousKey: string | null = null;
 
     if (lead) {
       // 1b. Known person (scenario A): store what they typed in Submitted_* only.
       leadId = lead.id;
-      const extras = await getLeadExtras(lead.id).catch(() => null);
+      // Must succeed: it holds the last submission key that decides whether emails are sent.
+      const extras = await getLeadExtras(lead.id);
+      previousKey = extras?.PLMA_Last_Submission_Key ?? null;
       const knownExtra = parseEmailList(extras?.Submitted_Additional_Emails);
       const ownEmails = [...leadEmails(lead), ...knownExtra];
       const mergedExtra = uniqueEmails([...knownExtra, ...s.additionalEmails], [email]);
@@ -442,6 +462,7 @@ export async function POST(request: Request) {
     let added = 0;
     let known = 0;
     let review = 0;
+    let colleagueLines: string[] = [];
     if (contacts.length) {
       const result = await addColleagues({
         submitter: { id: leadId, name: submitterName, email: s.email, test: isTestLead(lead) },
@@ -451,7 +472,24 @@ export async function POST(request: Request) {
         contacts,
         submittedAt,
       });
-      ({ added, known, review } = result);
+      ({ added, known, review, lines: colleagueLines } = result);
+    }
+
+    // 4. Zoho email workflow. Only a genuinely new submission (key not seen on this Lead) records its
+    // date and details and lets Zoho run the "PLMA 2026 New enquiry" workflow (internal notification,
+    // customer confirmation to the Submitted Email only, follow-up task). A retry of the same
+    // submission has already done this, so nothing is written or sent again.
+    if (submissionKey !== previousKey) {
+      await updateLead(
+        leadId,
+        {
+          PLMA_Submission_Date: zohoDateTime(submittedAt),
+          PLMA_Latest_Enquiry: (s.requirements || "No message entered.").slice(0, MAX_REQUIREMENTS),
+          PLMA_Colleagues_Added: colleagueLines.length ? colleagueLines.join("\n") : "None",
+          PLMA_Last_Submission_Key: submissionKey,
+        },
+        { workflow: true },
+      );
     }
 
     return reply({ ok: true, ...(contacts.length ? { contactsAdded: added, contactsAlreadyKnown: known, contactsForReview: review } : {}) });
@@ -477,6 +515,10 @@ async function addColleagues(args: {
   let added = 0;
   let known = 0;
   let review = 0;
+  // Plain list for the internal notification email (PLMA Colleagues Added): no internal IDs.
+  const lines: string[] = [];
+  const line = (c: ContactInput, outcome: string) =>
+    lines.push(`${[c.name, c.jobTitle, c.email].filter(Boolean).join(", ")} (${outcome})`);
 
   for (const c of args.contacts) {
     // Same person twice in this request, or the submitter themselves.
@@ -485,6 +527,7 @@ async function addColleagues(args: {
     if (c.email === submitter.email || samePersonName(c.name, submitter.name)) {
       known++;
       log.push(`${c.name}: same person as the submitter, not created`);
+      line(c, "same person as the submitter, not added");
       continue;
     }
     const existing = atCompany.find(
@@ -495,6 +538,7 @@ async function addColleagues(args: {
     if (existing) {
       known++;
       log.push(`${c.name}: already in the CRM (Lead ${existing.id}), not created`);
+      line(c, "already in the CRM, not added again");
       continue;
     }
     const elsewhere = isSharedInbox(c.email)
@@ -505,6 +549,7 @@ async function addColleagues(args: {
       const reason = `Colleague email ${c.email} (added by Lead ${submitter.id}) is already on Lead ${elsewhere.map((l) => l.id).join(", ")}`;
       await updateLead(elsewhere[0].id, { PLMA_Duplicate_Review: true, PLMA_Duplicate_Reason: reason.slice(0, 255) });
       log.push(`${c.name}: email already on another Lead (${elsewhere.map((l) => l.id).join(", ")}), flagged for review, not created`);
+      line(c, "email already on another Lead, flagged for duplicate review");
       continue;
     }
     const { first, last } = splitName(c.name);
@@ -531,10 +576,11 @@ async function addColleagues(args: {
     added++;
     atCompany.push({ id, First_Name: first, Last_Name: last, Email: c.email, PLMA_Company_ID: companyId });
     log.push(`${c.name}: new Lead ${id}`);
+    line(c, "added as a new Lead");
   }
 
   await addLeadNote(submitter.id, "PLMA 2026 – colleagues added by this contact", [`Submitted: ${submittedAt}`, "", ...log].join("\n")).catch(() =>
     console.error("PLMA enquiry: colleagues note failed"),
   );
-  return { added, known, review };
+  return { added, known, review, lines };
 }

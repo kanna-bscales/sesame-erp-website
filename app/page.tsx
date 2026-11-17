@@ -7,6 +7,7 @@ import { Hero } from "@/components/sections/Hero";
 import { Manufacturing } from "@/components/sections/Manufacturing";
 import { Modules } from "@/components/sections/Modules";
 import { ModuleFocusProvider } from "@/components/sections/modules/ModuleFocus";
+import { PlmaBand } from "@/components/sections/PlmaBand";
 import { Process } from "@/components/sections/Process";
 import { StatsTicker } from "@/components/sections/StatsTicker";
 import { WhyUs } from "@/components/sections/WhyUs";
@@ -19,6 +20,7 @@ export default function Home() {
     <main id="main">
       <Hero />
       <StatsTicker />
+      <PlmaBand />
       <WhyUs />
       <Process />
       <Agents />

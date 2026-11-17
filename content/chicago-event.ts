@@ -127,6 +127,13 @@ export const leadForm = {
   successBody: "Our team will review your requirements and contact you about the PLMA 2026 offer.",
   // Shown when a personal invitation link filled in the form from Zoho CRM.
   prefillNotice: "We have filled in the details we hold for you from your PLMA 2026 invitation. Please check them and change anything that is not right before you submit.",
+  // Welcome (Nov 17, 2026): inline, above the form fields, for every valid personal link after the
+  // form has been filled in. The first name comes from the person's verified Zoho Lead; without one
+  // the greeting has no name.
+  welcome: {
+    greeting: (firstName: string | null) => (firstName ? `Welcome to SesameERP, ${firstName}!` : "Welcome to SesameERP!"),
+    body: "Thank you for your interest in SesameERP at PLMA 2026. We've prefilled your details to make things easier. Please review them and let us know how we can help your business.",
+  },
   // Phase 2 (approved requirements, 2026-11): company count, extra emails, colleagues.
   // Shown only for a valid personal link. Used when no colleague allowed their first name to be shown.
   companyEnquiries: (count: number, company: string) =>
@@ -251,12 +258,15 @@ export const campaignChrome = {
 };
 
 export const plmaHero = {
+  // The page's single H1 (SEO update, Nov 17, 2026). Uses the approved offer wording.
+  h1: "PLMA 2026 ERP offer: complimentary development of one approved ERP module",
+  h1Lead: "For PLMA 2026 participants. Development services valued up to US$5,000; it is not cash or credit.",
   eyebrow: "PLMA 2026 attendee exclusive",
   headline: ["Complimentary development"],
   headlineSecond: "of one ERP module.",
   highlight: "Development services valued up to US$5,000",
   description:
-    "Attending PLMA 2026? Explore how SesameERP can help improve your business operations with custom ERP development, AI agents and ERP automation.",
+    "Attended PLMA 2026? Explore how SesameERP can help improve your business operations with custom ERP development, AI agents and ERP automation.",
   benefits: [
     { icon: "module", label: "One complimentary ERP module" },
     { icon: "erp", label: "Custom ERP development" },
@@ -292,9 +302,9 @@ export const aboutSection = {
 
 // learnMore: homepage section with more detail, opened in a new tab so the form stays open.
 export const capabilitiesSection = {
-  heading: "Our capabilities",
+  heading: "Custom ERP development, AI agents and automation",
   learnMoreLabel: "Learn more",
-  lead: "The ERP capabilities SesameERP is showcasing for PLMA 2026.",
+  lead: "What SesameERP builds for manufacturers, and what your complimentary ERP module can draw on.",
   items: [
     {
       icon: "erp",
@@ -341,8 +351,9 @@ export const audienceSection = {
 
 export const eventSection = {
   eyebrow: plmaEvent.name,
-  heading: "Meet the future of ERP at PLMA 2026",
-  body: "Are you attending PLMA 2026? Discover how SesameERP can help manufacturers, retailers and suppliers streamline operations through custom ERP modules, AI agents and automation.",
+  // Post-event wording (the show ran November 15–17, 2026). The offer has no expiry date (see FAQ).
+  heading: "After PLMA 2026: the ERP offer is still open",
+  body: "Did you attend PLMA 2026? The show has ended, but PLMA 2026 participants can still request the complimentary ERP module. Discover how SesameERP helps manufacturers, retailers and suppliers streamline operations through custom ERP modules, AI agents and automation.",
   note: "Product demos are arranged individually after you get in touch.",
   officialLink: "Official event page",
 };
@@ -391,6 +402,32 @@ export const plmaFaq = {
     { q: "Can I request a product demo?", a: "Yes. You can request a SesameERP product demo using the enquiry form." },
     // Brief wording: "Nbits has confirmed that there is no expiry date." Shown without the internal name.
     { q: "Does the offer expire?", a: "No. There is no expiry date for this offer." },
+    // Added Nov 17, 2026 for real search questions (Google related searches: "cost", "pdf"). Answers
+    // reuse the wording of the offer terms (content/plma-2026-terms.ts); no new commitments.
+    {
+      q: "Can I still request the offer now that PLMA 2026 has ended?",
+      a: "Yes. The offer is for businesses that attended or took part in PLMA 2026 activities, and no expiry date has been set. Each request is reviewed individually, and submitting an enquiry does not guarantee approval.",
+    },
+    {
+      q: "What counts as one ERP module?",
+      a: "A single functional area such as inventory, purchasing, sales, warehouse operations, vendor management, production tracking, a reporting dashboard or approval workflows. A complete ERP platform is not included. Business Scales determines the final scope.",
+    },
+    {
+      q: "Is there any cost to me?",
+      a: "Development of the approved module is complimentary, up to the US$5,000 value. Hosting, infrastructure, third-party licences and integration costs remain your responsibility, and work beyond the approved scope would need a separate agreement.",
+    },
+    {
+      q: "How long does development take?",
+      a: "It depends on the complexity of the scope, our resource availability and your responsiveness during the project. We agree the plan with you after reviewing your request.",
+    },
+    {
+      q: "What is a custom ERP module?",
+      a: "Part of an ERP system built around how your business already works, rather than a fixed template. SesameERP builds each module to fit your products, customers, suppliers and production steps, and connects it to the rest of your system.",
+    },
+    {
+      q: "Where can I read the full offer terms?",
+      a: "On the PLMA 2026 Offer Terms & Conditions page, which you can also download as a PDF.",
+    },
   ],
 };
 
@@ -409,15 +446,19 @@ export const offerTerms = {
 };
 
 export const plmaSeo = {
-  title: "PLMA 2026 Exclusive ERP Offer | Complimentary ERP Module Development | SesameERP",
+  // SEO update (Nov 17, 2026): title 57 characters, description 154 characters. This page targets the
+  // transactional offer searches ("PLMA 2026 ERP offer", "PLMA attendee ERP offer"); /plma-2026 stays
+  // the informational guide.
+  title: "PLMA 2026 ERP Offer: Complimentary ERP Module | SesameERP",
   description:
-    "Attending PLMA 2026? Request complimentary development of one approved ERP module, with development services valued up to US$5,000. Explore custom ERP development, AI agents and ERP automation with SesameERP.",
+    "PLMA 2026 attendees can request complimentary development of one approved ERP module, with development services valued up to US$5,000. Not cash or credit.",
   path: campaignPath,
   url: campaignUrl,
   keywords: [
-    "PLMA 2026",
-    "private label ERP",
+    "PLMA 2026 ERP offer",
+    "PLMA attendee ERP offer",
     "complimentary ERP module",
+    "ERP software for private label manufacturers",
     "custom ERP development",
     "AI agents for ERP",
     "ERP automation",

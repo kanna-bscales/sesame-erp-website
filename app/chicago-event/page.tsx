@@ -48,6 +48,24 @@ export const metadata: Metadata = {
 };
 
 const formHref = `#${anchors.form}`;
+
+// Every FAQ shown on the page; the FAQPage structured data is built from the same list, so the two
+// always match.
+const faqItems = [...plmaFaq.items, ...plmaLandingFaq];
+
+function faqJsonLd() {
+  const data = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqItems.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: { "@type": "Answer", text: item.a },
+    })),
+  };
+  // "<" escaped so the JSON can never close the script element.
+  return JSON.stringify(data).replace(/</g, "\\u003c");
+}
 const eventHref = `#${anchors.event}`;
 
 // Section rhythm: tighter than the homepage so the campaign reads as one focused page.
@@ -57,10 +75,16 @@ const sectionTitle = "heading-section text-[clamp(2rem,3.6vw,3.5rem)]";
 export default function PlmaCampaignPage() {
   return (
     <main id="main">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: faqJsonLd() }} />
+
       {/* Offer card + registration form */}
-      <section id="top" aria-label={cta.primary} className="border-b border-rule bg-sheet pt-28 sm:pt-32">
+      <section id="top" aria-labelledby="page-heading" className="border-b border-rule bg-sheet pt-28 sm:pt-32">
         <div className="page-container grid gap-12 pb-20 lg:grid-cols-12 lg:gap-10 lg:pb-28">
           <div className="lg:col-span-5">
+            <h1 id="page-heading" className="font-wide text-[clamp(1.75rem,2.6vw,2.4rem)] leading-[1.08] font-extrabold">
+              {plmaHero.h1}
+            </h1>
+            <p className="mt-4 mb-8 leading-relaxed text-ink-soft">{plmaHero.h1Lead}</p>
             <OfferCard />
 
             <ul className="mt-8 grid gap-x-6 gap-y-3.5 sm:grid-cols-2 lg:grid-cols-1">
@@ -344,7 +368,7 @@ export default function PlmaCampaignPage() {
       )}
 
       {/* FAQ, with the offer terms underneath */}
-      <EventFaq id={anchors.faq} heading={plmaFaq.heading} items={[...plmaFaq.items, ...plmaLandingFaq]}>
+      <EventFaq id={anchors.faq} heading={plmaFaq.heading} items={faqItems}>
         <details id={anchors.terms} open className="group mt-10 rounded-md bg-sheet ring-1 ring-ink/10">
           <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 font-semibold [&::-webkit-details-marker]:hidden">
             {offerTerms.summary}
