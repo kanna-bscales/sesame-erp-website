@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { motion } from "motion/react";
 import { Plus } from "lucide-react";
 
 type Item = { q: string; a: string; confirmed?: boolean };
@@ -50,29 +50,29 @@ export function EventFaq({ heading, items, showPending = true, id = "faq", child
                     </motion.span>
                   </button>
                 </h3>
-                <AnimatePresence initial={false}>
-                  {open && (
-                    <motion.div
-                      id={`event-faq-answer-${index}`}
-                      role="region"
-                      aria-labelledby={`event-faq-question-${index}`}
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                      className="overflow-hidden"
-                    >
-                      <div className="pb-7">
-                        <p className="max-w-[62ch] text-lg text-ink-soft">{item.a}</p>
-                        {showPending && item.confirmed === false && (
-                          <p className="mt-3 inline-flex rounded-full border border-ink/20 px-3 py-1 text-sm font-medium">
-                            Details to be confirmed
-                          </p>
-                        )}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                {/* Every answer is always in the HTML (search engines and the FAQPage structured data
+                    need it); closed answers collapse to zero height and are inert, so they are not
+                    focusable or read out. The grid-rows transition animates the height. */}
+                <div
+                  id={`event-faq-answer-${index}`}
+                  role="region"
+                  aria-labelledby={`event-faq-question-${index}`}
+                  inert={!open}
+                  className={`grid transition-[grid-template-rows,opacity] duration-350 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${
+                    open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+                  }`}
+                >
+                  <div className="overflow-hidden">
+                    <div className="pb-7">
+                      <p className="max-w-[62ch] text-lg text-ink-soft">{item.a}</p>
+                      {showPending && item.confirmed === false && (
+                        <p className="mt-3 inline-flex rounded-full border border-ink/20 px-3 py-1 text-sm font-medium">
+                          Details to be confirmed
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
               </li>
             );
           })}

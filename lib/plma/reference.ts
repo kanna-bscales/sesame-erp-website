@@ -37,7 +37,13 @@ export type AttendeePrefill = {
  */
 export type CompanyContext = { name: string; otherSubmitted: number; names: string[] };
 
-export type AttendeeLookupResponse = { found: true; fields: AttendeePrefill; company: CompanyContext | null } | { found: false };
+/**
+ * `firstName`: the person's own first name for the welcome message (latest submitted name, else the
+ * CRM first name; letters only). Null when the record has no usable first name.
+ */
+export type AttendeeLookupResponse =
+  | { found: true; fields: AttendeePrefill; firstName: string | null; company: CompanyContext | null }
+  | { found: false };
 
 /** Limits for one submission (also enforced on the server). */
 export const LIMITS = {

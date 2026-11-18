@@ -37,6 +37,16 @@ No SEO tool with search volume or ranking data was available (no connector in th
 - **Approved copy:** manufacturer challenges, ERP checklist, How SesameERP helps / AI-agent descriptions, "Built for private label manufacturers".
 - **Still open:** shorter `/chicago-event` meta title (proposed "PLMA 2026 ERP Offer: Complimentary ERP Module | SesameERP"); search volumes need an SEO tool; legal approval of the terms overall.
 
+## SEO update (November 17, 2026) – pending owner review
+
+- Meta description (149 characters): PLMA 2026 in Chicago (Nov 15–17, 2026): schedule, venues and who attends, plus a practical ERP guide for private label and store brand manufacturers. Title unchanged.
+- Keyword overlap fixed: offer searches belong to `/chicago-event`. The offer block is now one short paragraph, heading "For PLMA 2026 attendees", linking with the anchor text "PLMA 2026 attendee ERP offer"; hero button text "PLMA 2026 attendee ERP offer". The four offer FAQs were removed (they live on `/chicago-event`).
+- Post-event tense: "What is PLMA 2026?", schedule lead and Sunday item, "Who attends PLMA's Chicago show" (was "Who you will meet at PLMA 2026"), FAQ "When and where was PLMA 2026?", "Who exhibited at PLMA 2026?". No 2027 dates until PLMA publishes them.
+- New schedule card "Getting to the venue": 5555 N. River Road, Rosemont, IL 60018, about 10 minutes from O'Hare (rosemont.com, checked November 17, 2026).
+- New section "ERP for private label manufacturers: a practical guide" (six topics with "What to look for": retailer-specific products and specifications; production planning; purchasing; inventory; traceability and audits; costing and margins) and "Packaged ERP or custom modules?". Original copy; competitor pages were only used to see which topics searchers expect. The approved checklist stays, under the heading "Quick ERP checklist for store brand manufacturers".
+- New FAQs: What is the PLMA show? · Where is the PLMA trade show located in Chicago? · Are store brands still growing? (PLMA Store Brand Facts, Circana data: US$282.8 billion in 2025, 21.3% dollar share, +3.3% vs +1.2% national brands).
+- Sources list adds PLMA Store Brand Facts and the Rosemont venue page.
+
 ## Headings (`/plma-2026`)
 
 H1 PLMA 2026 in Chicago: a guide for private label manufacturers · H2 What is PLMA? · What is PLMA 2026? · PLMA 2026 schedule and venues · Who you will meet at PLMA 2026 · What private label manufacturers deal with every day · ERP for private label manufacturers: what it should cover · How SesameERP helps manufacturers · The complimentary PLMA 2026 offer · PLMA 2026 and private label ERP: questions.

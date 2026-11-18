@@ -42,7 +42,12 @@ export function SiteFooter() {
             ))}
             <li>
               <Link href="/plma-2026" className="transition-colors hover:text-white">
-                PLMA 2026
+                PLMA 2026 guide
+              </Link>
+            </li>
+            <li>
+              <Link href="/chicago-event" className="transition-colors hover:text-white">
+                PLMA 2026 ERP offer
               </Link>
             </li>
             <li>

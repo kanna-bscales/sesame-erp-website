@@ -165,11 +165,16 @@ export function newCompanyId() {
   return `PLMA26-W${Array.from(bytes, (b) => alphabet[b % alphabet.length]).join("")}`;
 }
 
-/** One Lead by id with the extra (multi-line) fields the form needs. */
-export async function getLeadExtras(id: string): Promise<{ Submitted_Additional_Emails?: string | null } | null> {
+type LeadExtras = { Submitted_Additional_Emails?: string | null; PLMA_Last_Submission_Key?: string | null };
+
+/**
+ * One Lead by id with the extra fields the form needs: the multi-line additional emails, and the
+ * key of the last submission that started the Zoho email workflow (used to recognise retries).
+ */
+export async function getLeadExtras(id: string): Promise<LeadExtras | null> {
   if (!/^[A-Za-z0-9]{1,25}$/.test(id)) return null;
-  const result = await zoho<{ data?: { Submitted_Additional_Emails?: string | null }[] }>(
-    `/Leads/${id}?fields=Submitted_Additional_Emails`,
+  const result = await zoho<{ data?: LeadExtras[] }>(
+    `/Leads/${id}?fields=Submitted_Additional_Emails,PLMA_Last_Submission_Key`,
   );
   return result?.data?.[0] ?? null;
 }
@@ -276,9 +281,13 @@ function firstId(result: WriteResult | null, action: string): string {
 }
 
 // trigger: [] — no workflow rules, approvals or blueprints run, so no automatic or promotional
-// emails are sent by these writes.
-export async function updateLead(id: string, data: Record<string, unknown>): Promise<void> {
-  firstId(await zoho<WriteResult>(`/Leads/${id}`, { method: "PUT", body: { data: [data], trigger: [] } }), "update");
+// emails are sent by these writes. The one exception is `{ workflow: true }`, used only by the
+// enquiry route for the single write that records a genuinely new PLMA 2026 submission: that write
+// lets Zoho's "PLMA 2026 New enquiry" workflow send the internal notification and the customer
+// confirmation and create the follow-up task (docs/plma-2026-phase2.md, "Enquiry emails").
+export async function updateLead(id: string, data: Record<string, unknown>, options: { workflow?: boolean } = {}): Promise<void> {
+  const trigger = options.workflow ? ["workflow"] : [];
+  firstId(await zoho<WriteResult>(`/Leads/${id}`, { method: "PUT", body: { data: [data], trigger } }), "update");
 }
 
 export async function createLead(data: Record<string, unknown>): Promise<string> {

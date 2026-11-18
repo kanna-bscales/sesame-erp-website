@@ -29,6 +29,8 @@ It is NOT a cash credit, account balance or discount, and it covers ERP only (no
 
 Rendered from `leadForm` in `content/chicago-event.ts`. Behaviour is described in `docs/plma-2026-phase2.md`.
 
+- Welcome message (Nov 17, 2026; personal links only, inline above the form fields after the form is pre-filled, never a popup): "Welcome to SesameERP, {First Name}! Thank you for your interest in SesameERP at PLMA 2026. We've prefilled your details to make things easier. Please review them and let us know how we can help your business." First name from the person's verified Zoho Lead (latest submitted name, else CRM First Name; letters only). A valid link without a usable first name shows "Welcome to SesameERP!" with the same text. No welcome without a valid reference.
+- Enquiry emails (Nov 17, 2026; awaiting approval of templates and recipients): internal notification "New PLMA 2026 Enquiry Received – {Company Name}" and customer acknowledgement "Thank You for Your PLMA 2026 Enquiry!" (Hello {First Name}, … Regards, SesameERP Team). Details: `docs/plma-2026-phase2.md` › Enquiry emails.
 - Company message (personal links only, when other people at the same company, by PLMA Company ID, have already submitted; the current person excluded):
     - With first names (Nov 2026), only for colleagues who ticked the name-display box: "Prakash from ABC Foods has already submitted an enquiry. You can still submit yours." / "Prakash and Monesh from ABC Foods have already submitted their enquiries. You can still submit yours." / "Prakash, Monesh and Sarah from …" (up to 5 names). Colleagues without permission are counted: "Priya and 1 other colleague from XYZ Snacks have already submitted their enquiries. You can still submit yours."
     - Nobody gave permission: "We have already received enquiries from {n} other contact(s) at {Company}. You can still submit your own enquiry."
@@ -49,6 +51,19 @@ Short, offer-focused copy (`plmaLanding`, `plmaLandingFaq` in `content/plma-2026
 - Offer wording everywhere (aligned with the legal terms, owner decision Nov 11, 2026): "Complimentary development of one approved ERP module, with development services valued up to US$5,000. It is not cash or credit." Hero highlight and offer card value: "Development services valued up to US$5,000" / "Up to US$5,000"; offer card note "Development work, not cash or credit"; form points "Complimentary development of one approved ERP module" and "Development services valued up to US$5,000, not cash or credit".
 - Section **Built for private label manufacturers** (after the event band): lead "Private label manufacturers juggle several retailers' prices, specifications and order patterns at once. One complimentary ERP module can start with the area that costs your team the most time." Five examples based on existing SesameERP modules (Retailer-specific pricing and quotes, Purchasing from several suppliers, Stock through every production stage, Orders tied to inventory, AI agents for repetitive work), note "Examples only. The module and its scope are agreed with you after review, under the offer terms.", button to the form and link to the guide.
 - FAQ additions after the offer questions: "Is the offer paid as cash or credit?" (No, plus the offer wording), "When and where is PLMA 2026?" (schedule split, points to the guide), "Is this offer from PLMA?" (No; SesameERP is independent and not affiliated with, sponsored by or endorsed by PLMA; the offer is provided by Business Scales LLC, the company behind SesameERP).
+
+## SEO update (November 17, 2026) – pending owner review
+
+Rendered from `content/chicago-event.ts` / `content/plma-2026.ts`. This page targets the offer searches ("PLMA 2026 ERP offer", "PLMA attendee ERP offer"); `/plma-2026` stays informational.
+
+- Meta title (57 characters): PLMA 2026 ERP Offer: Complimentary ERP Module | SesameERP
+- Meta description (154 characters): PLMA 2026 attendees can request complimentary development of one approved ERP module, with development services valued up to US$5,000. Not cash or credit.
+- H1 (new, top of the page above the offer card): "PLMA 2026 ERP offer: complimentary development of one approved ERP module". Line under it: "For PLMA 2026 participants. Development services valued up to US$5,000; it is not cash or credit."
+- Headings: "Our capabilities" → "Custom ERP development, AI agents and automation" (lead: "What SesameERP builds for manufacturers, and what your complimentary ERP module can draw on."); "Built for private label manufacturers" → "ERP software built for private label manufacturers".
+- Post-event (the show ran November 15–17, 2026): event band heading "After PLMA 2026: the ERP offer is still open"; body "Did you attend PLMA 2026? The show has ended, but PLMA 2026 participants can still request the complimentary ERP module. Discover how SesameERP helps manufacturers, retailers and suppliers streamline operations through custom ERP modules, AI agents and automation." FAQ "When and where was PLMA 2026?" in past tense.
+- New FAQs (answers reuse the offer terms' wording): Can I still request the offer now that PLMA 2026 has ended? · What counts as one ERP module? · Is there any cost to me? · How long does development take? · What is a custom ERP module? · Where can I read the full offer terms?
+- Structured data: FAQPage built from the same list as the visible FAQ (15 questions); Organization + WebSite on every page (root layout).
+- Guide link text: "PLMA 2026 guide: schedule, venues and ERP for private label manufacturers".
 
 ## Header and footer on this page
 

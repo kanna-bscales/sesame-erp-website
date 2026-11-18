@@ -150,6 +150,12 @@ function readUtm(): Utm {
   return { source: pick("source"), medium: pick("medium"), campaign: pick("campaign") };
 }
 
+/** Random id for one enquiry (crypto.randomUUID where available). */
+function newSubmissionId(): string {
+  if (typeof crypto !== "undefined" && "randomUUID" in crypto) return crypto.randomUUID();
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 12)}`;
+}
+
 const inputClasses =
   "mt-2 block h-12 w-full rounded-lg border border-rule bg-paper px-4 text-base text-ink placeholder:text-ink-soft/70 transition-colors hover:border-ink/40 focus-visible:border-ballpoint focus-visible:ring-2 focus-visible:ring-ballpoint/25 focus-visible:outline-none aria-invalid:border-ballpoint-ink aria-invalid:bg-ballpoint/[0.04]";
 
@@ -166,11 +172,16 @@ export function ZohoLeadForm() {
   const [errors, setErrors] = useState<Errors>({});
   const [submitted, setSubmitted] = useState(false);
   const [company, setCompany] = useState<CompanyContext | null>(null);
+  // undefined = no valid personal link (no welcome); null = valid link without a usable first name.
+  const [welcomeName, setWelcomeName] = useState<string | null | undefined>(undefined);
   const [extraEmails, setExtraEmails] = useState<string[]>([]);
   const [contacts, setContacts] = useState<ContactRow[]>([]);
   const [contactsAdded, setContactsAdded] = useState(0);
   const rowKey = useRef(0);
   const attendeeRef = useRef<string | null>(null);
+  // One id per enquiry, reused if the same enquiry is sent again (retry after an error or timeout),
+  // so the server never sends its confirmation emails twice.
+  const submissionId = useRef<string | null>(null);
 
   // Remember UTM values from the landing URL for the rest of the visit (first touch wins).
   useEffect(() => {
@@ -226,6 +237,7 @@ export function ZohoLeadForm() {
         if (result.fields.additionalEmails.length) {
           setExtraEmails((current) => (current.length ? current : result.fields.additionalEmails.slice(0, LIMITS.additionalEmails)));
         }
+        setWelcomeName(result.firstName ?? null);
         if (result.company && result.company.otherSubmitted > 0) setCompany(result.company);
       })
       .catch(() => {
@@ -308,6 +320,7 @@ export function ZohoLeadForm() {
         signal: controller.signal,
         body: JSON.stringify({
           ref: attendeeRef.current,
+          submissionId: submissionId.current,
           name: value(C.fullName),
           email: value(F.email),
           additionalEmails: filledExtraEmails(),
@@ -354,11 +367,13 @@ export function ZohoLeadForm() {
       return;
     }
 
+    if (!submissionId.current) submissionId.current = newSubmissionId();
     inFlight.current = true;
     setStatus("submitting");
     try {
       const outcome = await submitToApi(data);
       if (typeof outcome === "object" && !Array.isArray(outcome)) {
+        submissionId.current = null;
         setContactsAdded(outcome.added);
         setStatus("success");
         return;
@@ -524,6 +539,13 @@ export function ZohoLeadForm() {
       <div aria-hidden className="absolute -left-[9999px] h-px w-px overflow-hidden">
         <input type="text" name={zohoLeadForm.honeypot} tabIndex={-1} autoComplete="off" defaultValue="" />
       </div>
+
+      {welcomeName !== undefined && (
+        <div role="status" className="mt-6 rounded-lg border border-rule bg-paper px-4 py-3.5 text-[0.95rem] leading-relaxed">
+          <p className="font-semibold text-ink">{leadForm.welcome.greeting(welcomeName)}</p>
+          <p className="mt-1 text-ink-soft">{leadForm.welcome.body}</p>
+        </div>
+      )}
 
       {company && (
         <p role="status" className="mt-6 rounded-lg bg-canary px-4 py-3 text-[0.95rem] leading-relaxed text-night">

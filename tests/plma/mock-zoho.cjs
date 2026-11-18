@@ -2,7 +2,7 @@
 // Supports COQL: select … from Leads where <A = 'x' | A != 'x' joined by and/or, with parens> [order by …] [limit n]
 const http = require('http'); const crypto = require('crypto');
 const sha = r => crypto.createHash('sha256').update(r).digest('hex');
-const state = { leads: {}, notes: [], camp: [], tokens: 0, calls: [], campaignForbidden: false };
+const state = { leads: {}, notes: [], camp: [], tokens: 0, calls: [], writes: [], campaignForbidden: false, failWorkflowWrites: 0 };
 let seq = 0;
 function seed() {
   state.leads = {}; state.notes = []; state.camp = []; seq = 0;
@@ -75,7 +75,9 @@ http.createServer((req, res) => {
   let b = ''; req.on('data', d => b += d); req.on('end', () => {
     const u = new URL(req.url, 'http://x'); const p = u.pathname; state.calls.push(req.method + ' ' + p);
     if (p === '/__state') return send(res, 200, state);
-    if (p === '/__reset') { seed(); state.calls = []; state.campaignForbidden = false; return send(res, 200, { ok: 1 }); }
+    if (p === '/__reset') { seed(); state.calls = []; state.writes = []; state.campaignForbidden = false; state.failWorkflowWrites = 0; return send(res, 200, { ok: 1 }); }
+    // Makes the next workflow-triggering Lead write fail (tests the visitor's retry).
+    if (p === '/__failWorkflowWrite') { state.failWorkflowWrites = 1; return send(res, 200, { ok: 1 }); }
     if (p === '/__campaignForbidden') { state.campaignForbidden = true; return send(res, 200, { ok: 1 }); }
     if (p === '/oauth/v2/token') { state.tokens++; return send(res, 200, { access_token: 'tok', expires_in: 3600, scope: state.campaignForbidden ? 'ZohoCRM.modules.leads.ALL ZohoCRM.modules.campaigns.READ ZohoCRM.modules.notes.CREATE ZohoCRM.coql.READ' : 'ZohoCRM.modules.leads.ALL ZohoCRM.modules.campaigns.READ ZohoCRM.modules.campaigns.UPDATE ZohoCRM.modules.notes.CREATE ZohoCRM.coql.READ' }); }
     if (req.headers.authorization !== 'Zoho-oauthtoken tok') return send(res, 401, { code: 'INVALID_TOKEN' });
@@ -90,8 +92,8 @@ http.createServer((req, res) => {
     if (m && req.method === 'PUT') { if (state.campaignForbidden) return send(res, 403, { code: 'OAUTH_SCOPE_MISMATCH' }); state.camp.push({ lead: m[1], ...JSON.parse(b).data[0] }); return send(res, 200, { data: [{ status: 'success', code: 'SUCCESS' }] }); }
     m = p.match(/^\/crm\/v8\/Leads\/(\w+)$/);
     if (m && req.method === 'GET') { const l = state.leads[m[1]]; if (!l) return send(res, 204); const fields = (u.searchParams.get('fields') || '').split(','); return send(res, 200, { data: [{ id: l.id, ...Object.fromEntries(fields.map(f => [f, l[f] ?? null])) }] }); }
-    if (m && req.method === 'PUT') { const body = JSON.parse(b); if (!state.leads[m[1]]) return send(res, 400, {}); Object.assign(state.leads[m[1]], body.data[0]); state.leads[m[1]].__trigger = body.trigger; return send(res, 200, { data: [{ status: 'success', code: 'SUCCESS', details: { id: m[1] } }] }); }
-    if (p === '/crm/v8/Leads' && req.method === 'POST') { const body = JSON.parse(b); const id = 'N' + (++seq); state.leads[id] = { id, ...body.data[0], __trigger: body.trigger }; return send(res, 201, { data: [{ status: 'success', code: 'SUCCESS', details: { id } }] }); }
+    if (m && req.method === 'PUT') { const body = JSON.parse(b); if (!state.leads[m[1]]) return send(res, 400, {}); if (state.failWorkflowWrites && (body.trigger || []).includes('workflow')) { state.failWorkflowWrites--; return send(res, 500, { code: 'INTERNAL_ERROR' }); } state.writes.push({ id: m[1], method: 'PUT', trigger: body.trigger, fields: Object.keys(body.data[0]) }); Object.assign(state.leads[m[1]], body.data[0]); state.leads[m[1]].__trigger = body.trigger; return send(res, 200, { data: [{ status: 'success', code: 'SUCCESS', details: { id: m[1] } }] }); }
+    if (p === '/crm/v8/Leads' && req.method === 'POST') { const body = JSON.parse(b); const id = 'N' + (++seq); state.writes.push({ id, method: 'POST', trigger: body.trigger, fields: Object.keys(body.data[0]) }); state.leads[id] = { id, ...body.data[0], __trigger: body.trigger }; return send(res, 201, { data: [{ status: 'success', code: 'SUCCESS', details: { id } }] }); }
     if (p === '/crm/v8/Notes') { state.notes.push(JSON.parse(b).data[0]); return send(res, 201, { data: [{ status: 'success', code: 'SUCCESS', details: { id: 'NOTE' } }] }); }
     send(res, 404, { code: 'NOT_FOUND' });
   });

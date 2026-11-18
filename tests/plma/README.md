@@ -13,4 +13,4 @@ npx next start -p 3062 &            # no Zoho credentials: webform-fallback chec
 SHOT_DIR=/tmp node tests/plma/phase2.e2e.cjs
 ```
 
-Needs `playwright` with Chromium installed. Expected: all checks PASS (61 on 2026-11-11).
+Needs `playwright` with Chromium installed. Expected: all checks PASS (114 on 2026-11-17).
