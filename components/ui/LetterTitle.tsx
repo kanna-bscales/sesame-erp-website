@@ -11,7 +11,10 @@ export function LetterTitle({ text, className = "" }: Props) {
 
   return (
     <h1 aria-label={text} className={className}>
-      {words.map((word, wordIndex) => (
+      {/* The space between word blocks keeps the H1's text "Manufacturing ERP", not "ManufacturingERP",
+          for search engines (SEO audit, Nov 24, 2026); block layout makes it invisible. */}
+      {words.map((word, wordIndex) => [
+        wordIndex > 0 ? " " : null,
         <span key={`${word}-${wordIndex}`} aria-hidden className="block overflow-hidden pb-[0.06em]">
           {Array.from(word).map((char, charIndex) => (
             <motion.span
@@ -28,8 +31,8 @@ export function LetterTitle({ text, className = "" }: Props) {
               {char}
             </motion.span>
           ))}
-        </span>
-      ))}
+        </span>,
+      ])}
     </h1>
   );
 }

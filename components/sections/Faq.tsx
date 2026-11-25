@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { motion } from "motion/react";
 import { Plus } from "lucide-react";
 import { faq } from "@/content/home";
 
@@ -44,22 +44,22 @@ export function Faq() {
                     </motion.span>
                   </button>
                 </h3>
-                <AnimatePresence initial={false}>
-                  {open && (
-                    <motion.div
-                      id={`faq-answer-${index}`}
-                      role="region"
-                      aria-labelledby={`faq-question-${index}`}
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                      className="overflow-hidden"
-                    >
-                      <p className="max-w-[62ch] pb-7 text-lg text-ink-soft">{item.a}</p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                {/* Every answer is always in the HTML so search engines can read it (SEO audit,
+                    Nov 24, 2026; same pattern as EventFaq). Closed answers collapse to zero height and
+                    are inert, so they are not focusable or read out. */}
+                <div
+                  id={`faq-answer-${index}`}
+                  role="region"
+                  aria-labelledby={`faq-question-${index}`}
+                  inert={!open}
+                  className={`grid transition-[grid-template-rows,opacity] duration-350 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${
+                    open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+                  }`}
+                >
+                  <div className="overflow-hidden">
+                    <p className="max-w-[62ch] pb-7 text-lg text-ink-soft">{item.a}</p>
+                  </div>
+                </div>
               </li>
             );
           })}

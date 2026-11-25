@@ -18,6 +18,10 @@ export const site = {
 // URLs; set this to true to show the Solutions menu, mobile list and footer column again.
 export const showSolutions = false;
 
+// SEO audit (Nov 24, 2026): while the solution pages are hidden they are also kept out of search
+// results (noindex, links still followed). Setting showSolutions to true makes them indexable again.
+export const hiddenPageRobots = showSolutions ? undefined : { index: false, follow: true };
+
 // Each solution needs a matching route in app/ and a content file in content/.
 // Industry pages come from content/industries.ts.
 export const solutions = [

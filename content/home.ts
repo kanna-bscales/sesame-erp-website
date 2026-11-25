@@ -325,6 +325,16 @@ export const finalCta = {
 
 // Homepage link band to the two PLMA pages (SEO update, Nov 17, 2026: internal links from the
 // homepage to the PLMA guide and to the enquiry page, with descriptive anchor text).
+// Homepage link to the latest PUBLISHED blog article (its title is filled in automatically from
+// content/blog/posts.ts; blog launch, Nov 20, 2026).
+export const blogBand = {
+  label: "New article",
+  before: "Choosing or replacing an ERP system? Read",
+  middle: "or browse the",
+  blogLabel: "SesameERP blog",
+  after: ".",
+};
+
 export const plmaBand = {
   label: "PLMA 2026",
   before: "Met private label buyers at PLMA 2026? Read our",

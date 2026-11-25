@@ -229,6 +229,12 @@ export const plmaPage = {
       heading: "Packaged ERP or custom modules?",
       body: "A packaged ERP can suit a plant whose processes match its standard workflows. Custom modules make sense when retailer-specific rules, approvals or reports are where the team loses time, or when the rest of your systems already work and only one area needs fixing. Either way, start with the area that costs the most time today.",
     },
+    // Link to the blog article that covers this topic in depth (blog launch, Nov 20, 2026).
+    articleLink: {
+      before: "For a full requirements checklist with questions to ask ERP vendors, read",
+      label: "ERP for private label manufacturers: a practical requirements checklist",
+      href: "/blog/erp-for-private-label-manufacturers-checklist",
+    },
   },
   whyErp: {
     heading: "Quick ERP checklist for store brand manufacturers",
