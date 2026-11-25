@@ -3,10 +3,15 @@ import { ContactForm } from "@/components/contact/ContactForm";
 import { contact } from "@/content/contact";
 import { site } from "@/lib/site";
 
+const title = `Contact | ${site.name}`;
+
+// og:/twitter tags set here too, otherwise the page inherits the homepage's og:url and title.
 export const metadata: Metadata = {
   alternates: { canonical: "/contact" },
-  title: `Contact | ${site.name}`,
+  title,
   description: contact.intro,
+  openGraph: { title, description: contact.intro, url: "/contact", siteName: site.name, type: "website", locale: "en_US" },
+  twitter: { card: "summary_large_image", title, description: contact.intro },
 };
 
 export default function ContactPage() {

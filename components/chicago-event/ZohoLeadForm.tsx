@@ -518,7 +518,7 @@ export function ZohoLeadForm() {
       className="rounded-xl bg-sheet p-6 ring-1 ring-ink/10 shadow-[6px_6px_0_var(--color-canary)] sm:p-9 dark:shadow-[6px_6px_0_var(--color-canary),0_0_80px_-30px_var(--color-canary)]"
     >
       <div className="border-b border-rule pb-7">
-        <h3 className="font-semiwide text-2xl font-extrabold sm:text-[1.75rem]">{leadForm.heading}</h3>
+        <h2 className="font-semiwide text-2xl font-extrabold sm:text-[1.75rem]">{leadForm.heading}</h2>
         <p id={`${uid}-intro`} className="mt-3 leading-relaxed text-ink-soft">
           {leadForm.description}
         </p>

@@ -83,7 +83,7 @@ export function About() {
                     <div className="rounded-lg bg-paper p-3">
                       <div className="text-xs text-ink-soft">Orders</div>
                       <div className="font-semiwide mt-1 text-lg font-extrabold">47</div>
-                      <div className="mt-1 text-xs text-canary">3 pending</div>
+                      <div className="mt-1 inline-flex rounded-full bg-canary px-1.5 text-xs font-semibold text-night">3 pending</div>
                     </div>
                     <div className="rounded-lg bg-paper p-3">
                       <div className="text-xs text-ink-soft">AI tasks</div>

@@ -136,3 +136,5 @@ These short texts were not in the approved document. They support the layout and
 ## PLMA 2026 link band (SEO update, November 17, 2026 – pending owner review)
 
 Slim band under the stats bar (`components/sections/PlmaBand.tsx`, copy in `content/home.ts` › `plmaBand`): label "PLMA 2026"; "Met private label buyers at PLMA 2026? Read our **PLMA 2026 guide for private label manufacturers** (→ /plma-2026) or see the **PLMA 2026 attendee ERP offer** (→ /chicago-event)." Footer "Explore" now lists "PLMA 2026 guide" and "PLMA 2026 ERP offer".
+
+Blog band directly under the PLMA band (`components/sections/BlogBand.tsx`, copy in `content/home.ts` › `blogBand`, added Nov 20, 2026, pending owner review): label "New article"; "Choosing or replacing an ERP system? Read **{title of the latest published article}** (→ that article) or browse the **SesameERP blog** (→ /blog)." The article title comes from `content/blog/posts.ts`, so the band always points to the newest published article (currently "ERP for Private Label Manufacturers: A Practical Requirements Checklist"). Footer "Explore" adds "Blog" (→ /blog).

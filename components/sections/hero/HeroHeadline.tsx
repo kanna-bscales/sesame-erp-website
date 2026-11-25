@@ -22,7 +22,10 @@ export function HeroHeadline({ eyebrow, lines, second }: Props) {
       </motion.p>
 
       <h1 className="font-wide mt-7 text-[clamp(2.5rem,5.4vw,5.9rem)] leading-[0.96] text-balance">
-        {rows.map((row, index) => (
+        {/* Spaces between the row blocks keep the H1's text readable for search engines
+            ("Custom ERP systems, built fast."), invisible in the block layout (SEO audit, Nov 24, 2026). */}
+        {rows.map((row, index) => [
+          index > 0 ? " " : null,
           <span key={row.text} className="block overflow-hidden pb-[0.07em]">
             <motion.span
               className={`block ${row.light ? "font-light" : "font-extrabold"}`}
@@ -32,8 +35,8 @@ export function HeroHeadline({ eyebrow, lines, second }: Props) {
             >
               {row.text}
             </motion.span>
-          </span>
-        ))}
+          </span>,
+        ])}
       </h1>
     </div>
   );

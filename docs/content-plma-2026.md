@@ -47,6 +47,11 @@ No SEO tool with search volume or ranking data was available (no connector in th
 - New FAQs: What is the PLMA show? · Where is the PLMA trade show located in Chicago? · Are store brands still growing? (PLMA Store Brand Facts, Circana data: US$282.8 billion in 2025, 21.3% dollar share, +3.3% vs +1.2% national brands).
 - Sources list adds PLMA Store Brand Facts and the Rosemont venue page.
 
+## Blog link (November 20, 2026) – pending owner review
+
+- After "Packaged ERP or custom modules?" in the ERP guide section: "For a full requirements checklist with questions to ask ERP vendors, read [ERP for private label manufacturers: a practical requirements checklist](/blog/erp-for-private-label-manufacturers-checklist)." (`erpGuide.articleLink`).
+- Keyword note: the blog article now targets "erp for private label manufacturers" as its primary keyword. This page keeps it as a secondary topic. If Search Console later shows both pages competing for it, consider renaming this section's H2 (owner decision).
+
 ## Headings (`/plma-2026`)
 
 H1 PLMA 2026 in Chicago: a guide for private label manufacturers · H2 What is PLMA? · What is PLMA 2026? · PLMA 2026 schedule and venues · Who you will meet at PLMA 2026 · What private label manufacturers deal with every day · ERP for private label manufacturers: what it should cover · How SesameERP helps manufacturers · The complimentary PLMA 2026 offer · PLMA 2026 and private label ERP: questions.

@@ -219,6 +219,13 @@ export default function Plma2026Page() {
             <h3 className="font-semiwide text-xl font-extrabold">{p.erpGuide.choosing.heading}</h3>
             <p className="mt-2 leading-relaxed text-ink-soft">{p.erpGuide.choosing.body}</p>
           </div>
+          <p className="mt-8 max-w-[46rem] text-lg leading-relaxed text-ink-soft">
+            {p.erpGuide.articleLink.before}{" "}
+            <Link href={p.erpGuide.articleLink.href} className="font-semibold text-ink underline underline-offset-4 hover:text-ballpoint-ink">
+              {p.erpGuide.articleLink.label}
+            </Link>
+            .
+          </p>
         </div>
       </section>
 
